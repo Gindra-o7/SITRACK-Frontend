@@ -122,6 +122,9 @@ const UploadPendaftaran = ({ isOpen, onClose }) => {
                     </div>
                 </div>
                 <ModalConfirm
+                    text="Anda yakin akan melakukan pengiriman"
+                    confirm="Yakin"
+                    cancel="Tidak"
                     isOpen={showConfirmation}
                     onConfirm={handleConfirm}
                     onCancel={() => setShowConfirmation(false)}
