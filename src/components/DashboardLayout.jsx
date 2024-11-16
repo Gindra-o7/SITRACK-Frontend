@@ -124,7 +124,9 @@ const DashboardLayout = ({ role = "mahasiswa", userData }) => {
                 />
                 <div
                     className={`transition-all duration-300 flex-1 ${
-                        isSidebarOpen ? 'lg:ml-64' : ''
+                        isSidebarOpen
+                            ? 'lg:ml-64'
+                            : 'ml-0 lg:ml-20'  // mobile: ml-0, desktop: ml-20
                     }`}
                 >
                     <main className="p-8 mt-16">

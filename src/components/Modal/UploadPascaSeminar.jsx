@@ -1,8 +1,10 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Upload from '../UploadForm.jsx';
 import {X} from 'lucide-react';
+import Confirm from './Confirm.jsx';
 
 const UploadPascaSeminar = ({ isOpen, onClose }) => {
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const documents = [
         {
             title: "Surat Undangan Seminar Hasil KP",
@@ -21,6 +23,15 @@ const UploadPascaSeminar = ({ isOpen, onClose }) => {
             text: "Laporan Tambahan tugas KP final yang sudah disetujui oleh dosen pembimbing KP."
         }
     ];
+    const handleSubmit = () => {
+        setShowConfirmation(true);
+    };
+
+    const handleConfirm = () => {
+        // Handle the actual submission here
+        setShowConfirmation(false);
+        onClose();
+    };
 
     if (!isOpen) return null;
 
@@ -61,12 +72,22 @@ const UploadPascaSeminar = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="mt-6">
-                        <button className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                        <button
+                            onClick={handleSubmit}
+                            className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                             Kirim
                         </button>
                     </div>
                 </div>
             </div>
+            <Confirm
+                text="Anda yakin akan melakukan pengiriman"
+                confirm="Yakin"
+                cancel="Tidak"
+                isOpen={showConfirmation}
+                onConfirm={handleConfirm}
+                onCancel={() => setShowConfirmation(false)}
+            />
         </div>
     );
 };
