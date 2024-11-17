@@ -1,15 +1,13 @@
 import {useState} from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import {Outlet, useLocation} from "react-router-dom";
+import {Outlet, useLocation, Navigate} from "react-router-dom";
 import {
     LayoutDashboard,
     FileInput,
     FileSearch,
-    CircleUserRound,
     BadgeCheck,
     FileCheck2,
-    LogOut,
     Users,
     Settings,
     ClipboardList
@@ -43,20 +41,20 @@ const menuConfigs = {
             icon: <BadgeCheck className="w-5 h-5"/>,
         },
     ],
-    admin: [
+    koordinator: [
         {
             title: "Dashboard",
-            path: "/admin/dashboard",
+            path: "/koordinator/dashboard",
             icon: <LayoutDashboard className="w-5 h-5"/>,
         },
         {
             title: "Manajemen User",
-            path: "/admin/users",
+            path: "/koordinator/users",
             icon: <Users className="w-5 h-5"/>,
         },
         {
             title: "Pengaturan",
-            path: "/admin/settings",
+            path: "/koordinator/settings",
             icon: <Settings className="w-5 h-5"/>,
         },
     ],
@@ -87,10 +85,10 @@ const pageTitles = {
         "/mahasiswa/pasca-seminar": "Pasca Seminar",
         "/mahasiswa/status": "Status",
     },
-    admin: {
-        "/admin/dashboard": "Dashboard",
-        "/admin/users": "Manajemen User",
-        "/admin/settings": "Pengaturan",
+    koordinator: {
+        "/koordinator/dashboard": "Dashboard",
+        "/koordinator/users": "Manajemen User",
+        "/koordinator/settings": "Pengaturan",
     },
     dosen: {
         "/dosen/dashboard": "Dashboard",
@@ -99,7 +97,13 @@ const pageTitles = {
     }
 };
 
-const DashboardLayout = ({ role = "mahasiswa", userData }) => {
+const DashboardLayout = ({ role, userData }) => {
+
+    if (!role || !menuConfigs[role]) {
+        console.error("Invalid role provided to DashboardLayout:", role);
+        return <Navigate to="/login" replace />;
+    }
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const location = useLocation();
 
@@ -126,7 +130,7 @@ const DashboardLayout = ({ role = "mahasiswa", userData }) => {
                     className={`transition-all duration-300 flex-1 ${
                         isSidebarOpen
                             ? 'lg:ml-64'
-                            : 'ml-0 lg:ml-20'  // mobile: ml-0, desktop: ml-20
+                            : 'ml-0 lg:ml-20'
                     }`}
                 >
                     <main className="p-8 mt-16">
