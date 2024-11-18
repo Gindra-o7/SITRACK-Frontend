@@ -5,6 +5,7 @@ import Features from "../components/Features";
 import Flow from "../components/Flow";
 import FAQ from "../components/FAQ";
 import Footer from "../components/Footer";
+import Wave from "../components/Wave";
 
 const LandingPages = () => {
   return (
@@ -14,6 +15,7 @@ const LandingPages = () => {
       <Features />
       <Flow />
       <FAQ />
+      <Wave />
       <Footer />
     </div>
   );
