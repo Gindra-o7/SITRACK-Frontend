@@ -9,8 +9,10 @@ import {
     BadgeCheck,
     FileCheck2,
     Users,
-    Settings,
-    ClipboardList
+    ClipboardList,
+    GraduationCap,
+    BellPlus,
+    Calculator, Search
 } from "lucide-react";
 
 const menuConfigs = {
@@ -49,13 +51,23 @@ const menuConfigs = {
         },
         {
             title: "Manajemen User",
-            path: "/koordinator/users",
+            path: "/koordinator/manage-akun",
             icon: <Users className="w-5 h-5"/>,
         },
         {
-            title: "Pengaturan",
-            path: "/koordinator/settings",
-            icon: <Settings className="w-5 h-5"/>,
+            title: "Validasi Dokumen",
+            path: "/koordinator/validasi",
+            icon: <FileSearch className="w-5 h-5"/>,
+        },
+        {
+            title: "Penilaian Seminar",
+            path: "/koordinator/nilai-seminar",
+            icon: <Calculator className="w-5 h-5"/>,
+        },
+        {
+            title: "Notifikasi",
+            path: "/koordinator/notifikasi",
+            icon: <BellPlus className="w-5 h-5"/>,
         },
     ],
     dosen: [
@@ -65,9 +77,14 @@ const menuConfigs = {
             icon: <LayoutDashboard className="w-5 h-5"/>,
         },
         {
-            title: "Daftar Mahasiswa",
-            path: "/dosen/mahasiswa",
+            title: "Mahasiswa Bimbingan",
+            path: "/dosen/mahasiswa-bimbingan",
             icon: <ClipboardList className="w-5 h-5"/>,
+        },
+        {
+            title: "Mahasiswa Seminar",
+            path: "/dosen/mahasiswa-seminar",
+            icon: <GraduationCap className="w-5 h-5"/>,
         },
         {
             title: "Riwayat Bimbingan",
@@ -87,13 +104,21 @@ const pageTitles = {
     },
     koordinator: {
         "/koordinator/dashboard": "Dashboard",
-        "/koordinator/users": "Manajemen User",
-        "/koordinator/settings": "Pengaturan",
+        "/koordinator/manage-akun": "Manajemen User",
+        "/koordinator/validasi": "Validasi Dokumen",
+        "/koordinator/nilai-seminar": "Nilai Seminar Mahasiswa",
+        "/koordinator/notifikasi": "Notifikasi",
     },
     dosen: {
         "/dosen/dashboard": "Dashboard",
-        "/dosen/mahasiswa": "Daftar Mahasiswa",
-        "/dosen/riwayat": "Riwayat Bimbingan",
+        "/dosen/mahasiswa-bimbingan": "Mahasiswa Bimbingan",
+        "/dosen/mahasiswa-seminar": "Mahasiswa Seminar",
+        "/dosen/riwayat": "Riwayat",
+    },
+    kaprodi: {
+        "/kaprodi/dashboard": "Dashboard",
+        "/kaprodi/Mahasiswa": "Mahasiswa",
+        "/kaprodi/riwayat": "Riwayat",
     }
 };
 
