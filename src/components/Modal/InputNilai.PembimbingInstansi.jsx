@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Award, User, BookOpen, Building2, CalendarCheck } from 'lucide-react';
 
-const InputNilai = ({ isOpen, onClose, student }) => {
+const InputNilaiPembimbingInstansi = ({ isOpen, onClose, student }) => {
     const [selectedGrades, setSelectedGrades] = useState({
         deliverables: '',
         punctuality: '',
@@ -161,4 +161,4 @@ const InputNilai = ({ isOpen, onClose, student }) => {
     );
 };
 
-export default InputNilai;
+export default InputNilaiPembimbingInstansi;
