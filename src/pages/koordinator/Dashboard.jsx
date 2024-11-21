@@ -58,7 +58,6 @@ const Dashboard = () => {
         <div className="flex bg-gray-50 min-h-screen">
             <div className="flex-1 overflow-auto">
                 <main className="p-6">
-                    {/* Welcome Section */}
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-900">
                             Selamat Datang, Dr. Ahmad Koordinator
@@ -68,7 +67,6 @@ const Dashboard = () => {
                         </p>
                     </div>
 
-                    {/* Stats Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         {stats.map((stat, index) => (
                             <div key={index} className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
@@ -78,7 +76,6 @@ const Dashboard = () => {
                         ))}
                     </div>
 
-                    {/* Alert Section - if there are pending tasks */}
                     <div className="mb-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
                         <div className="flex">
                             <div className="flex-shrink-0">
@@ -94,7 +91,6 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    {/* Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {cards.map((card, index) => (
                             <a href={card.path} key={index}>

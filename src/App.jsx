@@ -6,12 +6,11 @@ import Pendaftaran from "./pages/mahasiswa/Pendaftaran";
 import Status from "../src/pages/mahasiswa/Status";
 import NotFound from "../src/pages/NotFound";
 import Persyaratan from "./pages/mahasiswa/Persyaratan";
-import PascaSeminar from "./pages/mahasiswa/PascaSeminar.jsx";
+import PascaSeminar from "./pages/mahasiswa/Pasca.Seminar.jsx";
 import DashboardInstansi from "./pages/instansi/Dashboard.jsx"
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import DashboardDosen from "./pages/dosen/Dashboard.jsx";
-import DashboardLayout from "./components/DashboardLayout.jsx";
-import RiwayatDosen from "./pages/dosen/Riwayat.jsx";
+import DashboardLayout from "./components/Dashboard.Layout.jsx";
 import MahasiswaBimbingan from "./pages/dosen/Mahasiswa.Bimbingan.jsx";
 import MahasiswaSeminar from "./pages/dosen/Mahasiswa.Seminar.jsx";
 import ManageAccounts from "./pages/koordinator/Manage.Accounts.jsx";
@@ -39,7 +38,6 @@ const App = () => {
                     <Route path="/dosen/dashboard" element={<DashboardDosen/>}/>
                     <Route path="/dosen/mahasiswa-bimbingan" element={<MahasiswaBimbingan/>}/>
                     <Route path="/dosen/mahasiswa-seminar" element={<MahasiswaSeminar/>}/>
-                    <Route path="/dosen/riwayat" element={<RiwayatDosen/>}/>
                 </Route>
                 <Route element={<DashboardLayout role="koordinator"/>}>
                     <Route path="/koordinator/dashboard" element={<DashboardKoordinator/>}/>

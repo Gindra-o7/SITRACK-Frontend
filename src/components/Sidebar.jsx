@@ -4,7 +4,7 @@ import {CircleUser, LogOut} from "lucide-react";
 import Logout from "./Modal/Logout.jsx";
 import Profile from "./Modal/Profile.jsx";
 
-const Sidebar = ({isOpen, menuItems, userData, role}) => {
+const Sidebar = ({isOpen, menuItems, userData, role, onToggle}) => {
     const location = useLocation();
     const [showLogout, setShowLogout] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -22,16 +22,25 @@ const Sidebar = ({isOpen, menuItems, userData, role}) => {
         setShowProfile(false);
     }
 
+    const handleBackgroundClick = (e) => {
+        // Hanya trigger jika yang diklik adalah background
+        if (e.target === e.currentTarget) {
+            onToggle?.();
+        }
+    };
+
     return (
         <div
-            className={`fixed top-0 left-0 z-20 h-screen pt-16 transition-all duration-300 bg-white dark:bg-gray-800
-            ${isOpen ? "w-64" : "w-0 lg:w-20"
-            }
+            className={`fixed top-0 left-0 z-20 h-screen pt-16 transition-all duration-300 bg-white dark:bg-gray-800 overflow-hidden
+            ${isOpen ? "w-64" : "w-0 lg:w-20"}
             `}
         >
-            <div className={`h-full px-3 py-4 overflow-y-auto flex flex-col ${
-                !isOpen && "lg:px-3 px-0"
-            }`}>
+            <div
+                className={`h-full px-3 py-4 flex flex-col ${
+                    !isOpen && "lg:px-3 px-0"
+                }`}
+                onClick={handleBackgroundClick}
+            >
                 <ul className="space-y-2 font-medium flex-grow">
                     {menuItems.map((item, index) => {
                         const isActive = location.pathname === item.path;
@@ -108,7 +117,6 @@ const Sidebar = ({isOpen, menuItems, userData, role}) => {
                     >
                         <button
                             onClick={() => setShowProfile(true)}
-                            to={`/${role}/profile`}
                             className="flex items-center w-full">
                             <CircleUser className={`rounded-full ${!isOpen ? "w-12 h-12" : "w-10 h-10"}`}/>
                             <div className={`transition-all duration-300 ml-2

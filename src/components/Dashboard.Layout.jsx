@@ -12,7 +12,9 @@ import {
     ClipboardList,
     GraduationCap,
     BellPlus,
-    Calculator, Search
+    Calculator,
+    Search,
+    FileUp
 } from "lucide-react";
 
 const menuConfigs = {
@@ -36,6 +38,11 @@ const menuConfigs = {
             title: "Pasca Seminar",
             path: "/mahasiswa/pasca-seminar",
             icon: <FileCheck2 className="w-5 h-5"/>,
+        },
+        {
+            title: "Upload Dokumen",
+            path: "/mahasiswa/upload",
+            icon: <FileUp className="w-5 h-5"/>,
         },
         {
             title: "Status",
@@ -85,12 +92,7 @@ const menuConfigs = {
             title: "Mahasiswa Seminar",
             path: "/dosen/mahasiswa-seminar",
             icon: <GraduationCap className="w-5 h-5"/>,
-        },
-        {
-            title: "Riwayat Bimbingan",
-            path: "/dosen/riwayat",
-            icon: <FileCheck2 className="w-5 h-5"/>,
-        },
+        }
     ]
 };
 
@@ -100,6 +102,7 @@ const pageTitles = {
         "/mahasiswa/persyaratan": "Persyaratan",
         "/mahasiswa/pendaftaran": "Pendaftaran",
         "/mahasiswa/pasca-seminar": "Pasca Seminar",
+        "/mahasiswa/upload": "Upload Dokumen",
         "/mahasiswa/status": "Status",
     },
     koordinator: {
@@ -112,13 +115,11 @@ const pageTitles = {
     dosen: {
         "/dosen/dashboard": "Dashboard",
         "/dosen/mahasiswa-bimbingan": "Mahasiswa Bimbingan",
-        "/dosen/mahasiswa-seminar": "Mahasiswa Seminar",
-        "/dosen/riwayat": "Riwayat",
+        "/dosen/mahasiswa-seminar": "Mahasiswa Seminar"
     },
     kaprodi: {
         "/kaprodi/dashboard": "Dashboard",
-        "/kaprodi/Mahasiswa": "Mahasiswa",
-        "/kaprodi/riwayat": "Riwayat",
+        "/kaprodi/visualisasi": "Visualisasi Data",
     }
 };
 

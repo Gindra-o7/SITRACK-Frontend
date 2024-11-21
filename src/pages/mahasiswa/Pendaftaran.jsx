@@ -1,7 +1,7 @@
 import {useState} from 'react'
-import CardUpload from "../../components/CardUpload.jsx";
+import CardUpload from "../../components/Card.Upload.jsx";
 import { CirclePlus } from "lucide-react";
-import UploadPendaftaran from "../../components/Modal/UploadPendaftaran.jsx";
+import UploadPendaftaran from "../../components/Modal/Upload.Pendaftaran.jsx";
 import Revisi from "../../components/Modal/Revisi.jsx";
 import Diterima from "../../components/Modal/Diterima.jsx";
 

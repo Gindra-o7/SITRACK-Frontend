@@ -1,5 +1,5 @@
 import {useState} from "react";
-import Upload from '../UploadForm.jsx';
+import Upload from '../Upload.Form.jsx';
 import {X} from 'lucide-react';
 import ModalConfirm from './Confirm.jsx';
 

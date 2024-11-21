@@ -1,5 +1,5 @@
 import React from "react";
-import LoginForm from "../components/LoginForm";
+import LoginForm from "../components/Login.Form.jsx";
 import logo from "../assets/logoimage.png";
 
 const Login = () => {
