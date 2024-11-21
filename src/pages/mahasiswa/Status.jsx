@@ -1,80 +1,238 @@
-import React from 'react'
-import {MoveRight} from 'lucide-react'
+import React, { useState } from "react";
+import UploadPersyaratan from "../../components/Modal/Upload.Persyaratan.jsx";
+import UploadPendaftaran from "../../components/Modal/Upload.Pendaftaran.jsx";
+import UploadPascaSeminar from "../../components/Modal/Upload.PascaSeminar.jsx";
+import Revisi from "../../components/Modal/Revisi.jsx";
+import Diterima from "../../components/Modal/Diterima.jsx";
+import PendaftaranDiterima from "../../components/Modal/Diterima.jsx";
+import CardUpload from "../../components/Card.Upload.jsx";
+import { CheckCircle, PlusCircle } from "lucide-react";
 
-const Status = () => {
-  const riwayatSeminar = [
+const Pengajuan = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [isPendaftaranDitolakModalOpen, setIsPendaftaranDitolakModalOpen] =
+      useState(false);
+  const [isPendaftaranDiterimaModalOpen, setIsPendaftaranDiterimaModalOpen] =
+      useState(false);
+  const [revisionNotes, setRevisionNotes] = useState([]);
+
+  const submissions = [
+    {
+      number: 1,
+      date: "Senin, 4 November 2024",
+      status: "revisi",
+      notes: [
+        "Surat keterangan selesai kp dari instansi",
+        "Daily Report Kerja Praktik 1",
+        "Daily Report Kerja Praktik 2",
+      ],
+    },
+    { number: 2, date: "Selasa, 5 November 2024", status: "diterima" },
+    { number: 3, date: "Rabu, 6 November 2024", status: "menunggu" },
+  ];
+
+  const handleStatusClick = (status, notes) => {
+    if (activeStep === 1) {
+      if (status === "revisi") {
+        setIsPendaftaranDitolakModalOpen(true);
+      } else if (status === "diterima") {
+        setIsPendaftaranDiterimaModalOpen(true);
+      }
+    } else {
+      if (status === "revisi") {
+        setRevisionNotes(notes);
+        setIsRevisionModalOpen(true);
+      } else if (status === "diterima") {
+        setIsAcceptModalOpen(true);
+      }
+    }
+  };
+
+  const steps = [
+    {
+      id: 0,
+      title: "Persyaratan",
+      description: "Syarat-syarat untuk mendaftar seminar",
+    },
     {
       id: 1,
-      tanggal: "Rabu, 6 November 2023",
-      judul: "Pengembangan Sistem Informasi Inventaris",
-      lokasi: "PT. Technology Indonesia"
+      title: "Pendaftaran",
+      description: "Berkas-berkas pendaftaran seminar",
     },
     {
       id: 2,
-      tanggal: "Kamis, 8 Februari 2024",
-      judul: "Pengembangan Sistem Informasi draf",
-      lokasi: "Diskominfo"
-    }
+      title: "Pasca-Seminar",
+      description: "Berkas setelah pelaksanaan seminar",
+    },
   ];
 
+  const getStepTitle = () => {
+    return steps[activeStep].title;
+  };
+
+  const renderModal = () => {
+    if (!isModalOpen) return null;
+
+    switch (activeStep) {
+      case 0:
+        return (
+            <UploadPersyaratan
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
+        );
+      case 1:
+        return (
+            <UploadPendaftaran
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
+        );
+      case 2:
+        return (
+            <UploadPascaSeminar
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-      <div className="p-6">
-        {/* Status Cards Container */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {/* Card 1 - Alur Selesai */}
-          <div className="bg-white shadow-lg p-4 rounded-lg">
-            <div className="text-gray-600 text-sm mb-1">ALUR SELESAI</div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">3/3</div>
-            <div className="text-gray-500 text-sm">Administrasi Seminar Kp</div>
-          </div>
+      <div className="container">
+        <h1 className="text-2xl font-bold mb-6">Pengajuan</h1>
 
-          {/* Card 2 - Periode */}
-          <div className="bg-white shadow-lg p-4 rounded-lg">
-            <div className="text-gray-600 text-sm mb-1">PERIODE</div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">2023-2024</div>
-            <div className="text-gray-500 text-sm">Ganjil</div>
-          </div>
+        {/* Improved Progress Steps */}
+        <div className="flex justify-between items-center mb-8">
+          {steps.map((step, index) => (
+              <React.Fragment key={step.id}>
+                <div className="flex flex-col items-center relative w-1/3">
+                  <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 z-10 relative 
+                ${
+                          activeStep === index
+                              ? "bg-blue-500 text-white"
+                              : activeStep > index
+                                  ? "bg-green-500 text-white"
+                                  : "bg-gray-200"
+                      }`}
+                  >
+                    {activeStep > index ? (
+                        <CheckCircle className="w-5 h-5" />
+                    ) : (
+                        index + 1
+                    )}
+                  </div>
+                  <div className="text-sm font-medium text-center">
+                    {step.title}
+                  </div>
 
-          {/* Card 3 - Sisa Waktu */}
-          <div className="bg-white shadow-lg p-4 rounded-lg">
-            <div className="text-gray-600 text-sm mb-1">SISA WAKTU</div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">20 Hari</div>
-            <div className="text-gray-500 text-sm">periode ini</div>
-          </div>
+                  {/* Connecting Line */}
+                  {index < steps.length - 1 && (
+                      <div
+                          className={`absolute top-4 -right-1/2 w-full h-1 
+                  ${activeStep > index ? "bg-green-500" : "bg-gray-200"}`}
+                          style={{
+                            right: "-50%",
+                            width: "100%",
+                          }}
+                      ></div>
+                  )}
+                </div>
+              </React.Fragment>
+          ))}
         </div>
 
-        {/* Card List Section */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Status Riwayat Deseminasi Seminar Kerja Praktik</h2>
-          <div className="space-y-4">
-            {riwayatSeminar.map((item) => (
-                <div key={item.id} className="bg-white shadow-lg rounded-lg p-4">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="flex-grow">
-                      <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
-                        <span>No. {item.id}</span>
-                        <span>•</span>
-                        <span>{item.tanggal}</span>
-                      </div>
-                      <h3 className="text-gray-800 font-medium mb-2">{item.judul}</h3>
-                      <div className="text-gray-600">
-                        Lokasi: {item.lokasi}
-                      </div>
-                    </div>
-                    <div className="flex justify-end">
-                      <button
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
-                        View
-                        <MoveRight className="w-4 h-4 ms-2"/>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-            ))}
-          </div>
+        {/* Rest of the component remains the same */}
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-reguler text-gray-900">
+            Riwayat Pengajuan <span className="font-bold">{getStepTitle()}</span>{" "}
+            Seminar KP
+          </h3>
+          <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300"
+          >
+            Create
+            <PlusCircle className="w-6 h-6 ml-2" />
+          </button>
+        </div>
+
+        {submissions.map((submission, index) => (
+            <CardUpload
+                key={index}
+                number={submission.number}
+                date={submission.date}
+                status={submission.status}
+                onStatusClick={() =>
+                    handleStatusClick(submission.status, submission.notes)
+                }
+            />
+        ))}
+
+        {renderModal()}
+
+        {/* Other modal components remain the same */}
+        <Revisi
+            title={`Pengajuan ${getStepTitle()} Seminar KP Anda`}
+            text="Laporan Daily report tidak ada tanda tangan pembimbing instansi, serta, surat keterangan selesai kp tidak di tandatangan basah oleh dosen pembimbing."
+            isOpen={isRevisionModalOpen}
+            onClose={() => setIsRevisionModalOpen(false)}
+            notes={revisionNotes}
+        />
+
+        <Diterima
+            title={`Pengajuan ${getStepTitle()} Seminar KP Anda`}
+            isOpen={isAcceptModalOpen}
+            onClose={() => setIsAcceptModalOpen(false)}
+        />
+
+        <PendaftaranDitolak
+            title={`Pengajuan ${getStepTitle()} Seminar KP Anda`}
+            isOpen={isPendaftaranDitolakModalOpen}
+            onClose={() => setIsPendaftaranDitolakModalOpen(false)}
+        />
+
+        <PendaftaranDiterima
+            title={`Pengajuan ${getStepTitle()} Seminar KP Anda`}
+            isOpen={isPendaftaranDiterimaModalOpen}
+            onClose={() => setIsPendaftaranDiterimaModalOpen(false)}
+        />
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between mt-6">
+          <button
+              className={`px-4 py-2 border rounded-md ${
+                  activeStep === 0
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "hover:bg-gray-50"
+              }`}
+              onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
+              disabled={activeStep === 0}
+          >
+            Previous
+          </button>
+          <button
+              className={`px-4 py-2 bg-blue-500 text-white rounded-md ${
+                  activeStep === steps.length - 1
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "hover:bg-blue-600"
+              }`}
+              onClick={() =>
+                  setActiveStep((prev) => Math.min(steps.length - 1, prev + 1))
+              }
+              disabled={activeStep === steps.length - 1}
+          >
+            Next
+          </button>
         </div>
       </div>
   );
-}
+};
 
-export default Status
+export default Pengajuan;

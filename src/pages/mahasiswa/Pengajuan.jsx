@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import {useState} from 'react'
 import CardUpload from "../../components/Card.Upload.jsx";
 import { CirclePlus } from "lucide-react";
-import UploadPersyaratan from "../../components/Modal/Upload.Persyaratan.jsx";
+import UploadPascaSeminar from "../../components/Modal/Upload.PascaSeminar.jsx";
 import Revisi from "../../components/Modal/Revisi.jsx";
 import Diterima from "../../components/Modal/Diterima.jsx";
 
-const Persyaratan = () => {
+const Pengajuan = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
@@ -13,11 +13,7 @@ const Persyaratan = () => {
     const [revisionNotes, setRevisionNotes] = useState([]);
 
     const submissions = [
-        { number: 1, date: "Senin, 4 November 2024", status: "revisi", notes: [
-                "Surat keterangan selesai kp dari instansi",
-                "Daily Report Kerja Praktik 1",
-                "Daily Report Kerja Praktik 2",
-            ] },
+        { number: 1, date: "Senin, 4 November 2024", status: "revisi" },
         { number: 2, date: "Selasa, 5 November 2024", status: "diterima" },
         { number: 3, date: "Rabu, 6 November 2024", status: "menunggu" },
     ];
@@ -35,7 +31,7 @@ const Persyaratan = () => {
         <div>
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-reguler text-gray-900 dark:text-white">
-                    Riwayat Pengajuan <span className="font-bold">Persyaratan</span> Seminar KP
+                    Riwayat Pengajuan Dokumen <span className="font-bold">Pasca Seminar</span>
                 </h3>
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -56,15 +52,15 @@ const Persyaratan = () => {
                 />
             ))}
 
-            {/* Upload Modal */}
-            <UploadPersyaratan
+            {/* Modal */}
+            <UploadPascaSeminar
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
             />
 
             {/* Revision Modal */}
             <Revisi
-                title="Pengajuan Persyaratan Seminar Kp Anda"
+                title="Pengajuan Dokumen Pasca-Seminar KP Anda"
                 text="Laporan Daily report tidak ada tanda tangan pembimbing instansi, serta, surat keterangan selesai kp tidak di tandatangan basah oleh dosen pembimbing."
                 isOpen={isRevisionModalOpen}
                 onClose={() => setIsRevisionModalOpen(false)}
@@ -72,15 +68,15 @@ const Persyaratan = () => {
             />
 
             <Diterima
-                title="Pengajuan Persyaratan Seminar Kp Anda"
-                text="Silakan lalukan pendaftaran deseminasi kp !"
-                textButton="Lanjut Pendaftaran"
+                title="Pengajuan Dokumen Pasca-Seminar KP Anda"
+                text="Infomasi deseminasi kp selanjutnya ada di status !"
+                textButton="Lanjut Status"
                 isOpen={isAcceptModalOpen}
                 onClose={() => setIsAcceptModalOpen(false)}
-                linkTo="/mahasiswa/pendaftaran"
+                linkTo="/mahasiswa/status"
             />
         </div>
-    );
+    )
 }
 
-export default Persyaratan;
+export default Pengajuan
