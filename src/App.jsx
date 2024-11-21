@@ -1,14 +1,13 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Login from "../src/pages/Login";
 import Dashboard from "../src/pages/mahasiswa/Dashboard";
 import LandingPage from "./pages/LandingPages";
-import Pendaftaran from "./pages/mahasiswa/Pendaftaran";
+import Pengajuan from "./pages/mahasiswa/Pengajuan";
 import Status from "../src/pages/mahasiswa/Status";
 import NotFound from "../src/pages/NotFound";
-import Persyaratan from "./pages/mahasiswa/Persyaratan";
-import PascaSeminar from "./pages/mahasiswa/PascaSeminar.jsx";
-import DashboardInstansi from "./pages/instansi/Dashboard.jsx"
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+
+import DashboardInstansi from "./pages/instansi/Dashboard.jsx";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DashboardDosen from "./pages/dosen/Dashboard.jsx";
 import DashboardLayout from "./components/DashboardLayout.jsx";
 import RiwayatDosen from "./pages/dosen/Riwayat.jsx";
@@ -21,36 +20,47 @@ import Notifikasi from "./pages/koordinator/Notifikasi.jsx";
 import Validasi from "./pages/koordinator/Validasi.jsx";
 
 const App = () => {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<LandingPage/>}/>
-                <Route path="/login" element={<Login/>}/>
-                <Route path="*" element={<NotFound/>}/>
-                <Route element={<DashboardLayout role="mahasiswa"/>}>
-                    <Route path="/mahasiswa/dashboard" element={<Dashboard/>}/>
-                    <Route path="/mahasiswa/pendaftaran" element={<Pendaftaran/>}/>
-                    <Route path="/mahasiswa/persyaratan" element={<Persyaratan/>}/>
-                    <Route path="/mahasiswa/pasca-seminar" element={<PascaSeminar/>}/>
-                    <Route path="/mahasiswa/status" element={<Status/>}/>
-                </Route>
-                <Route path="/pembimbing-instansi/Dashboard" element={<DashboardInstansi/>}/>
-                <Route element={<DashboardLayout role="dosen"/>}>
-                    <Route path="/dosen/dashboard" element={<DashboardDosen/>}/>
-                    <Route path="/dosen/mahasiswa-bimbingan" element={<MahasiswaBimbingan/>}/>
-                    <Route path="/dosen/mahasiswa-seminar" element={<MahasiswaSeminar/>}/>
-                    <Route path="/dosen/riwayat" element={<RiwayatDosen/>}/>
-                </Route>
-                <Route element={<DashboardLayout role="koordinator"/>}>
-                    <Route path="/koordinator/dashboard" element={<DashboardKoordinator/>}/>
-                    <Route path="/koordinator/manage-akun" element={<ManageAccounts/>}/>
-                    <Route path="/koordinator/nilai-seminar" element={<NilaiSeminar/>}/>
-                    <Route path="/koordinator/validasi" element={<Validasi/>}/>
-                    <Route path="/koordinator/notifikasi" element={<Notifikasi/>}/>
-                </Route>
-            </Routes>
-        </Router>
-    );
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
+        <Route element={<DashboardLayout role="mahasiswa" />}>
+          <Route path="/mahasiswa/dashboard" element={<Dashboard />} />
+          <Route path="/mahasiswa/pengajuan" element={<Pengajuan />} />
+
+          <Route path="/mahasiswa/status" element={<Status />} />
+        </Route>
+        <Route
+          path="/pembimbing-instansi/Dashboard"
+          element={<DashboardInstansi />}
+        />
+        <Route element={<DashboardLayout role="dosen" />}>
+          <Route path="/dosen/dashboard" element={<DashboardDosen />} />
+          <Route
+            path="/dosen/mahasiswa-bimbingan"
+            element={<MahasiswaBimbingan />}
+          />
+          <Route
+            path="/dosen/mahasiswa-seminar"
+            element={<MahasiswaSeminar />}
+          />
+          <Route path="/dosen/riwayat" element={<RiwayatDosen />} />
+        </Route>
+        <Route element={<DashboardLayout role="koordinator" />}>
+          <Route
+            path="/koordinator/dashboard"
+            element={<DashboardKoordinator />}
+          />
+          <Route path="/koordinator/manage-akun" element={<ManageAccounts />} />
+          <Route path="/koordinator/nilai-seminar" element={<NilaiSeminar />} />
+          <Route path="/koordinator/validasi" element={<Validasi />} />
+          <Route path="/koordinator/notifikasi" element={<Notifikasi />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;
