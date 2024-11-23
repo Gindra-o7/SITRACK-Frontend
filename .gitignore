@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 Dockerfile
+.env
 
 # Editor directories and files
 .vscode/*
