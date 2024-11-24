@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2017",           // Updated from es2015 to es2017
+    "lib": [
+      "dom",
+      "es2017",                   // Updated from es2015 to es2017
+      "dom.iterable",             // Added for better DOM support
+      "esnext"                    // Added for modern JavaScript features
+    ],
+    "allowJs": true,
+    "checkJs": false,
+    "jsx": "react",               // Can be updated to "react-jsx" for React 17+
+    "outDir": "./build",
+    "rootDir": "./lib",
+    "removeComments": true,
+    "noEmit": true,
+    "pretty": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,  // Added for better import support
+    "resolveJsonModule": true,             // Added for JSON imports
+    "isolatedModules": true,               // Added for better build tool compatibility
+    "noImplicitAny": true,                 // Added to catch implicit any types
+    "strictNullChecks": true              // Added for better null checking
+  },
+  "include": [
+    "./lib/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
