@@ -15,20 +15,21 @@ const Dashboard: React.FC = () => {
     {
       title: "Upload Kebutuhan Dokumen Seminar",
       description:
-        "Silahkan ajukan dokumen untuk validasi kelengkapan dalam pelaksanaan menuju pendaftaran seminar hasil kerja praktik.",
+        "Silahkan ajukan dokumen untuk validasi kelengkapan pendaftaran seminar kerja praktik Anda",
       path: "/mahasiswa/pengajuan",
       icon: FileUp,
     },
     {
       title: "Status Seminar KP",
-      description: "Ayo lihat status pengajuan seminar kerja praktik anda.",
+      description:
+        "Pantau status unggahan berkas persyaratan, pendaftaran, dan berkas pasca-seminar kerja praktik Anda",
       path: "/mahasiswa/status",
       icon: BadgeInfo,
     },
   ];
 
   return (
-    <div className="flex bg-gray-100">
+    <div className="flex">
       <div className="flex-1 overflow-auto">
         <main className="p-6">
           <div className="mb-8">
