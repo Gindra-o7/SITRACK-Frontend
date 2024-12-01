@@ -2,7 +2,7 @@ import React from "react";
 import { X } from "lucide-react";
 import FileItem from "../../components/File.Item";
 
-interface DiterimaProps {
+interface MenungguProps {
   title: string;
   text?: string;
   isOpen: boolean;
@@ -14,35 +14,35 @@ interface DiterimaProps {
 const documentData = [
   {
     name: "Surat keterangan selesai KP dari instansi",
-    status: "diterima",
+    status: "menunggu",
   },
   {
     name: "Daily Report Kerja Praktik - Minggu 1",
-    status: "diterima",
+    status: "menunggu",
   },
   {
     name: "Daily Report Kerja Praktik - Minggu 2",
-    status: "diterima",
+    status: "menunggu",
   },
   {
     name: "Daily Report Kerja Praktik - Minggu 3",
-    status: "diterima",
+    status: "menunggu",
   },
   {
     name: "Daily Report Kerja Praktik - Minggu 4",
-    status: "diterima",
+    status: "menunggu",
   },
   {
     name: "Daily Report Kerja Praktik - Minggu 5",
-    status: "diterima",
+    status: "menunggu",
   },
   {
     name: "Laporan Akhir Kerja Praktik",
-    status: "diterima",
+    status: "menunggu",
   },
 ];
 
-const Diterima: React.FC<DiterimaProps> = ({
+const Menunggu: React.FC<MenungguProps> = ({
   title,
   text,
   isOpen,
@@ -55,11 +55,11 @@ const Diterima: React.FC<DiterimaProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-green-500 dark:bg-gray-900 p-6 border-b sticky top-0 z-50">
+        <div className="bg-yellow-500 dark:bg-gray-900 p-6 border-b sticky top-0 z-50">
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-white text-xl font-medium dark:text-white">
-                {title} <span className="font-bold">Diterima!</span>
+                {title} <span className="font-bold">Menunggu Validasi!</span>
               </h2>
             </div>
             <button
@@ -96,4 +96,4 @@ const Diterima: React.FC<DiterimaProps> = ({
   );
 };
 
-export default Diterima;
+export default Menunggu;
