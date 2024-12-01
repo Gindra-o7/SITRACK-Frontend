@@ -1,9 +1,4 @@
-import React from "react";
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from "@headlessui/react";
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 interface FAQItem {
@@ -12,6 +7,8 @@ interface FAQItem {
 }
 
 const FAQ: React.FC = () => {
+  const [openIndexes, setOpenIndexes] = useState<number[]>([0, 1, 2, 3]); // All items open by default
+
   const faqs: FAQItem[] = [
     {
       question: "Apa saja syarat pendaftaran seminar KP?",
@@ -35,6 +32,14 @@ const FAQ: React.FC = () => {
     },
   ];
 
+  const toggleItem = (index: number) => {
+    setOpenIndexes((prevIndexes) =>
+        prevIndexes.includes(index)
+            ? prevIndexes.filter((i) => i !== index)
+            : [...prevIndexes, index]
+    );
+  };
+
   return (
       <div id="faq" className="my-32 w-full px-4">
         <div className="text-center mb-12">
@@ -42,30 +47,39 @@ const FAQ: React.FC = () => {
             FAQ Tentang Pendaftaran Seminar KP
           </h2>
           <p className="text-gray-600">
-            Temukan jawaban atas pertanyaan umum terkait proses pendaftaran
-            seminar Kerja Praktik (KP).
+            Temukan jawaban atas pertanyaan umum terkait proses pendaftaran seminar
+            Kerja Praktik (KP).
           </p>
         </div>
         <div className="mx-auto w-full max-w-4xl divide-y divide-black/20 rounded-xl bg-gray-50">
-          {faqs.map((faq: FAQItem, index: number) => (
-              <Disclosure as="div" className="p-6" defaultOpen={true} key={index}>
-                {({ open }: { open: boolean }) => (
-                    <>
-                      <DisclosureButton className="group flex w-full items-center justify-between">
-                  <span className="text-md/6 font-semibold text-black group-data-[hover]:text-black/80">
-                    {faq.question}
-                  </span>
-                        <ChevronDown className={`h-5 w-5 fill-white/60 group-data-[hover]:fill-white/50 transition-transform duration-300 ${
-                            open ? 'rotate-180' : ''
-                        }`} />
-                      </DisclosureButton>
-                      <DisclosurePanel className="mt-2 text-sm text-black transition-all duration-300 ease-in-out">
-                        {faq.answer}
-                      </DisclosurePanel>
-                    </>
-                )}
-              </Disclosure>
-          ))}
+          {faqs.map((faq: FAQItem, index: number) => {
+            const isOpen = openIndexes.includes(index);
+
+            return (
+                <div className="p-6" key={index}>
+                  <button
+                      onClick={() => toggleItem(index)}
+                      className="group flex w-full items-center justify-between"
+                  >
+                <span className="text-md/6 font-semibold text-black group-hover:text-black/80">
+                  {faq.question}
+                </span>
+                    <ChevronDown
+                        className={`h-5 w-5 fill-white/60 group-hover:fill-white/50 transition-transform duration-300 ${
+                            isOpen ? "rotate-180" : ""
+                        }`}
+                    />
+                  </button>
+                  <div
+                      className={`mt-2 text-sm text-black transition-all duration-300 ease-in-out overflow-hidden ${
+                          isOpen ? "h-auto opacity-100" : "h-0 opacity-0"
+                      }`}
+                  >
+                    {faq.answer}
+                  </div>
+                </div>
+            );
+          })}
         </div>
       </div>
   );

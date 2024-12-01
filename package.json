@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
+    "@aws-amplify/auth": "^6.7.0",
+    "@aws-amplify/core": "^6.6.0",
+    "@aws-amplify/ui-react": "^6.7.0",
+    "aws-amplify": "^6.9.0",
+    "aws-jwt-verify": "^4.0.1",
     "axios": "^1.7.7",
-    "flowbite": "^2.5.2",
-    "flowbite-react": "^0.10.2",
-    "keycloak-js": "^26.0.5",
+    "headlessui": "^0.0.0",
     "lucide-react": "^0.454.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/node": "^22.9.3",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.15.0",

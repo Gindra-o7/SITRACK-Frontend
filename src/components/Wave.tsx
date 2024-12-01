@@ -1,5 +1,5 @@
 import React from "react";
-import PicWave from "../assets/Wave.svg";
+import PicWave from "../assets/wave.svg";
 
 const Wave = () => {
   return (
