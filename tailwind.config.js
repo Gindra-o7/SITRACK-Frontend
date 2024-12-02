@@ -1,15 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-
 export default {
-<<<<<<< HEAD
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-=======
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "node_modules/flowbite-react/lib/esm/**/*.js",
+    "node_modules/flowbite/**/*.js",
   ],
->>>>>>> ff05f1fe7ae548cbcef241fb4a9dba31e5a7f575
   theme: {
     extend: {
       fontFamily: {
@@ -27,5 +22,10 @@ export default {
       },
     },
   },
-  plugins: [require("flowbite/plugin")],
+  plugins: [
+    require("flowbite/plugin")({
+      charts: true,
+      datatables: true,
+    }),
+  ],
 };
