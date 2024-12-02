@@ -13,15 +13,20 @@
     "@aws-amplify/auth": "^6.7.0",
     "@aws-amplify/core": "^6.6.0",
     "@aws-amplify/ui-react": "^6.7.0",
+    "apexcharts": "^4.1.0",
     "aws-amplify": "^6.9.0",
     "aws-jwt-verify": "^4.0.1",
     "axios": "^1.7.7",
+    "flowbite": "^2.5.2",
+    "flowbite-react": "^0.10.2",
     "headlessui": "^0.0.0",
     "lucide-react": "^0.454.0",
     "react": "^18.3.1",
+    "react-apexcharts": "^1.6.0",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
-    "react-router-dom": "^6.27.0"
+    "react-router-dom": "^6.27.0",
+    "simple-datatables": "^9.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -37,8 +42,8 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.14",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
     "vite": "^5.4.10"
   }
 }

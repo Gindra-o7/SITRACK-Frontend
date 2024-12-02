@@ -17,6 +17,7 @@ import DashboardKoordinator from "./pages/koordinator/Dashboard";
 import JadwalNilai from "./pages/koordinator/Jadwal.Nilai";
 import Notifikasi from "./pages/koordinator/Notifikasi";
 import Validasi from "./pages/koordinator/Validasi";
+import DashboardKaprodi from "./pages/kaprodi/Dashboard";
 
 const App: React.FC = () => {
   return (
@@ -59,6 +60,7 @@ const App: React.FC = () => {
           <Route path="/koordinator/validasi" element={<Validasi />} />
           <Route path="/koordinator/notifikasi" element={<Notifikasi />} />
         </Route>
+        <Route path="/kaprodi/Dashboard" element={<DashboardKaprodi />} />
       </Routes>
     </Router>
   );
