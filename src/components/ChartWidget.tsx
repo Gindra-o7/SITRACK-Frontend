@@ -76,9 +76,9 @@ const ChartWidget: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
       {/* Header Section */}
-      <div className="flex justify-between items-start w-full">
+      <div className="flex justify-between items-start w-full mb-4">
         <div className="flex-col items-center">
           <div className="flex items-center mb-1">
             <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white me-1">
@@ -127,7 +127,9 @@ const ChartWidget: React.FC = () => {
       </div>
 
       {/* Pie Chart */}
-      <div className="py-6" id="pie-chart"></div>
+      <div className="flex justify-center py-6">
+        <div id="pie-chart" className="w-full max-w-full"></div>
+      </div>
 
       {/* Footer Section */}
       <div className="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">

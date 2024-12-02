@@ -33,7 +33,7 @@ const Chartsat: React.FC = () => {
     ],
     chart: {
       type: "bar",
-      height: "320px",
+      height: "100%",
       fontFamily: "Inter, sans-serif",
       toolbar: {
         show: false,
@@ -119,7 +119,7 @@ const Chartsat: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="w-full bg-white shadow-lg rounded-lg p-6">
       <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
           <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
@@ -184,7 +184,7 @@ const Chartsat: React.FC = () => {
         </dl>
       </div>
 
-      <div ref={chartRef} id="column-chart" className="pt-5"></div>
+      <div ref={chartRef} id="column-chart" className="pt-5 w-full h-full"></div>
 
       <div className="grid grid-cols-1 items-center border-t border-gray-200 dark:border-gray-700 justify-between">
         <div className="flex justify-between items-center pt-5">

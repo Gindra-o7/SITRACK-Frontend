@@ -9,11 +9,11 @@ interface ChartOptions {
   chart: {
     height: number;
     width: string;
-    type: "pie"; // Set 'pie' type explicitly
+    type: "pie";
   };
   stroke: {
     colors: string[];
-    lineCap: "butt" | "square" | "round" | undefined; // Explicitly type 'lineCap'
+    lineCap: "butt" | "square" | "round" | undefined;
   };
   plotOptions: {
     pie: {
@@ -23,6 +23,11 @@ interface ChartOptions {
       size: string;
       dataLabels: {
         offset: number;
+        dropShadow: {
+          enabled: boolean;
+          blur: number;
+          opacity: number;
+        };
       };
     };
   };
@@ -31,10 +36,12 @@ interface ChartOptions {
     enabled: boolean;
     style: {
       fontFamily: string;
+      fontSize: string;
+      fontWeight: string;
     };
   };
   legend: {
-    position: "top" | "right" | "bottom" | "left" | undefined; // Valid values for legend position
+    position: "top" | "right" | "bottom" | "left" | undefined;
     fontFamily: string;
   };
   yaxis: {
@@ -44,7 +51,7 @@ interface ChartOptions {
   };
   xaxis: {
     labels: {
-      formatter: (value: string) => string; // Change parameter to string
+      formatter: (value: string) => string;
     };
     axisTicks: {
       show: boolean;
@@ -60,44 +67,51 @@ const Chartprapasca: React.FC = () => {
     series: [52.8, 26.8, 20.4],
     colors: ["#1C64F2", "#16BDCA", "#9061F9"],
     chart: {
-      height: 420,
+      height: 350,
       width: "100%",
-      type: "pie", // Set chart type to 'pie'
+      type: "pie", 
     },
     stroke: {
       colors: ["white"],
-      lineCap: "butt", // Set lineCap to one of the allowed values ('butt', 'square', 'round')
+      lineCap: "butt",
     },
     plotOptions: {
       pie: {
         labels: {
           show: true,
         },
-        size: "100%",
+        size: "80%",
         dataLabels: {
-          offset: -25,
+          offset: -10, // Adjust offset of data labels if needed
+          dropShadow: {
+            enabled: true, // Enable shadow to make labels more visible
+            blur: 3, // Shadow blur effect
+            opacity: 0.5, // Shadow opacity
+          },
         },
       },
     },
-    labels: ["Direct", "Organic search", "Referrals"],
+    labels: ["UI & UX", "Pemograman", "Data Scienes"],
     dataLabels: {
       enabled: true,
       style: {
         fontFamily: "Inter, sans-serif",
+        fontSize: "14px", // Adjust font size for clarity
+        fontWeight: "bold", // Bold text for emphasis
       },
     },
     legend: {
-      position: "bottom", // Use valid position: 'top' | 'right' | 'bottom' | 'left'
+      position: "bottom",
       fontFamily: "Inter, sans-serif",
     },
     yaxis: {
       labels: {
-        formatter: (value) => `${value}%`, // No changes here
+        formatter: (value) => `${value}%`,
       },
     },
     xaxis: {
       labels: {
-        formatter: (value) => `${value}%`, // Updated to accept string (fixing the error)
+        formatter: (value) => `${value}%`,
       },
       axisTicks: {
         show: false,
@@ -111,64 +125,23 @@ const Chartprapasca: React.FC = () => {
   const chartOptions = getChartOptions();
 
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
-      <div className="flex justify-between items-start w-full">
-        <div className="flex-col items-center">
-          <div className="flex items-center mb-1">
-            <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white me-1">
-              Website traffic
-            </h5>
-            <svg
-              data-popover-target="chart-info"
-              data-popover-placement="bottom"
-              className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer ms-1"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm0 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm1-5.034V12a1 1 0 0 1-2 0v-1.418a1 1 0 0 1 1.038-.999 1.436 1.436 0 0 0 1.488-1.441 1.501 1.501 0 1 0-3-.116.986.986 0 0 1-1.037.961 1 1 0 0 1-.96-1.037A3.5 3.5 0 1 1 11 11.466Z" />
-            </svg>
-          </div>
-        </div>
-        {/* Date Range Button */}
-        <button
-          id="dateRangeButton"
-          data-dropdown-toggle="dateRangeDropdown"
-          data-dropdown-ignore-click-outside-class="datepicker"
-          type="button"
-          className="inline-flex items-center text-blue-700 dark:text-blue-600 font-medium hover:underline"
-        >
-          31 Nov - 31 Dec
-          <svg
-            className="w-3 h-3 ms-2"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 10 6"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="m1 1 4 4 4-4"
-            />
-          </svg>
-        </button>
+    <div className="max-w-full w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+      <div className="flex justify-center mb-4">
+        <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+          Peminatan Diagram
+        </h5>
       </div>
 
-      {/* Pie Chart */}
-      <div className="py-6" id="pie-chart">
+      {/* Pie Chart Container */}
+      <div className="flex justify-center py-6">
         <ReactApexChart
           options={chartOptions}
           series={chartOptions.series}
           type="pie"
-          height={420}
+          height={350}
         />
       </div>
 
-      {/* Additional Content (Buttons, Dropdowns) */}
       <div className="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
         <div className="flex justify-between items-center pt-5">
           <button

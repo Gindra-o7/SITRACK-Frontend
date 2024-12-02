@@ -9,7 +9,7 @@ const Tablelok: React.FC = () => {
 
     if (tableElement) {
       const dataTable = new DataTable(tableElement, {
-        searchable: true, // Disable search
+        searchable: true, // Enable search
         perPageSelect: [5, 10, 15, 20], // Provide valid options for pagination per page dropdown
         sortable: true, // Enable sorting for all columns
         fixedHeight: true, // Optional, if you want to have fixed table height
@@ -23,11 +23,11 @@ const Tablelok: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="w-full"> {/* Added w-full to ensure full width of the container */}
       <h2 className="text-xl font-bold mb-4">
         Rekap Data Instansi/Tempat Mahasiswa Selesai KP
       </h2>
-      <table id="default-table">
+      <table id="default-table" className="w-full"> {/* Added w-full to ensure the table takes full width */}
         <thead>
           <tr>
             <th>
@@ -38,7 +38,7 @@ const Tablelok: React.FC = () => {
             </th>
             <th>
               <span className="flex items-center">
-                Jumlah Mahasiswa KP Selesai
+                Jumlah Mahasiswa KP
                 <svg
                   className="w-4 h-4 ms-1"
                   aria-hidden="true"
