@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { CheckCircle, PlusCircle } from "lucide-react";
-
-// Components
+import { PlusCircle } from "lucide-react";
+import { ProgressSteps, NavigationButtons, STEPS } from "../../components/Step";
 import UploadPersyaratan from "../../components/Modal/Upload.Persyaratan";
 import UploadPendaftaran from "../../components/Modal/Upload.Pendaftaran";
 import UploadPascaSeminar from "../../components/Modal/Upload.PascaSeminar";
@@ -12,11 +11,6 @@ import PendaftaranMenunggu from "../../components/Modal/Pendaftaran.Menunggu";
 import CardUpload from "../../components/Card.Upload";
 
 // Types & Data
-interface Step {
-  id: number;
-  title: string;
-}
-
 export interface DocumentData {
   name: string;
   status: "menunggu" | "diterima" | "revisi";
@@ -29,14 +23,7 @@ export interface SubmissionData {
   documents: DocumentData[];
 }
 
-// Constants remain the same...
-const STEPS: Step[] = [
-  { id: 0, title: "Persyaratan" },
-  { id: 1, title: "Pendaftaran" },
-  { id: 2, title: "Pasca-Seminar" },
-];
-
-// Sample data remains the same...
+// Dummy Data
 const submission1: SubmissionData = {
   number: 1,
   date: "Senin, 4 November 2024",
@@ -84,74 +71,6 @@ const submission3: SubmissionData = {
 
 const SAMPLE_SUBMISSIONS = [submission1, submission2, submission3];
 
-// ProgressSteps and NavigationButtons components remain the same...
-const ProgressSteps: React.FC<{ activeStep: number }> = ({ activeStep }) => (
-  <div className="flex justify-between items-center mb-8">
-    {STEPS.map((step, index) => (
-      <React.Fragment key={step.id}>
-        <div className="flex flex-col items-center relative w-1/3">
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 z-10 relative 
-              ${
-                activeStep === index
-                  ? "bg-blue-500 text-white"
-                  : activeStep > index
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-200"
-              }`}
-          >
-            {activeStep > index ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              index + 1
-            )}
-          </div>
-          <div className="text-sm font-medium text-center">{step.title}</div>
-          {index < STEPS.length - 1 && (
-            <div
-              className={`absolute top-4 -right-1/2 w-full h-1 
-                ${activeStep > index ? "bg-green-500" : "bg-gray-200"}`}
-              style={{ right: "-50%", width: "100%" }}
-            />
-          )}
-        </div>
-      </React.Fragment>
-    ))}
-  </div>
-);
-
-const NavigationButtons: React.FC<{
-  activeStep: number;
-  onPrevious: () => void;
-  onNext: () => void;
-}> = ({ activeStep, onPrevious, onNext }) => (
-  <div className="flex justify-between mt-6">
-    <button
-      className={`px-4 py-2 border rounded-md ${
-        activeStep === 0
-          ? "text-gray-400 cursor-not-allowed"
-          : "hover:bg-gray-50"
-      }`}
-      onClick={onPrevious}
-      disabled={activeStep === 0}
-    >
-      Sebelumnya
-    </button>
-    <button
-      className={`px-4 py-2 bg-blue-500 text-white rounded-md ${
-        activeStep === STEPS.length - 1
-          ? "bg-gray-400 cursor-not-allowed"
-          : "hover:bg-blue-600"
-      }`}
-      onClick={onNext}
-      disabled={activeStep === STEPS.length - 1}
-    >
-      Lanjut
-    </button>
-  </div>
-);
-
-// Main Component
 const Pengajuan: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [activeSubmission, setActiveSubmission] =
@@ -164,6 +83,10 @@ const Pengajuan: React.FC = () => {
     pendaftaranMenunggu: false,
   });
 
+  const handleStepClick = (stepIndex: number) => {
+    setActiveStep(stepIndex);
+  };
+
   const closeModal = (modalKey: keyof typeof modalStates) => {
     setModalStates((prev) => ({ ...prev, [modalKey]: false }));
   };
@@ -171,7 +94,6 @@ const Pengajuan: React.FC = () => {
   const handleStatusClick = (submission: SubmissionData) => {
     setActiveSubmission(submission);
     if (activeStep === 1) {
-      // Handle pendaftaran specific modals
       switch (submission.status) {
         case "revisi":
           setModalStates((prev) => ({ ...prev, pendaftaranDitolak: true }));
@@ -184,7 +106,6 @@ const Pengajuan: React.FC = () => {
           break;
       }
     } else {
-      // Handle regular file modal for other steps
       setModalStates((prev) => ({ ...prev, status: true }));
     }
   };
@@ -213,7 +134,7 @@ const Pengajuan: React.FC = () => {
     <div className="container bg-white p-4 rounded-lg">
       <h1 className="text-2xl font-bold mb-6">Pengajuan</h1>
 
-      <ProgressSteps activeStep={activeStep} />
+      <ProgressSteps activeStep={activeStep} onStepClick={handleStepClick} />
 
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-reguler text-gray-900">
