@@ -11,7 +11,7 @@ interface ValidationModalProps {
     name: string;
   };
   comments: Record<string, string>;
-  statuses: Record<string, string>; // New: To store previously selected statuses
+  statuses: Record<string, string>;
   onClose: () => void;
   onValidate: (docId: number, status: string) => void;
   onCommentSubmit: (studentId: number, docId: number, comment: string) => void;
@@ -21,7 +21,7 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
   activeDocument,
   selectedStudent,
   comments,
-  statuses, // New: Pass the saved statuses
+  statuses,
   onClose,
   onValidate,
   onCommentSubmit,
@@ -30,7 +30,6 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    // Pre-fill comment and status when modal opens
     const previousComment =
       comments[`${selectedStudent.id}-${activeDocument.id}`] || "";
     const previousStatus =
@@ -40,31 +39,27 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
   }, [selectedStudent.id, activeDocument.id, comments, statuses]);
 
   const handleValidationClick = (status: string) => {
-    // Toggle status if clicked twice
     if (selectedStatus === status) {
       setSelectedStatus(null);
-      onValidate(activeDocument.id, "");
     } else {
       setSelectedStatus(status);
-      onValidate(activeDocument.id, status);
       if (status === "setuju") {
-        setComment(""); // Clear comment if status is "setuju"
+        setComment("");
       }
     }
   };
 
-  useEffect(() => {
-    const previousStatus =
-      statuses[`${selectedStudent.id}-${activeDocument.id}`] || null;
-    setSelectedStatus(previousStatus);
-  }, [selectedStudent.id, activeDocument.id, statuses]);
-
   const handleCommentSubmit = () => {
+    if (!selectedStatus) return;
+
     if (selectedStatus === "revisi" && !comment.trim()) {
-      return; // Prevent submission if no comment is provided for "revisi"
+      return;
     }
+
+    onValidate(activeDocument.id, selectedStatus);
     onCommentSubmit(selectedStudent.id, activeDocument.id, comment);
-    onClose(); // Close the modal after submission
+
+    onClose();
   };
 
   const isSaveEnabled =
@@ -129,7 +124,7 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
               isSaveEnabled ? "bg-blue-600" : "bg-gray-300"
             }`}
             onClick={handleCommentSubmit}
-            disabled={!isSaveEnabled} // Disable if no status or comment for "revisi"
+            disabled={!isSaveEnabled}
           >
             Simpan {selectedStatus === "revisi" ? "Komentar" : "Validasi"}
           </button>
