@@ -18,7 +18,7 @@ const Validasi = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [activeDocument, setActiveDocument] = useState(null);
 
-  const students = [
+  const [students, setStudents] = useState([
     {
       id: 1,
       name: "Ahmad Fajar",
@@ -40,17 +40,17 @@ const Validasi = () => {
       submissionDate: "2024-03-13",
       status: "setuju",
     },
-  ];
+  ]);
 
-  const stepDocuments = [
+  const [stepDocuments, setStepDocuments] = useState([
     {
       id: 0,
       title: "Persyaratan",
       description: "Syarat-syarat untuk mendaftar seminar",
       documents: [
         { id: 1, name: "Kartu Hasil Studi (KHS)", status: "menunggu" },
-        { id: 2, name: "Bukti pembayaran KP", status: "revisi" },
-        { id: 3, name: "Kartu Bimbingan KP", status: "setuju" },
+        { id: 2, name: "Bukti pembayaran KP", status: "menunggu" },
+        { id: 3, name: "Kartu Bimbingan KP", status: "menunggu" },
       ],
     },
     {
@@ -73,15 +73,40 @@ const Validasi = () => {
         { id: 9, name: "Form Nilai KP", status: "menunggu" },
       ],
     },
-  ];
+  ]);
 
-  const [statuses, setStatuses] = useState<Record<string, string>>({});
+  const [statuses, setStatuses] = useState({});
 
   const handleValidateDocument = (docId, status) => {
     setStatuses((prev) => ({
       ...prev,
       [`${selectedStudent.id}-${docId}`]: status,
     }));
+
+    setStepDocuments((prevDocuments) =>
+      prevDocuments.map((step) => ({
+        ...step,
+        documents: step.documents.map((doc) =>
+          doc.id === docId ? { ...doc, status } : doc
+        ),
+      }))
+    );
+
+    const currentStepDocuments = stepDocuments[activeStep].documents;
+    const allDocumentsValidated = currentStepDocuments.every(
+      (doc) =>
+        statuses[`${selectedStudent.id}-${doc.id}`] || doc.status !== "menunggu"
+    );
+
+    if (allDocumentsValidated) {
+      setStudents((prevStudents) =>
+        prevStudents.map((student) =>
+          student.id === selectedStudent.id
+            ? { ...student, status: status === "revisi" ? "revisi" : "setuju" }
+            : student
+        )
+      );
+    }
   };
 
   const handleCommentSubmit = (studentId, docId, comment) => {
@@ -259,7 +284,7 @@ const Validasi = () => {
           activeDocument={activeDocument}
           selectedStudent={selectedStudent}
           comments={comments}
-          statuses={statuses} // Pass statuses to the modal
+          statuses={statuses}
           onClose={() => {
             setShowDialog(false);
             setActiveDocument(null);
