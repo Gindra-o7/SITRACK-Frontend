@@ -50,19 +50,12 @@ const DashboardKaprodi: React.FC = () => {
         </div>
 
        {/* Chart Section - Horizontal Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-[60%,40%] lg:grid-cols-[60%,40%] gap-6 mb-8">
         
         {/* ChartCard */}
         <div className="flex justify-center bg-white shadow-lg rounded-lg p-6 w-full">
           <div className="w-full">
             <ChartCard />
-          </div>
-        </div>
-        
-        {/* PSB Chart */}
-        <div className="flex justify-center bg-white shadow-lg rounded-lg p-6 w-full">
-          <div className="w-full">
-            <ChartPSB />
           </div>
         </div>
 
@@ -99,7 +92,7 @@ const DashboardKaprodi: React.FC = () => {
 
           {/* Prapasca Chart (30% lebar) */}
           <div className="bg-white shadow-lg rounded-lg p-6" >
-            <Chartprapasca />
+            <ChartPSB />
           </div>
         </div>
 
