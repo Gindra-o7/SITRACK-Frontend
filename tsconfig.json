@@ -5,9 +5,9 @@
     "lib": ["dom", "es2017", "dom.iterable", "esnext"],
     "allowJs": true,
     "checkJs": false,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "outDir": "./build",
-    "rootDir": "./lib",
+    "rootDir": "./src",  // Perbaiki rootDir menjadi ./src jika sumber daya Anda ada di folder src
     "removeComments": true,
     "noEmit": true,
     "pretty": true,
@@ -20,8 +20,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["./lib/**/*"],
+  "include": ["./src/**/*"],  // Pastikan include mencakup folder src
   "exclude": ["node_modules"]
 }

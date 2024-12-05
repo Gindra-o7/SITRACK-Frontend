@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Add type declaration for the image import
+// Menambahkan deklarasi untuk tipe impor gambar
 declare module "*.png" {
     const value: string;
     export default value;
@@ -26,41 +26,35 @@ const Header: React.FC = () => {
         <nav className="bg-white shadow-md fixed w-full z-50">
             <div className="container mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center">
+                    {/* Logo dan Judul */}
+                    <div className="flex items-center space-x-4">
                         <img src={logo} alt="Logo" className="h-10 w-10 mr-3" />
                         <span className="text-xl font-bold text-primary">SITRACK</span>
                     </div>
 
+                    {/* Links untuk tampilan Desktop */}
                     <div className="hidden md:flex items-center space-x-8">
                         <a
                             href="#home"
-                            className="relative py-2
-                after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms]
-                hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
+                            className="relative py-2 after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms] hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
                         >
                             Beranda
                         </a>
                         <a
                             href="#features"
-                            className="relative py-2
-                after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms]
-                hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
+                            className="relative py-2 after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms] hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
                         >
                             Fitur
                         </a>
                         <a
                             href="#flow"
-                            className="relative py-2
-                after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms]
-                hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
+                            className="relative py-2 after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms] hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
                         >
                             Alur
                         </a>
                         <a
                             href="#faq"
-                            className="relative py-2
-                after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms]
-                hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
+                            className="relative py-2 after:content-[''] after:scale-x-0 after:h-[2px] after:inline-block after:absolute after:bottom-0 after:bg-primary after:transition-all after:duration-[200ms] hover:after:scale-x-50 after:inset-x-0 hover:transition-all hover:duration-[400ms]"
                         >
                             FAQ
                         </a>
@@ -72,6 +66,7 @@ const Header: React.FC = () => {
                         </button>
                     </div>
 
+                    {/* Tombol Hamburger untuk tampilan mobile */}
                     <div className="flex md:hidden">
                         <button
                             className="text-gray-700 hover:text-gray-900 focus:outline-none"
@@ -93,11 +88,11 @@ const Header: React.FC = () => {
                 </div>
             </div>
 
-            {/* Sidebar */}
+            {/* Sidebar untuk Mobile */}
             <div
                 className={`fixed top-0 right-0 z-20 w-64 h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${
                     isOpen ? "translate-x-0" : "translate-x-full"
-                }`}
+                } md:hidden`}
             >
                 <div className="h-full px-6 py-8 overflow-y-auto">
                     <a
