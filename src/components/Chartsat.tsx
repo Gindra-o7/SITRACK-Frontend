@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ApexCharts from "apexcharts";
 
 const Chartsat: React.FC = () => {
   const chartRef = useRef<HTMLDivElement | null>(null); // Reference for the chart container
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State to manage dropdown visibility
+  const [selectedRange, setSelectedRange] = useState("Last 7 days"); // Selected date range
 
   // Chart options object
   const options = {
@@ -22,7 +24,7 @@ const Chartsat: React.FC = () => {
       {
         name: "Sudah Seminar Kp",
         color: "#FDBA8C",
-        data:   [
+        data: [
           { x: "2020", y: 232 },
           { x: "2021", y: 113 },
           { x: "2022", y: 341 },
@@ -118,6 +120,17 @@ const Chartsat: React.FC = () => {
     }
   }, []);
 
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  // Handle option selection from dropdown
+  const handleOptionSelect = (range: string) => {
+    setSelectedRange(range);
+    setDropdownOpen(false); // Close the dropdown after selection
+  };
+
   return (
     <div className="w-full bg-white shadow-lg rounded-lg p-6">
       <div className="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -176,7 +189,7 @@ const Chartsat: React.FC = () => {
         </dl>
         <dl className="flex items-center justify-end">
           <dt className="text-gray-500 dark:text-gray-400 text-sm font-normal me-1">
-            Sudah Seminar:
+            Selesai Seminar:
           </dt>
           <dd className="text-gray-900 text-sm dark:text-white font-semibold">
             21
@@ -189,13 +202,11 @@ const Chartsat: React.FC = () => {
       <div className="grid grid-cols-1 items-center border-t border-gray-200 dark:border-gray-700 justify-between">
         <div className="flex justify-between items-center pt-5">
           <button
-            id="dropdownDefaultButton"
-            data-dropdown-toggle="lastDaysdropdown"
-            data-dropdown-placement="bottom"
+            onClick={toggleDropdown} // Toggle dropdown visibility
             className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
             type="button"
           >
-            Last 7 days
+            {selectedRange}
             <svg
               className="w-2.5 m-2.5 ms-1.5"
               aria-hidden="true"
@@ -212,77 +223,25 @@ const Chartsat: React.FC = () => {
               />
             </svg>
           </button>
-          <div
-            id="lastDaysdropdown"
-            className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
-          >
-            <ul
-              className="py-2 text-sm text-gray-700 dark:text-gray-200"
-              aria-labelledby="dropdownDefaultButton"
+          {dropdownOpen && (
+            <div
+              className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
             >
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Yesterday
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Today
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Last 7 days
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Last 30 days
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Last 90 days
-                </a>
-              </li>
-            </ul>
-          </div>
-          <a
-            href="#"
-            className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2"
-          >
-            Leads Report
-            <svg
-              className="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 9 4-4-4-4"
-              />
-            </svg>
-          </a>
+              <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                {["Yesterday", "Today", "Last 7 days", "Last 30 days", "Last 90 days"].map((range) => (
+                  <li key={range}>
+                    <a
+                      href="#"
+                      onClick={() => handleOptionSelect(range)} // Set selected range
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
+                      {range}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>

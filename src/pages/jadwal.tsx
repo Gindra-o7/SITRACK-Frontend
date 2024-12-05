@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DataTable } from "simple-datatables";
-import { Link } from "react-router-dom"; // Untuk navigasi kembali ke landing page
-import "font-awesome/css/font-awesome.min.css";  // Pastikan FontAwesome diimpor jika menggunakan ikon ini
+import "font-awesome/css/font-awesome.min.css"; // Pastikan FontAwesome diimpor jika menggunakan ikon ini
 
 interface TableRow {
   name: string;
@@ -36,57 +35,31 @@ const Jadwal: React.FC = () => {
     { name: "Zaki Murtada", nim: "12250111250", pembimbing: "Dr. Heri", penguji: "Prof. Eka", tanggal: "2024-12-21", jam: "18:00 WIB", ruangan: "Q717", selected: false },
   ]);
 
-  useEffect(() => {
-    const isMobile = window.matchMedia("(any-pointer:coarse)").matches;
-    const rowNavigation = !isMobile;
+  // State untuk menyimpan jumlah data per halaman
+  const [pageSize, setPageSize] = useState(5);
 
+  useEffect(() => {
     const tableElement = tableRef.current;
     if (tableElement) {
-      const options = {
-        searchable: true, // Bisa mencari
-        sortable: true,   // Mengaktifkan sorting
-        rowRender: (row: any, tr: any, _index: any) => {
-          if (!tr.attributes) tr.attributes = {};
-          if (!tr.attributes.class) tr.attributes.class = '';
-          tr.attributes.class = row.selected ? `${tr.attributes.class} selected` : tr.attributes.class.replace(' selected', '');
-          return tr;
-        }
-      };
-
-      const table = new DataTable(tableElement, options);
-
-      table.on("datatable.selectrow", ((rowIndex: any, event: any) => {
-        event.preventDefault();
-        const updatedData = [...data];
-        const row = updatedData[rowIndex];
-        row.selected = !row.selected;
-
-        if (!row.selected) {
-          updatedData[rowIndex] = row;
-        } else {
-          updatedData.forEach((r) => (r.selected = false));
-          updatedData[rowIndex] = row;
-        }
-
-        setData(updatedData);
-        table.update();
-      }) as any);
+      const table = new DataTable(tableElement, {
+        searchable: true,
+        sortable: true,
+        perPage: pageSize,  // Tampilkan hanya 5 data saat pertama kali
+      });
     }
-  }, [data]);
+  }, [pageSize]); // Setiap kali pageSize berubah, refresh DataTable
+
+  // Fungsi untuk mengubah jumlah data per halaman
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageSize(Number(e.target.value));
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Navbar dengan desain tombol yang lebih menarik */}
-      <nav className="mb-4 flex justify-between items-center">
-        <Link 
-          to="/" 
-          className="inline-block px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105"
-        >
-          Kembali ke Landing Page
-        </Link>
-      </nav>
-
       <h1 className="text-3xl font-bold mb-4">Real-Time Jadwal Seminar-KP</h1>
+      
+
+
       <table ref={tableRef} id="jadwal-table" className="min-w-full border-collapse border border-gray-200">
         <thead>
           <tr>
@@ -101,7 +74,7 @@ const Jadwal: React.FC = () => {
         </thead>
         <tbody>
           {data.map((row, index) => (
-            <tr key={index} className={row.selected ? 'bg-blue-100' : ''}>
+            <tr key={index}>
               <td className="border p-2">{row.name}</td>
               <td className="border p-2">{row.nim}</td>
               <td className="border p-2">{row.tanggal}</td>
