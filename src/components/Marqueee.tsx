@@ -1,16 +1,17 @@
 import { cn } from "@/lib/utils";
 import Marquee from "@/components/ui/marquee";
 import logo from "../assets/logoimage.png"; // Mengimpor gambar yang sama untuk semua review
+import { Link } from "react-router-dom";  // Menambahkan impor Link
 
 // Mengubah data review
 const reviews = [
   {
     name: "Gilang Ramadhan",
     nim: "12250111234",
-    tanggal: "2024-12-05",  // Menambahkan tanggal
-    jam: "10:00 WIB",       // Menambahkan jam
-    ruangan: "A101",        // Menambahkan ruangan
-    img: logo,  // Menggunakan gambar yang sama untuk semua review
+    tanggal: "2024-12-05",
+    jam: "10:00 WIB",
+    ruangan: "A101",
+    img: logo,
   },
   {
     name: "Raka Sabri",
@@ -18,7 +19,7 @@ const reviews = [
     tanggal: "2024-12-06",
     jam: "11:00 WIB",
     ruangan: "B202",
-    img: logo, // Menggunakan gambar yang sama untuk semua review
+    img: logo,
   },
   {
     name: "M.Rafly",
@@ -26,7 +27,7 @@ const reviews = [
     tanggal: "2024-12-07",
     jam: "13:00 WIB",
     ruangan: "C303",
-    img: logo, // Menggunakan gambar yang sama untuk semua review
+    img: logo,
   },
   {
     name: "M.Nabil dawami",
@@ -34,7 +35,7 @@ const reviews = [
     tanggal: "2024-12-08",
     jam: "14:00 WIB",
     ruangan: "D404",
-    img: logo, // Menggunakan gambar yang sama untuk semua review
+    img: logo,
   },
   {
     name: "Fajri",
@@ -42,7 +43,7 @@ const reviews = [
     tanggal: "2024-12-09",
     jam: "15:00 WIB",
     ruangan: "E505",
-    img: logo, // Menggunakan gambar yang sama untuk semua review
+    img: logo,
   },
   {
     name: "Fakhri",
@@ -50,7 +51,7 @@ const reviews = [
     tanggal: "2024-12-10",
     jam: "16:00 WIB",
     ruangan: "F606",
-    img: logo, // Menggunakan gambar yang sama untuk semua review
+    img: logo,
   },
 ];
 
@@ -73,13 +74,12 @@ const ReviewCard = ({
   ruangan: string;
 }) => {
   return (
-    <figure
+    <Link
+      to="/jadwal"  // Link menuju halaman "/jadwal" tanpa parameter
       className={cn(
         "relative w-64 cursor-pointer overflow-hidden rounded-xl border p-6",
-        // light styles
         "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
-        // dark styles
-        "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]",
+        "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]"
       )}
     >
       <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ const ReviewCard = ({
           <p>{jam}</p>
         </div>
       </div>
-    </figure>
+    </Link>
   );
 };
 
@@ -129,9 +129,9 @@ export function Marqueee() {
   return (
     <div className="relative flex h-[470px] w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-white md:h-[470px]">
       {/* Subjudul di atas Marquee */}
-      <div className="absolute top-5 w-full text-center z-9">
-        <h2 className="text-x font-bold text-black dark:text-white underline">
-          Real-Time Jadwal Seminar-KP 
+      <div className="absolute top-5 w-full text-left z-10">
+        <h2 className="text-s font-bold text-black dark:text-white underline">
+          Real-Time Jadwal Seminar-KP
         </h2>
       </div>
 
@@ -155,12 +155,12 @@ export function Marqueee() {
 
       {/* Tautan Selengkapnya di bawah Marquee */}
       <div className="absolute bottom-6 w-full text-right z-10">
-        <a
-          href="#link"
+        <Link
+          to="/jadwal"  // Menentukan link ke halaman "/jadwal"
           className="text-black-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 text-lg font-semibold"
         >
           Selengkapnya &gt;
-        </a>
+        </Link>
       </div>
     </div>
   );
