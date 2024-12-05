@@ -22,7 +22,7 @@ const Chartsat: React.FC = () => {
       {
         name: "Sudah Seminar Kp",
         color: "#FDBA8C",
-        data: [
+        data:   [
           { x: "2020", y: 232 },
           { x: "2021", y: 113 },
           { x: "2022", y: 341 },
