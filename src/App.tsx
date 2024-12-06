@@ -15,10 +15,9 @@ import MahasiswaSeminar from "./pages/dosen/Mahasiswa.Seminar";
 import ManageAccounts from "./pages/koordinator/Manage.Accounts";
 import DashboardKoordinator from "./pages/koordinator/Dashboard";
 import JadwalNilai from "./pages/koordinator/Jadwal.Nilai";
-import Notifikasi from "./pages/koordinator/Notifikasi";
 import Validasi from "./pages/koordinator/Validasi";
 import DashboardKaprodi from "./pages/kaprodi/Dashboard";
-import Jadwal from "./pages/jadwal"; 
+import Jadwal from "./pages/jadwal";
 
 const App: React.FC = () => {
   return (
@@ -27,17 +26,16 @@ const App: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
-        <Route element={<DashboardLayout role="mahasiswa" />}>
-          <Route path="/mahasiswa/dashboard" element={<Dashboard />} />
+        <Route
+          element={<DashboardLayout role="mahasiswa" userData={undefined} />}
+        >
+          <Route path="/mahasiswa" element={<Dashboard />} />
           <Route path="/mahasiswa/pengajuan" element={<Pengajuan />} />
           <Route path="/mahasiswa/status" element={<Status />} />
         </Route>
-        <Route
-          path="/pembimbing-instansi/Dashboard"
-          element={<DashboardInstansi />}
-        />
-        <Route element={<DashboardLayout role="dosen" />}>
-          <Route path="/dosen/dashboard" element={<DashboardDosen />} />
+        <Route path="/pembimbing-instansi" element={<DashboardInstansi />} />
+        <Route element={<DashboardLayout role="dosen" userData={undefined} />}>
+          <Route path="/dosen" element={<DashboardDosen />} />
           <Route
             path="/dosen/mahasiswa-bimbingan"
             element={<MahasiswaBimbingan />}
@@ -48,20 +46,18 @@ const App: React.FC = () => {
           />
           <Route path="/dosen/riwayat" element={<RiwayatDosen />} />
         </Route>
-        <Route element={<DashboardLayout role="koordinator" />}>
-          <Route
-            path="/koordinator/dashboard"
-            element={<DashboardKoordinator />}
-          />
+        <Route
+          element={<DashboardLayout role="koordinator" userData={undefined} />}
+        >
+          <Route path="/koordinator" element={<DashboardKoordinator />} />
           <Route path="/koordinator/manage-akun" element={<ManageAccounts />} />
           <Route
             path="/koordinator/jadwal-dan-nilai"
             element={<JadwalNilai />}
           />
           <Route path="/koordinator/validasi" element={<Validasi />} />
-          <Route path="/koordinator/notifikasi" element={<Notifikasi />} />
         </Route>
-        <Route path="/kaprodi/Dashboard" element={<DashboardKaprodi />} />
+        <Route path="/kaprodi" element={<DashboardKaprodi />} />
         <Route path="/jadwal" element={<Jadwal />} />
       </Routes>
     </Router>
