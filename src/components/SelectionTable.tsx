@@ -12,6 +12,7 @@ const SelectionTable: React.FC = () => {
         searchable: true, // Enable search
         sensitivity: "base", // Sensitivitas pencarian
         searchQuerySeparator: " ", // Separator query pencarian
+        perPage: 5, // Set default number of items per page
         perPageSelect: [5, 10, 15, 20], // Pilihan jumlah item per halaman
         sortable: true, // Enable sorting
         fixedHeight: true, // Fix the height of the table
@@ -160,78 +161,6 @@ const SelectionTable: React.FC = () => {
               <td>1984567878</td>
               <td className="text-center">9</td>
               <td className="text-center">4</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Dr. Sandi Wijaya
-              </td>
-              <td>1985463728</td>
-              <td className="text-center">20</td>
-              <td className="text-center">15</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Prof. Ratna Indah
-              </td>
-              <td>1989745612</td>
-              <td className="text-center">16</td>
-              <td className="text-center">10</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Dr. David Kurniawan
-              </td>
-              <td>1985324761</td>
-              <td className="text-center">18</td>
-              <td className="text-center">12</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Dr. Mayang Sari
-              </td>
-              <td>1986547632</td>
-              <td className="text-center">14</td>
-              <td className="text-center">7</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Prof. Bintang Pratama
-              </td>
-              <td>1989876543</td>
-              <td className="text-center">19</td>
-              <td className="text-center">15</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Dr. Firman Hadi
-              </td>
-              <td>1981112233</td>
-              <td className="text-center">11</td>
-              <td className="text-center">6</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Prof. Rina Wulandari
-              </td>
-              <td>1984332244</td>
-              <td className="text-center">22</td>
-              <td className="text-center">18</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Dr. Suharto Dwi
-              </td>
-              <td>1989876540</td>
-              <td className="text-center">13</td>
-              <td className="text-center">10</td>
-            </tr>
-            <tr>
-              <td className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                Prof. Selvi Arum
-              </td>
-              <td>1988796543</td>
-              <td className="text-center">8</td>
-              <td className="text-center">3</td>
             </tr>
           </tbody>
         </table>

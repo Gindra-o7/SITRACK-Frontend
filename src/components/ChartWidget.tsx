@@ -212,7 +212,7 @@ const ChartWidget: React.FC = () => {
             href="#"
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2"
           >
-            Traffic analysis{" "}
+            Unduh{" "}
             <svg
               className="w-2.5 h-2.5 ms-1.5 rtl:rotate-180"
               aria-hidden="true"

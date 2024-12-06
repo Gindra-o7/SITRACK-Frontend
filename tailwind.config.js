@@ -93,6 +93,10 @@ export default {
 		datatables: true, // Mengaktifkan datatables dari Flowbite
 	  }),
 	  require("tailwindcss-animate") // Mengaktifkan plugin animasi Tailwind
-	]
+	],
+	safelist: [
+		'after:duration-[200ms]',
+		'hover:duration-[400ms]',
+	  ],
   };
   
