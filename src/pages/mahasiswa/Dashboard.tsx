@@ -1,14 +1,9 @@
 import React from "react";
-import Card from "../../components/Card";
+import Card, { CardData } from "../../components/Card";
+import CardStat from "../../components/Card.Stat";
 import { Link } from "react-router-dom";
-import { FileUp, LucideIcon, BadgeInfo } from "lucide-react";
-
-type CardData = {
-  title: string;
-  description: string;
-  path: string;
-  icon: LucideIcon;
-};
+import { FileUp, BadgeInfo } from "lucide-react";
+import Alert, { AlertData } from "../../components/Alert";
 
 const Dashboard: React.FC = () => {
   const cards: CardData[] = [
@@ -28,8 +23,22 @@ const Dashboard: React.FC = () => {
     },
   ];
 
+  const stats = [
+    {
+      title: "ALUR SELESAI",
+      value: "2/3",
+      description: "Pendaftaran Seminar KP",
+    },
+    { title: "PERIODE", value: "2023-2024", description: "Ganjil" },
+    { title: "SISA WAKTU", value: "20 Hari", description: "Periode ini" },
+  ];
+
+  const alert: AlertData = {
+    description: "Anda memiliki 3 berkas persyaratan yang harus direvisi",
+  };
+
   return (
-    <div className="flex">
+    <div className="flex bg-gray-50">
       <div className="flex-1 overflow-auto">
         <main className="p-6">
           <div className="mb-8">
@@ -39,15 +48,29 @@ const Dashboard: React.FC = () => {
             </p>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {stats.map((stat, index) => (
+              <CardStat
+                key={index}
+                variant="detailed"
+                title={stat.title}
+                value={stat.value}
+                description={stat.description}
+              />
+            ))}
+          </div>
+
+          <Alert description={alert.description} />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cards.map((card, index) => (
-              <Link to={card.path} key={index}>
-                <Card
-                  title={card.title}
-                  description={card.description}
-                  icon={card.icon}
-                />
-              </Link>
+              <Card
+                key={index}
+                title={card.title}
+                description={card.description}
+                path={card.path}
+                icon={card.icon}
+              />
             ))}
           </div>
         </main>
