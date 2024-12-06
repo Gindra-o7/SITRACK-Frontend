@@ -1,17 +1,11 @@
 import React from "react";
-import Card from "../../components/Card";
+import Card, { CardData } from "../../components/Card";
+import Alert, { AlertData } from "../../components/Alert";
 import { Link } from "react-router-dom";
-import { LucideIcon, PenLine, History } from "lucide-react";
-
-interface CardType {
-  title: string;
-  description: string;
-  path: string;
-  icon: LucideIcon;
-}
+import { PenLine, History } from "lucide-react";
 
 const Dashboard: React.FC = () => {
-  const cards: CardType[] = [
+  const cards: CardData[] = [
     {
       title: "Penilaian Seminar",
       description:
@@ -35,8 +29,12 @@ const Dashboard: React.FC = () => {
     },
   ];
 
+  const alert: AlertData = {
+    description: "Anda memiliki 3 mahasiswa yang harus dinilai",
+  };
+
   return (
-    <div className="flex bg-gray-100">
+    <div className="flex">
       <div className="flex-1 overflow-auto">
         <main className="p-6">
           <div className="mb-8">
@@ -44,19 +42,21 @@ const Dashboard: React.FC = () => {
               Selamat Datang, Dr. Budi Santoso, M.Kom
             </h2>
             <p className="text-gray-500 text-lg">
-              Anda memiliki 3 pengajuan berkas baru yang perlu divalidasi
+              Ingin melakukan apa hari ini?
             </p>
           </div>
 
+          <Alert description={alert.description} />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cards.map((card, index) => (
-              <Link to={card.path} key={index}>
-                <Card
-                  title={card.title}
-                  description={card.description}
-                  icon={card.icon}
-                />
-              </Link>
+              <Card
+                key={index}
+                title={card.title}
+                description={card.description}
+                path={card.path}
+                icon={card.icon}
+              />
             ))}
           </div>
         </main>
