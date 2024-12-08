@@ -24,7 +24,7 @@ const Hero: React.FC<HeroProps> = () => {
               praktik dengan mudah, cepat, dan efisien.
             </p>
             <div className="flex space-x-4">
-              <button className="border-2 border-blue-900 text-blue-900 px-8 py-3 rounded-lg hover:bg-primary hover:text-white transition-all duration-300">
+              <button className="border-2 border-blue-900 text-blue-900 px-8 py-3 rounded-lg hover:bg-blue-800 hover:text-white transition-all duration-300">
                 Pelajari Lebih Lanjut
               </button>
             </div>

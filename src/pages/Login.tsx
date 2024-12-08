@@ -5,13 +5,13 @@ import logo from "../assets/logoimage.png";
 const Login = () => {
   return (
     <div className="min-h-screen flex bg-white">
-      <div className="hidden md:flex md:w-1/2 bg-primary p-8 flex-col">
+      <div className="hidden md:flex md:w-1/2 bg-blue-800 p-8 flex-col">
         <div className="flex items-center space-x-2">
           <img src={logo} alt="SISKPTIF Logo" className="w-12 h-12" />
           <span className="text-white text-xl font-bold">SISKPTIF</span>
         </div>
 
-        <div className="flex-grow flex flex-col justify-center">
+        <div className="flex-grow flex flex-col justify-center ">
           <h1 className="text-white text-5xl font-bold mb-4">Welcome to</h1>
           <p className="text-white text-xl">
             Sistem Informasi Seminar Kerja Praktik Teknik Informatika
