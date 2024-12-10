@@ -1,15 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-	darkMode: ["class"], // Mengaktifkan mode gelap berdasarkan kelas
+	darkMode: ["class"], 
 	content: [
-	  "./index.html", // Memastikan Tailwind mengakses file HTML di root
-	  "./src/**/*.{js,ts,jsx,tsx}", // Menyertakan seluruh file di dalam folder src
-	  "node_modules/flowbite/**/*.js", // Menyertakan file dari Flowbite
+	  "./index.html", 
+	  "./src/**/*.{js,ts,jsx,tsx}", 
+	  "node_modules/flowbite/**/*.js", 
 	],
 	theme: {
 	  extend: {
 		fontFamily: {
-		  sans: ["Instrument sans", "sans-serif"], // Menambahkan font khusus
+		  sans: ["Instrument sans", "sans-serif"], 
 		},
 		colors: {
 		  primary: {
@@ -56,10 +56,10 @@ export default {
 		  }
 		},
 		backgroundImage: {
-		  pattern: 'url(./assets/pattern.svg)' // Menambahkan latar belakang khusus
+		  pattern: 'url(./assets/pattern.svg)' 
 		},
 		borderRadius: {
-		  lg: 'var(--radius)', // Menambahkan radius khusus
+		  lg: 'var(--radius)', 
 		  md: 'calc(var(--radius) - 2px)',
 		  sm: 'calc(var(--radius) - 4px)'
 		},
@@ -89,10 +89,10 @@ export default {
 	},
 	plugins: [
 	  require("flowbite/plugin")({
-		charts: true, // Mengaktifkan chart dari Flowbite
-		datatables: true, // Mengaktifkan datatables dari Flowbite
+		charts: true, 
+		datatables: true, 
 	  }),
-	  require("tailwindcss-animate") // Mengaktifkan plugin animasi Tailwind
+	  require("tailwindcss-animate") 
 	],
 	safelist: [
 		'after:duration-[200ms]',

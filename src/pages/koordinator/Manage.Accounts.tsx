@@ -497,123 +497,114 @@ const ManageAccounts = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto bg-white rounded-lg shadow mt-3">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <TableHeader label="Nama" column="name" />
-                <TableHeader label="Email" column="email" />
-                <TableHeader label="Role" column="role" />
-                <TableHeader label="NIM/NIP/NIK" column="nimNipNik" />
-                <TableHeader label="Status" column="status" />
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {paginatedUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {user.name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{user.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {roles.find((r) => r.id === user.role)?.label}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.nim || user.nip}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                    ${
-                      user.status === "aktif"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                    >
-                      {user.status === "aktif" ? "Aktif" : "Nonaktif"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setShowEditModal(true)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        <Pencil className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => setShowDeleteModal(true)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex items-center justify-between mt-4">
-          <div className="text-sm text-gray-700">
-            Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-            {Math.min(
-              currentPage * itemsPerPage,
-              filteredAndSortedUsers.length
-            )}{" "}
-            of {filteredAndSortedUsers.length} entries
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className={`p-2 border rounded-md ${
-                currentPage === 1
-                  ? "bg-gray-100 cursor-not-allowed"
-                  : "hover:bg-gray-50"
+        {/* Desktop Table */}
+<div className="overflow-x-auto bg-white rounded-lg shadow mt-3 hidden sm:block">
+  <table className="min-w-full divide-y divide-gray-200">
+    <thead className="bg-gray-50">
+      <tr>
+        <TableHeader label="Nama" column="name" />
+        <TableHeader label="Email" column="email" />
+        <TableHeader label="Role" column="role" />
+        <TableHeader label="NIM/NIP/NIK" column="nimNipNik" />
+        <TableHeader label="Status" column="status" />
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Aksi
+        </th>
+      </tr>
+    </thead>
+    <tbody className="divide-y divide-gray-200">
+      {paginatedUsers.map((user) => (
+        <tr key={user.id} className="hover:bg-gray-50">
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm font-medium text-gray-900">{user.name}</div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm text-gray-500">{user.email}</div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+              {roles.find((r) => r.id === user.role)?.label}
+            </span>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {user.nim || user.nip}
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <span
+              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                user.status === "aktif"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
               }`}
             >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              {user.status === "aktif" ? "Aktif" : "Nonaktif"}
+            </span>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div className="flex gap-2">
               <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 border rounded-md ${
-                  currentPage === page
-                    ? "bg-blue-600 text-white"
-                    : "hover:bg-gray-50"
-                }`}
+                onClick={() => setShowEditModal(true)}
+                className="text-blue-600 hover:text-blue-900"
               >
-                {page}
+                <Pencil className="h-5 w-5" />
               </button>
-            ))}
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className={`p-2 border rounded-md ${
-                currentPage === totalPages
-                  ? "bg-gray-100 cursor-not-allowed"
-                  : "hover:bg-gray-50"
-              }`}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="text-red-600 hover:text-red-900"
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
+            </div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* Mobile Cards */}
+<div className="sm:hidden grid grid-cols-1 gap-4 mt-3">
+  {paginatedUsers.map((user) => (
+    <div key={user.id} className="bg-white p-4 rounded-lg shadow">
+      <h2 className="text-lg font-bold">{user.name}</h2>
+      <p className="text-gray-500">{user.email}</p>
+      <p>
+        <span className="font-semibold">Role: </span>
+        {roles.find((r) => r.id === user.role)?.label}
+      </p>
+      <p>
+        <span className="font-semibold">NIM/NIP: </span>
+        {user.nim || user.nip}
+      </p>
+      <p>
+        <span
+          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+            user.status === "aktif"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {user.status === "aktif" ? "Aktif" : "Nonaktif"}
+        </span>
+      </p>
+      <div className="flex gap-2 mt-3">
+        <button
+          onClick={() => setShowEditModal(true)}
+          className="text-blue-600 hover:text-blue-900"
+        >
+          <Pencil className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="text-red-600 hover:text-red-900"
+        >
+          <Trash2 className="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
 
         {/* Modals */}
         {showAddModal && <AddUserModal />}

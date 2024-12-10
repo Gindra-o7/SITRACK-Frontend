@@ -29,7 +29,7 @@ const Header: React.FC = () => {
                     {/* Logo dan Judul */}
                     <div className="flex items-center space-x-4">
                         <img src={logo} alt="Logo" className="h-10 w-10 mr-3" />
-                        <span className="text-xl font-bold text-primary">SITRACK</span>
+                        <span className="text-xl font-bold text-blue-800">SITRACK</span>
                     </div>
 
                     {/* Links untuk tampilan Desktop */}
@@ -60,8 +60,8 @@ const Header: React.FC = () => {
                         </a>
                         <button
                             onClick={handleMasukClick}
-                            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors"
-                        >
+                            className="bg-primary text-white bg-blue-800 px-6 py-2 rounded-lg hover:bg-black transition-colors"
+                        > 
                             Masuk
                         </button>
                     </div>
