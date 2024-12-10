@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Search, ListFilter, Calendar, Clock, MapPin } from "lucide-react";
 import InputNilaiDosenPembimbing from "../../components/Modal/InputNilai.DosenPembimbing";
 import LihatNilai from "../../components/Modal/LihatNilai";
@@ -20,6 +20,8 @@ const MahasiswaSeminar: React.FC = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+
+  const studentsSectionRef = useRef<HTMLDivElement>(null); 
 
   const students: Student[] = [
     // Menunggu Seminar
@@ -140,6 +142,9 @@ const MahasiswaSeminar: React.FC = () => {
 
   const handleStatsCardClick = (filter: string | null) => {
     setActiveFilter(activeFilter === filter ? null : filter);
+  
+   
+    studentsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   // Get counts for each status
@@ -176,178 +181,192 @@ const MahasiswaSeminar: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <main className="pt-10 px-8 pb-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-semibold">Mahasiswa Bimbingan</h1>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div
-            className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-blue-500 cursor-pointer transition-all ${
-              activeFilter === "total" ? "ring-2 ring-blue-500 shadow-md" : ""
-            }`}
-            onClick={() => handleStatsCardClick("total")}
-          >
-            <p className="text-gray-600 text-sm">Total Seminar</p>
-            <h2 className="text-2xl font-bold mt-1">{statusCounts.total}</h2>
-            <p className="text-blue-500 text-sm mt-2">Minggu Ini</p>
-          </div>
-          <div
-            className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-yellow-500 cursor-pointer transition-all ${
-              activeFilter === "menunggu"
-                ? "ring-2 ring-yellow-500 shadow-md"
-                : ""
-            }`}
-            onClick={() => handleStatsCardClick("menunggu")}
-          >
-            <p className="text-gray-600 text-sm">Menunggu Seminar</p>
-            <h2 className="text-2xl font-bold mt-1">{statusCounts.menunggu}</h2>
-            <p className="text-yellow-500 text-sm mt-2">Terjadwal</p>
-          </div>
-          <div
-            className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-green-500 cursor-pointer transition-all ${
-              activeFilter === "berlangsung"
-                ? "ring-2 ring-green-500 shadow-md"
-                : ""
-            }`}
-            onClick={() => handleStatsCardClick("berlangsung")}
-          >
-            <p className="text-gray-600 text-sm">Sedang Berlangsung</p>
-            <h2 className="text-2xl font-bold mt-1">
-              {statusCounts.berlangsung}
-            </h2>
-            <p className="text-green-500 text-sm mt-2">Hari Ini</p>
-          </div>
-          <div
-            className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-purple-500 cursor-pointer transition-all ${
-              activeFilter === "selesai"
-                ? "ring-2 ring-purple-500 shadow-md"
-                : ""
-            }`}
-            onClick={() => handleStatsCardClick("selesai")}
-          >
-            <p className="text-gray-600 text-sm">Selesai Seminar</p>
-            <h2 className="text-2xl font-bold mt-1">{statusCounts.selesai}</h2>
-            <p className="text-purple-500 text-sm mt-2">Sudah Dinilai</p>
-          </div>
-        </div>
-
-        {/* Content Card */}
-        <div className="bg-white rounded-lg shadow-sm">
-          {/* Search and Filter */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row items-center gap-2">
-              <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Cari mahasiswa seminar..."
-                  className="w-full pl-10 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <button
-                className={`w-full sm:w-auto px-6 py-2 rounded-lg border border-gray-300 transition-colors flex items-center justify-center gap-2 ${
-                  activeFilter
-                    ? "bg-blue-50 border-blue-200 text-blue-600"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-                onClick={() => setActiveFilter(null)}
-              >
-                <ListFilter className="h-4 w-4" />
-                {activeFilter ? "Clear Filter" : "Filter Status"}
-              </button>
-            </div>
-          </div>
-
-          {/* Student Cards */}
-          <div className="p-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filteredStudents.map((student, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {student.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        NIM: {student.nim}
-                      </p>
-                    </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs ${
-                        student.status === "Sedang Berlangsung"
-                          ? "bg-green-100 text-green-600"
-                          : student.status === "Menunggu Seminar"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-blue-100 text-blue-600"
-                      }`}
-                    >
-                      {student.status}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2 mb-3">
-                    <p className="text-gray-800 text-sm font-medium line-clamp-2">
-                      {student.judulKP}
-                    </p>
-                  </div>
-
-                  <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
-                    <p className="text-gray-600 text-sm flex justify-between">
-                      <span>Pembimbing:</span>
-                      <span className="font-medium">{student.pembimbing}</span>
-                    </p>
-                    <p className="text-gray-600 text-sm flex justify-between">
-                      <span>Tempat KP:</span>
-                      <span className="font-medium">{student.company}</span>
-                    </p>
-                  </div>
-
-                  <div className="mt-4">
-                    <button
-                      onClick={() => {
-                        if (student.action === "Input Nilai") {
-                          handleOpenInputModal(student);
-                        } else if (student.action === "Lihat Nilai") {
-                          handleOpenViewModal(student);
-                        }
-                      }}
-                      className={`w-full py-2 rounded-lg font-medium transition-colors ${
-                        student.status === "Selesai Seminar"
-                          ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                          : student.status === "Sedang Berlangsung"
-                          ? "bg-green-500 text-white hover:bg-green-600"
-                          : "bg-blue-500 text-white hover:bg-blue-600"
-                      }`}
-                    >
-                      {student.action}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-      <InputNilaiDosenPembimbing
-        isOpen={isInputModalOpen}
-        onClose={handleCloseInputModal}
-        student={selectedStudent}
-      />
-      <LihatNilai
-        isOpen={isViewModalOpen}
-        onClose={handleCloseViewModal}
-        student={selectedStudent}
-      />
+  <main className="pt-10 px-4 md:px-8 pb-8">
+    <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+      <h1 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-0">
+        Mahasiswa Bimbingan
+      </h1>
     </div>
+
+    {/* Stats Cards */}
+<div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3 xs:gap-4 md:gap-6 mb-4 xs:mb-6 md:mb-8 px-2 xs:px-4 md:px-0">
+  <div
+    className={`bg-white shadow-sm rounded-lg p-3 xs:p-4 border-l-4 border-blue-500 cursor-pointer transition-all hover:shadow-md ${
+      activeFilter === "total" ? "ring-2 ring-blue-500 shadow-md" : ""
+    }`}
+    onClick={() => handleStatsCardClick("total")}
+  >
+    <div className="flex flex-col h-full justify-between">
+      <p className="text-gray-600 text-xs xs:text-sm">Total Seminar</p>
+      <h2 className="text-lg xs:text-xl md:text-2xl font-bold my-1">
+        {statusCounts.total}
+      </h2>
+      <p className="text-blue-500 text-xs xs:text-sm mt-auto">Minggu Ini</p>
+    </div>
+  </div>
+
+  <div
+    className={`bg-white shadow-sm rounded-lg p-3 xs:p-4 border-l-4 border-yellow-500 cursor-pointer transition-all hover:shadow-md ${
+      activeFilter === "menunggu" ? "ring-2 ring-yellow-500 shadow-md" : ""
+    }`}
+    onClick={() => handleStatsCardClick("menunggu")}
+  >
+    <div className="flex flex-col h-full justify-between">
+      <p className="text-gray-600 text-xs xs:text-sm">Menunggu Seminar</p>
+      <h2 className="text-lg xs:text-xl md:text-2xl font-bold my-1">
+        {statusCounts.menunggu}
+      </h2>
+      <p className="text-yellow-500 text-xs xs:text-sm mt-auto">Terjadwal</p>
+    </div>
+  </div>
+
+  <div
+    className={`bg-white shadow-sm rounded-lg p-3 xs:p-4 border-l-4 border-green-500 cursor-pointer transition-all hover:shadow-md ${
+      activeFilter === "berlangsung" ? "ring-2 ring-green-500 shadow-md" : ""
+    }`}
+    onClick={() => handleStatsCardClick("berlangsung")}
+  >
+    <div className="flex flex-col h-full justify-between">
+      <p className="text-gray-600 text-xs xs:text-sm">Sedang Berlangsung</p>
+      <h2 className="text-lg xs:text-xl md:text-2xl font-bold my-1">
+        {statusCounts.berlangsung}
+      </h2>
+      <p className="text-green-500 text-xs xs:text-sm mt-auto">Hari Ini</p>
+    </div>
+  </div>
+
+  <div
+    className={`bg-white shadow-sm rounded-lg p-3 xs:p-4 border-l-4 border-purple-500 cursor-pointer transition-all hover:shadow-md ${
+      activeFilter === "selesai" ? "ring-2 ring-purple-500 shadow-md" : ""
+    }`}
+    onClick={() => handleStatsCardClick("selesai")}
+  >
+    <div className="flex flex-col h-full justify-between">
+      <p className="text-gray-600 text-xs xs:text-sm">Selesai Seminar</p>
+      <h2 className="text-lg xs:text-xl md:text-2xl font-bold my-1">
+        {statusCounts.selesai}
+      </h2>
+      <p className="text-purple-500 text-xs xs:text-sm mt-auto">Sudah Dinilai</p>
+    </div>
+  </div>
+</div>
+
+    {/* Content Card */}
+    <div
+          ref={studentsSectionRef} // Referensi untuk bagian ini
+          className="bg-white rounded-lg shadow-sm"
+        >
+      <div className="p-4 md:p-6 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          <div className="relative flex-1 w-full">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Cari mahasiswa seminar..."
+              className="w-full pl-10 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <button
+            className={`w-full sm:w-auto px-6 py-2 rounded-lg border border-gray-300 transition-colors flex items-center justify-center gap-2 ${
+              activeFilter
+                ? "bg-blue-50 border-blue-200 text-blue-600"
+                : "bg-white hover:bg-gray-50"
+            }`}
+            onClick={() => setActiveFilter(null)}
+          >
+            <ListFilter className="h-4 w-4" />
+            {activeFilter ? "Clear Filter" : "Filter Status"}
+          </button>
+        </div>
+      </div>
+
+      {/* Student Cards */}
+      <div className="p-4 md:p-6">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {filteredStudents.map((student, index) => (
+            <div
+              key={index}
+              className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {student.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm">NIM: {student.nim}</p>
+                </div>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs ${
+                    student.status === "Sedang Berlangsung"
+                      ? "bg-green-100 text-green-600"
+                      : student.status === "Menunggu Seminar"
+                      ? "bg-yellow-100 text-yellow-600"
+                      : "bg-blue-100 text-blue-600"
+                  }`}
+                >
+                  {student.status}
+                </span>
+              </div>
+
+              <div className="space-y-2 mb-3">
+                <p className="text-gray-800 text-sm font-medium line-clamp-2">
+                  {student.judulKP}
+                </p>
+              </div>
+
+              <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                <p className="text-gray-600 text-sm flex justify-between">
+                  <span>Pembimbing:</span>
+                  <span className="font-medium">{student.pembimbing}</span>
+                </p>
+                <p className="text-gray-600 text-sm flex justify-between">
+                  <span>Tempat KP:</span>
+                  <span className="font-medium">{student.company}</span>
+                </p>
+              </div>
+
+              <div className="mt-4">
+                <button
+                  onClick={() => {
+                    if (student.action === "Input Nilai") {
+                      handleOpenInputModal(student);
+                    } else if (student.action === "Lihat Nilai") {
+                      handleOpenViewModal(student);
+                    }
+                  }}
+                  className={`w-full py-2 rounded-lg font-medium transition-colors ${
+                    student.status === "Selesai Seminar"
+                      ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      : student.status === "Sedang Berlangsung"
+                      ? "bg-green-500 text-white hover:bg-green-600"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                >
+                  {student.action}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </main>
+  <InputNilaiDosenPembimbing
+    isOpen={isInputModalOpen}
+    onClose={handleCloseInputModal}
+    student={selectedStudent}
+  />
+  <LihatNilai
+    isOpen={isViewModalOpen}
+    onClose={handleCloseViewModal}
+    student={selectedStudent}
+  />
+</div>
+
   );
 };
 

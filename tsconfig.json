@@ -7,7 +7,7 @@
     "checkJs": false,
     "jsx": "react-jsx",
     "outDir": "./build",
-    "rootDir": "./src",  // Perbaiki rootDir menjadi ./src jika sumber daya Anda ada di folder src
+    "rootDir": "./src",  
     "removeComments": true,
     "noEmit": true,
     "pretty": true,
@@ -26,6 +26,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["./src/**/*"],  // Pastikan include mencakup folder src
+  "include": ["./src/**/*"], 
   "exclude": ["node_modules"]
 }

@@ -13,7 +13,7 @@ interface MenuItem {
 interface UserData {
   name?: string;
   id?: string;
-  [key: string]: any; // For any additional user data properties
+  [key: string]: any; 
 }
 
 interface SidebarProps {
@@ -25,7 +25,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-  isOpen,
+  isOpen=true,
   menuItems,
   userData,
   role,
