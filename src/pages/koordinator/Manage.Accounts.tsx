@@ -75,50 +75,10 @@ const ManageAccounts = () => {
       nim: "123460",
       status: "aktif",
     },
-    {
-      id: 6,
-      name: "Ratna Sari",
-      email: "ratna@example.com",
-      role: "mahasiswa",
-      nim: "123461",
-      status: "nonaktif",
-    },
-    {
-      id: 7,
-      name: "Michael Chang",
-      email: "michael@example.com",
-      role: "mahasiswa",
-      nim: "123462",
-      status: "aktif",
-    },
-    {
-      id: 8,
-      name: "Dewi Putri",
-      email: "dewi@example.com",
-      role: "mahasiswa",
-      nim: "123463",
-      status: "aktif",
-    },
-    {
-      id: 9,
-      name: "James Lee",
-      email: "james@example.com",
-      role: "mahasiswa",
-      nim: "123464",
-      status: "nonaktif",
-    },
-    {
-      id: 10,
-      name: "Siti Rahayu",
-      email: "siti@example.com",
-      role: "mahasiswa",
-      nim: "123465",
-      status: "aktif",
-    },
 
     // Dosen
     {
-      id: 11,
+      id: 6,
       name: "Dr. Jane Smith",
       email: "jane@example.com",
       role: "dosen",
@@ -126,7 +86,7 @@ const ManageAccounts = () => {
       status: "aktif",
     },
     {
-      id: 12,
+      id: 7,
       name: "Prof. Bambang Wijaya",
       email: "bambang@example.com",
       role: "dosen",
@@ -134,7 +94,7 @@ const ManageAccounts = () => {
       status: "aktif",
     },
     {
-      id: 13,
+      id: 8,
       name: "Dr. Robert Chen",
       email: "robert@example.com",
       role: "dosen",
@@ -142,7 +102,7 @@ const ManageAccounts = () => {
       status: "nonaktif",
     },
     {
-      id: 14,
+      id: 9,
       name: "Dr. Sri Mulyani",
       email: "sri@example.com",
       role: "dosen",
@@ -150,57 +110,17 @@ const ManageAccounts = () => {
       status: "aktif",
     },
     {
-      id: 15,
+      id: 10,
       name: "Prof. David Wilson",
       email: "david@example.com",
       role: "dosen",
       nip: "789016",
       status: "aktif",
     },
-    {
-      id: 16,
-      name: "Dr. Ani Kusuma",
-      email: "ani@example.com",
-      role: "dosen",
-      nip: "789017",
-      status: "nonaktif",
-    },
-    {
-      id: 17,
-      name: "Prof. Lisa Wong",
-      email: "lisa@example.com",
-      role: "dosen",
-      nip: "789018",
-      status: "aktif",
-    },
-    {
-      id: 18,
-      name: "Dr. Hadi Prasetyo",
-      email: "hadi@example.com",
-      role: "dosen",
-      nip: "789019",
-      status: "aktif",
-    },
-    {
-      id: 19,
-      name: "Prof. Emma Brown",
-      email: "emma@example.com",
-      role: "dosen",
-      nip: "789020",
-      status: "nonaktif",
-    },
-    {
-      id: 20,
-      name: "Dr. Agus Supriyanto",
-      email: "agus@example.com",
-      role: "dosen",
-      nip: "789021",
-      status: "aktif",
-    },
 
     // Pembimbing Instansi
     {
-      id: 21,
+      id: 11,
       name: "Ir. Rudi Hartono",
       email: "rudi@company.com",
       role: "pembimbing",
@@ -208,7 +128,7 @@ const ManageAccounts = () => {
       status: "aktif",
     },
     {
-      id: 22,
+      id: 12,
       name: "Linda Wijaya, M.T.",
       email: "linda@company.com",
       role: "pembimbing",
@@ -216,7 +136,7 @@ const ManageAccounts = () => {
       status: "aktif",
     },
     {
-      id: 23,
+      id: 13,
       name: "Hendri Kusuma, S.T.",
       email: "hendri@company.com",
       role: "pembimbing",
@@ -224,7 +144,7 @@ const ManageAccounts = () => {
       status: "nonaktif",
     },
     {
-      id: 24,
+      id: 14,
       name: "Maya Putri, M.Sc.",
       email: "maya@company.com",
       role: "pembimbing",
@@ -232,47 +152,16 @@ const ManageAccounts = () => {
       status: "aktif",
     },
     {
-      id: 25,
+      id: 15,
       name: "Eko Prasetyo, B.Eng.",
       email: "eko@company.com",
       role: "pembimbing",
       nip: "PI005",
       status: "aktif",
     },
+
     {
-      id: 26,
-      name: "Diana Chen, M.B.A.",
-      email: "diana@company.com",
-      role: "pembimbing",
-      nip: "PI006",
-      status: "nonaktif",
-    },
-    {
-      id: 27,
-      name: "Arif Santoso, S.Kom.",
-      email: "arif@company.com",
-      role: "pembimbing",
-      nip: "PI007",
-      status: "aktif",
-    },
-    {
-      id: 28,
-      name: "Sari Indah, M.M.",
-      email: "sari@company.com",
-      role: "pembimbing",
-      nip: "PI008",
-      status: "aktif",
-    },
-    {
-      id: 29,
-      name: "Tony Wilson, Ph.D.",
-      email: "tony@company.com",
-      role: "pembimbing",
-      nip: "PI009",
-      status: "aktif",
-    },
-    {
-      id: 30,
+      id: 16,
       name: "Rina Wati, M.Eng.",
       email: "rina@company.com",
       role: "kaprodi",
@@ -341,6 +230,85 @@ const ManageAccounts = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Pagination Controls
+  const PaginationControls = () => {
+    // Generate page numbers to display
+    const generatePageNumbers = () => {
+      const pageNumbers = [];
+      const maxPagesToShow = 5;
+
+      // Always show first and last page
+      const startPage = Math.max(
+        1,
+        Math.min(
+          currentPage - Math.floor(maxPagesToShow / 2),
+          totalPages - maxPagesToShow + 1
+        )
+      );
+      const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
+      // Add first page if not already shown
+      if (startPage > 1) {
+        pageNumbers.push(1);
+        if (startPage > 2) {
+          pageNumbers.push("...");
+        }
+      }
+
+      // Add page numbers in range
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      // Add last page if not already shown
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          pageNumbers.push("...");
+        }
+        pageNumbers.push(totalPages);
+      }
+
+      return pageNumbers;
+    };
+
+    const pageNumbers = generatePageNumbers();
+
+    return (
+      <div className="flex justify-center items-center space-x-2 mt-4">
+        <button
+          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+
+        {pageNumbers.map((page, index) => (
+          <button
+            key={index}
+            onClick={() => typeof page === "number" && setCurrentPage(page)}
+            className={`px-4 py-2 border rounded-md ${
+              page === currentPage
+                ? "bg-blue-600 text-white"
+                : "bg-white text-gray-600 hover:bg-gray-100"
+            } ${page === "..." ? "cursor-default" : ""}`}
+            disabled={page === "..."}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
+    );
+  };
 
   // Sort indicator component
   const SortIndicator = ({ column }) => {
@@ -498,116 +466,136 @@ const ManageAccounts = () => {
 
         {/* Table */}
         {/* Desktop Table */}
-<div className="overflow-x-auto bg-white rounded-lg shadow mt-3 hidden sm:block">
-  <table className="min-w-full divide-y divide-gray-200">
-    <thead className="bg-gray-50">
-      <tr>
-        <TableHeader label="Nama" column="name" />
-        <TableHeader label="Email" column="email" />
-        <TableHeader label="Role" column="role" />
-        <TableHeader label="NIM/NIP/NIK" column="nimNipNik" />
-        <TableHeader label="Status" column="status" />
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Aksi
-        </th>
-      </tr>
-    </thead>
-    <tbody className="divide-y divide-gray-200">
-      {paginatedUsers.map((user) => (
-        <tr key={user.id} className="hover:bg-gray-50">
-          <td className="px-6 py-4 whitespace-nowrap">
-            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <div className="text-sm text-gray-500">{user.email}</div>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-              {roles.find((r) => r.id === user.role)?.label}
-            </span>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {user.nim || user.nip}
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <span
-              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                user.status === "aktif"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-              }`}
-            >
-              {user.status === "aktif" ? "Aktif" : "Nonaktif"}
-            </span>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowEditModal(true)}
-                className="text-blue-600 hover:text-blue-900"
-              >
-                <Pencil className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="text-red-600 hover:text-red-900"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+        <div className="overflow-x-auto bg-white rounded-lg shadow mt-3 hidden sm:block">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <TableHeader label="Nama" column="name" />
+                <TableHeader label="Email" column="email" />
+                <TableHeader label="Role" column="role" />
+                <TableHeader label="NIM/NIP/NIK" column="nimNipNik" />
+                <TableHeader label="Status" column="status" />
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {paginatedUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {user.name}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">{user.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                      {roles.find((r) => r.id === user.role)?.label}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {user.nim || user.nip}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        user.status === "aktif"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {user.status === "aktif" ? "Aktif" : "Nonaktif"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowEditModal(true)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        <Pencil className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => setShowDeleteModal(true)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="sm:hidden grid grid-cols-1 gap-4 mt-3">
+          {paginatedUsers.map((user) => (
+            <div key={user.id} className="bg-white p-4 rounded-lg shadow">
+              <h2 className="text-lg font-bold">{user.name}</h2>
+              <p className="text-gray-500">{user.email}</p>
+              <p>
+                <span className="font-semibold">Role: </span>
+                {roles.find((r) => r.id === user.role)?.label}
+              </p>
+              <p>
+                <span className="font-semibold">NIM/NIP: </span>
+                {user.nim || user.nip}
+              </p>
+              <p>
+                <span
+                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.status === "aktif"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {user.status === "aktif" ? "Aktif" : "Nonaktif"}
+                </span>
+              </p>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  className="text-blue-600 hover:text-blue-900"
+                >
+                  <Pencil className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="text-red-600 hover:text-red-900"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              </div>
             </div>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-{/* Mobile Cards */}
-<div className="sm:hidden grid grid-cols-1 gap-4 mt-3">
-  {paginatedUsers.map((user) => (
-    <div key={user.id} className="bg-white p-4 rounded-lg shadow">
-      <h2 className="text-lg font-bold">{user.name}</h2>
-      <p className="text-gray-500">{user.email}</p>
-      <p>
-        <span className="font-semibold">Role: </span>
-        {roles.find((r) => r.id === user.role)?.label}
-      </p>
-      <p>
-        <span className="font-semibold">NIM/NIP: </span>
-        {user.nim || user.nip}
-      </p>
-      <p>
-        <span
-          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            user.status === "aktif"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          {user.status === "aktif" ? "Aktif" : "Nonaktif"}
-        </span>
-      </p>
-      <div className="flex gap-2 mt-3">
-        <button
-          onClick={() => setShowEditModal(true)}
-          className="text-blue-600 hover:text-blue-900"
-        >
-          <Pencil className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => setShowDeleteModal(true)}
-          className="text-red-600 hover:text-red-900"
-        >
-          <Trash2 className="h-5 w-5" />
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
-
+          ))}
+        </div>
 
         {/* Modals */}
         {showAddModal && <AddUserModal />}
+
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-4">
+            <PaginationControls />
+          </div>
+        )}
+
+        {filteredAndSortedUsers.length > 0 && (
+          <div className="flex justify-center items-center text-gray-600 mt-4 text-sm">
+            Halaman {currentPage} dari {totalPages} | Total{" "}
+            {filteredAndSortedUsers.length} pengguna
+          </div>
+        )}
+
+        {filteredAndSortedUsers.length === 0 && (
+          <div className="text-center text-gray-600 mt-8">
+            Tidak ada pengguna ditemukan
+          </div>
+        )}
       </div>
     </div>
   );
