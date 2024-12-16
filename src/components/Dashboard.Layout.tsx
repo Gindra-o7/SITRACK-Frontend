@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -34,7 +34,7 @@ interface PageTitles {
 // Props untuk komponen DashboardLayout
 interface DashboardLayoutProps {
   role: string;
-  userData: any; // Anda dapat mengganti `any` dengan tipe data user yang lebih spesifik
+  userData: any;
 }
 
 const menuConfigs: MenuConfigs = {
@@ -136,11 +136,46 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const savedSidebarState = localStorage.getItem("sidebarOpen");
+
+    if (savedSidebarState === null) {
+      return window.innerWidth >= 1024;
+    }
+
+    return JSON.parse(savedSidebarState);
+  });
+
   const location = useLocation();
 
+  useEffect(() => {
+    const checkAndCloseSidebar = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+        localStorage.setItem("sidebarOpen", "false");
+      }
+    };
+
+    checkAndCloseSidebar();
+
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+        localStorage.setItem("sidebarOpen", "false");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [location.pathname]);
+
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    const newState = !isSidebarOpen;
+    setIsSidebarOpen(newState);
+    localStorage.setItem("sidebarOpen", JSON.stringify(newState));
   };
 
   const getPageTitle = (): string => {
@@ -157,6 +192,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           menuItems={menuConfigs[role]}
           userData={userData}
           role={role}
+          onToggle={toggleSidebar}
         />
         <div
           className={`transition-all duration-300 flex-1 ${
