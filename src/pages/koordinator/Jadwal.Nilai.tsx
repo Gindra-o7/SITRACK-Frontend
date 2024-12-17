@@ -1,447 +1,652 @@
 import React, { useState, useMemo } from "react";
-import { Pencil, Trash2, ChevronUp, ChevronDown, Search } from "lucide-react";
+import { Pencil, Trash2, Search } from "lucide-react";
 import TambahJadwal from "../../components/Modal/TambahJadwal";
 
-const JadwalNilai = () => {
+const JadwalNilaiTabs = () => {
+  const [activeTab, setActiveTab] = useState("jadwal");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingJadwal, setEditingJadwal] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
   const [jadwalList, setJadwalList] = useState([
     {
       id: 1,
-      tanggal: "2024-11-25",
-      waktu: "09:00",
-      mahasiswa: "Budi Santoso",
-      judul: "Pengembangan Sistem Informasi Akademik",
-      nilai: {
-        pembimbing: 85,
-        penguji: 88,
-        pembimbingInstansi: 90,
-      },
+      tanggal: "2024-06-15",
+      waktu: "09:00 - 10:00",
+      mahasiswa: "Ahmad Rifqi",
+      judul: "Analisis Sistem ERP",
+      ruangan: "GB301",
+      dosenPenguji: "Dr. Andi M.T.",
     },
     {
       id: 2,
-      tanggal: "2024-11-26",
-      waktu: "13:30",
-      mahasiswa: "Ani Wijaya",
-      judul: "Implementasi Machine Learning untuk Prediksi Cuaca",
-      nilai: {
-        pembimbing: 90,
-        penguji: 85,
-        pembimbingInstansi: 88,
-      },
+      tanggal: "2024-06-16",
+      waktu: "10:00 - 11:00",
+      mahasiswa: "Siti Nurhaliza",
+      judul: "Machine Learning Prediksi Cuaca",
+      ruangan: "GB302",
+      dosenPenguji: "Dr. Ikfa S.T",
     },
     {
       id: 3,
-      tanggal: "2024-11-27",
-      waktu: "10:00",
-      mahasiswa: "Candra Wijaya",
-      judul:
-        "Analisis Sentimen Media Sosial Menggunakan Natural Language Processing",
-      nilai: {
-        pembimbing: 87,
-        penguji: 89,
-        pembimbingInstansi: 85,
-      },
+      tanggal: "2024-06-17",
+      waktu: "13:00 - 14:00",
+      mahasiswa: "Budi Santoso",
+      judul: "Optimasi AI Sorting",
+      ruangan: "GB303",
+      dosenPenguji: "Dr. Retno S.Kom",
     },
     {
       id: 4,
-      tanggal: "2024-11-27",
-      waktu: "14:00",
-      mahasiswa: "Diana Putri",
-      judul: "Pengembangan Aplikasi Mobile untuk Monitoring Kesehatan",
-      nilai: {
-        pembimbing: 92,
-        penguji: 88,
-        pembimbingInstansi: 90,
-      },
+      tanggal: "2024-06-18",
+      waktu: "11:00 - 12:00",
+      mahasiswa: "Dewi Kurniawati",
+      judul: "IoT untuk Monitoring Rumah",
+      ruangan: "GB304",
+      dosenPenguji: "Dr. Budi Haryanto M.T.",
     },
     {
       id: 5,
-      tanggal: "2024-11-28",
-      waktu: "09:30",
-      mahasiswa: "Eko Prasetyo",
-      judul: "Sistem Keamanan IoT Berbasis Blockchain",
-      nilai: {
-        pembimbing: 88,
-        penguji: 86,
-        pembimbingInstansi: 89,
-      },
+      tanggal: "2024-06-19",
+      waktu: "08:00 - 09:00",
+      mahasiswa: "Eko Saputra",
+      judul: "Mobile Finance Management",
+      ruangan: "GB305",
+      dosenPenguji: "Prof. Hartono S.T.",
     },
     {
       id: 6,
-      tanggal: "2024-11-28",
-      waktu: "13:00",
-      mahasiswa: "Fitri Handayani",
-      judul: "Optimasi Database menggunakan Algoritma Genetika",
-      nilai: {
-        pembimbing: 89,
-        penguji: 91,
-        pembimbingInstansi: 87,
-      },
+      tanggal: "2024-06-20",
+      waktu: "10:00 - 11:00",
+      mahasiswa: "Lina Rahmawati",
+      judul: "Analisis Penggunaan Big Data",
+      ruangan: "GB306",
+      dosenPenguji: "Dr. Andi M.T.",
     },
     {
       id: 7,
-      tanggal: "2024-11-29",
-      waktu: "10:30",
-      mahasiswa: "Gatot Subroto",
-      judul: "Implementasi Deep Learning untuk Deteksi Objek Real-Time",
-      nilai: {
-        pembimbing: 93,
-        penguji: 90,
-        pembimbingInstansi: 92,
-      },
+      tanggal: "2024-06-21",
+      waktu: "13:00 - 14:00",
+      mahasiswa: "Rahmat Pratama",
+      judul: "Kinerja Aplikasi Real-Time",
+      ruangan: "GB307",
+      dosenPenguji: "Dr. Ikfa S.T",
     },
     {
       id: 8,
-      tanggal: "2024-11-29",
-      waktu: "15:00",
-      mahasiswa: "Hana Susanti",
-      judul: "Pengembangan Chatbot menggunakan Natural Language Understanding",
-      nilai: {
-        pembimbing: 86,
-        penguji: 88,
-        pembimbingInstansi: 85,
-      },
+      tanggal: "2024-06-22",
+      waktu: "08:00 - 09:00",
+      mahasiswa: "Sri Handayani",
+      judul: "Sistem Blockchain untuk Logistik",
+      ruangan: "GB308",
+      dosenPenguji: "Dr. Retno S.Kom",
     },
     {
       id: 9,
-      tanggal: "2024-11-30",
-      waktu: "09:00",
-      mahasiswa: "Irfan Hakim",
-      judul: "Analisis Performa Web Service menggunakan Load Testing",
-      nilai: {
-        pembimbing: 88,
-        penguji: 87,
-        pembimbingInstansi: 90,
-      },
+      tanggal: "2024-06-23",
+      waktu: "11:00 - 12:00",
+      mahasiswa: "Miko Anggara",
+      judul: "AI untuk Deteksi Objek",
+      ruangan: "GB309",
+      dosenPenguji: "Dr. Budi Haryanto M.T.",
     },
     {
       id: 10,
-      tanggal: "2024-11-30",
-      waktu: "13:30",
-      mahasiswa: "Jenny Kusuma",
-      judul: "Implementasi Augmented Reality untuk Media Pembelajaran",
-      nilai: {
-        pembimbing: 91,
-        penguji: 89,
-        pembimbingInstansi: 88,
-      },
+      tanggal: "2024-06-24",
+      waktu: "09:00 - 10:00",
+      mahasiswa: "Sari Oktavia",
+      judul: "Mobile App untuk E-Commerce",
+      ruangan: "GB310",
+      dosenPenguji: "Prof. Hartono S.T.",
+    },
+    {
+      id: 11,
+      tanggal: "2024-06-25",
+      waktu: "10:00 - 11:00",
+      mahasiswa: "Andi Pratama",
+      judul: "Perancangan Database Distribusi",
+      ruangan: "GB311",
+      dosenPenguji: "Dr. Andi M.T.",
+    },
+    {
+      id: 12,
+      tanggal: "2024-06-26",
+      waktu: "13:00 - 14:00",
+      mahasiswa: "Nina Lestari",
+      judul: "Analisis Keamanan Jaringan",
+      ruangan: "GB312",
+      dosenPenguji: "Dr. Ikfa S.T",
+    },
+    {
+      id: 13,
+      tanggal: "2024-06-27",
+      waktu: "08:00 - 09:00",
+      mahasiswa: "Bayu Saputra",
+      judul: "Implementasi AR di Pendidikan",
+      ruangan: "GB313",
+      dosenPenguji: "Dr. Retno S.Kom",
+    },
+    {
+      id: 14,
+      tanggal: "2024-06-28",
+      waktu: "11:00 - 12:00",
+      mahasiswa: "Dina Rahmah",
+      judul: "IoT Smart Agriculture",
+      ruangan: "GB314",
+      dosenPenguji: "Dr. Budi Haryanto M.T.",
+    },
+    {
+      id: 15,
+      tanggal: "2024-06-29",
+      waktu: "09:00 - 10:00",
+      mahasiswa: "Arief Hidayat",
+      judul: "AI dalam Diagnosis Medis",
+      ruangan: "GB315",
+      dosenPenguji: "Prof. Hartono S.T.",
     },
   ]);
 
-  // New states for sorting, searching, and pagination
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [nilaiList, setNilaiList] = useState([
+    {
+      id: 1,
+      mahasiswa: "Ahmad Rifqi",
+      judul: "Analisis Sistem ERP",
+      pembimbing: 85,
+      penguji: 82,
+      pembimbingInstansi: 87,
+    },
+    {
+      id: 2,
+      mahasiswa: "Siti Nurhaliza",
+      judul: "Machine Learning Prediksi Cuaca",
+      pembimbing: 90,
+      penguji: 86,
+      pembimbingInstansi: 92,
+    },
+    {
+      id: 3,
+      mahasiswa: "Budi Santoso",
+      judul: "Optimasi AI Sorting",
+      pembimbing: 78,
+      penguji: 80,
+      pembimbingInstansi: 85,
+    },
+    {
+      id: 4,
+      mahasiswa: "Dewi Kurniawati",
+      judul: "IoT untuk Monitoring Rumah",
+      pembimbing: 88,
+      penguji: 83,
+      pembimbingInstansi: 89,
+    },
+    {
+      id: 5,
+      mahasiswa: "Eko Saputra",
+      judul: "Mobile Finance Management",
+      pembimbing: 92,
+      penguji: 88,
+      pembimbingInstansi: 95,
+    },
+    {
+      id: 6,
+      mahasiswa: "Lina Rahmawati",
+      judul: "Analisis Penggunaan Big Data",
+      pembimbing: 84,
+      penguji: 81,
+      pembimbingInstansi: 86,
+    },
+    {
+      id: 7,
+      mahasiswa: "Rahmat Pratama",
+      judul: "Kinerja Aplikasi Real-Time",
+      pembimbing: 89,
+      penguji: 85,
+      pembimbingInstansi: 91,
+    },
+    {
+      id: 8,
+      mahasiswa: "Sri Handayani",
+      judul: "Sistem Blockchain untuk Logistik",
+      pembimbing: 79,
+      penguji: 77,
+      pembimbingInstansi: 80,
+    },
+    {
+      id: 9,
+      mahasiswa: "Miko Anggara",
+      judul: "AI untuk Deteksi Objek",
+      pembimbing: 87,
+      penguji: 84,
+      pembimbingInstansi: 88,
+    },
+    {
+      id: 10,
+      mahasiswa: "Sari Oktavia",
+      judul: "Mobile App untuk E-Commerce",
+      pembimbing: 90,
+      penguji: 86,
+      pembimbingInstansi: 93,
+    },
+    {
+      id: 11,
+      mahasiswa: "Andi Pratama",
+      judul: "Perancangan Database Distribusi",
+      pembimbing: 83,
+      penguji: 80,
+      pembimbingInstansi: 85,
+    },
+    {
+      id: 12,
+      mahasiswa: "Nina Lestari",
+      judul: "Analisis Keamanan Jaringan",
+      pembimbing: 86,
+      penguji: 82,
+      pembimbingInstansi: 87,
+    },
+    {
+      id: 13,
+      mahasiswa: "Bayu Saputra",
+      judul: "Implementasi AR di Pendidikan",
+      pembimbing: 91,
+      penguji: 88,
+      pembimbingInstansi: 92,
+    },
+    {
+      id: 14,
+      mahasiswa: "Dina Rahmah",
+      judul: "IoT Smart Agriculture",
+      pembimbing: 84,
+      penguji: 80,
+      pembimbingInstansi: 86,
+    },
+    {
+      id: 15,
+      mahasiswa: "Arief Hidayat",
+      judul: "AI dalam Diagnosis Medis",
+      pembimbing: 93,
+      penguji: 89,
+      pembimbingInstansi: 95,
+    },
+  ]);
 
-  // Sorting function
-  const requestSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
+  const [jadwalSearchTerm, setJadwalSearchTerm] = useState("");
+  const [nilaiSearchTerm, setNilaiSearchTerm] = useState("");
+  const [jadwalCurrentPage, setJadwalCurrentPage] = useState(1);
+  const [nilaiCurrentPage, setNilaiCurrentPage] = useState(1);
 
-  // Filtered and sorted data
-  const filteredAndSortedData = useMemo(() => {
-    let filtered = jadwalList.filter(
-      (item) =>
-        item.mahasiswa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.judul.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.tanggal.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.waktu.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const itemsPerPage = 10;
 
-    if (sortConfig.key) {
-      filtered.sort((a, b) => {
-        if (sortConfig.key === "nilai") {
-          const nilaiA = hitungNilaiAkhir(a.nilai);
-          const nilaiB = hitungNilaiAkhir(b.nilai);
-          return sortConfig.direction === "asc"
-            ? nilaiA - nilaiB
-            : nilaiB - nilaiA;
-        }
-
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "asc" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "asc" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    return filtered;
-  }, [jadwalList, searchTerm, sortConfig]);
-
-  // Pagination
-  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
-  const paginatedData = filteredAndSortedData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // Your existing functions remain the same
   const hitungNilaiAkhir = (nilai) => {
     const bobotPembimbing = 0.4;
     const bobotPenguji = 0.3;
-    const bobotpembimbingInstansi = 0.3;
+    const bobotPembimbingInstansi = 0.3;
 
-    return (
+    const nilaiAkhir = (
       nilai.pembimbing * bobotPembimbing +
       nilai.penguji * bobotPenguji +
-      nilai.pembimbingInstansi * bobotpembimbingInstansi
+      nilai.pembimbingInstansi * bobotPembimbingInstansi
     ).toFixed(2);
+
+    return parseFloat(nilaiAkhir);
   };
 
-  // Existing handlers remain the same
-  const handleDelete = (id) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus jadwal ini?")) {
-      setJadwalList(jadwalList.filter((jadwal) => jadwal.id !== id));
-    }
-  };
+  const filteredJadwal = useMemo(() => {
+    return jadwalList.filter(
+      (item) =>
+        jadwalSearchTerm === "" ||
+        item.mahasiswa.toLowerCase().includes(jadwalSearchTerm.toLowerCase())
+    );
+  }, [jadwalList, jadwalSearchTerm]);
 
-  const handleEdit = (jadwal) => {
-    setEditingJadwal(jadwal);
-    setIsModalOpen(true);
-  };
+  const filteredNilai = useMemo(() => {
+    return nilaiList.filter(
+      (item) =>
+        nilaiSearchTerm === "" ||
+        item.mahasiswa.toLowerCase().includes(nilaiSearchTerm.toLowerCase())
+    );
+  }, [nilaiList, nilaiSearchTerm]);
 
-  const handleSave = (formData) => {
-    if (editingJadwal) {
+  const jadwalTotalPages = Math.ceil(filteredJadwal.length / itemsPerPage);
+  const nilaiTotalPages = Math.ceil(filteredNilai.length / itemsPerPage);
+
+  const paginatedJadwal = filteredJadwal.slice(
+    (jadwalCurrentPage - 1) * itemsPerPage,
+    jadwalCurrentPage * itemsPerPage
+  );
+
+  const paginatedNilai = filteredNilai.slice(
+    (nilaiCurrentPage - 1) * itemsPerPage,
+    nilaiCurrentPage * itemsPerPage
+  );
+
+  const handleJadwalSave = (formData) => {
+    if (editingItem) {
       setJadwalList(
-        jadwalList.map((jadwal) =>
-          jadwal.id === editingJadwal.id
-            ? { ...jadwal, ...formData, id: jadwal.id }
-            : jadwal
+        jadwalList.map((item) =>
+          item.id === editingItem.id ? { ...item, ...formData } : item
         )
       );
     } else {
       const newJadwal = {
         id: jadwalList.length + 1,
         ...formData,
-        nilai: {
-          pembimbing: 0,
-          penguji: 0,
-          pembimbingInstansi: 0,
-        },
       };
       setJadwalList([...jadwalList, newJadwal]);
     }
     setIsModalOpen(false);
-    setEditingJadwal(null);
+    setEditingItem(null);
   };
 
-  // Sort indicator component
-  const SortIndicator = ({ columnKey }) => {
-    if (sortConfig.key !== columnKey) {
-      return <ChevronUp className="w-4 h-4 text-gray-400" />;
-    }
-    return sortConfig.direction === "asc" ? (
-      <ChevronUp className="w-4 h-4 text-blue-500" />
-    ) : (
-      <ChevronDown className="w-4 h-4 text-blue-500" />
-    );
-  };
+  const renderEmptyState = (message) => (
+    <div className="text-center py-12">
+      <p className="text-gray-500 text-lg">{message}</p>
+    </div>
+  );
 
-  return (
-    <div className="p-6 bg-gray-50">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Jadwal & Nilai Seminar KP</h1>
+  const renderJadwalTab = () => (
+    <div>
+      <div className="mb-4 flex justify-between items-center">
+        <div className="relative flex-grow">
+          <input
+            type="text"
+            placeholder="Cari jadwal (nama mahasiswa)"
+            value={jadwalSearchTerm}
+            onChange={(e) => setJadwalSearchTerm(e.target.value)}
+            className="w-full p-2 pl-10 border rounded-lg"
+          />
+          <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+        </div>
         <button
           onClick={() => {
-            setEditingJadwal(null);
+            setEditingItem(null);
             setIsModalOpen(true);
           }}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center"
+          className="ml-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center"
         >
           <span className="mr-2">+</span>
           Tambah Jadwal
         </button>
       </div>
 
-      {/* Search Bar */}
-      <div className="mb-4 relative">
+      {jadwalList.length === 0 ? (
+        renderEmptyState("Belum ada jadwal ditambahkan")
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-lg shadow-lg border-collapse">
+              <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                <tr>
+                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
+                    Tanggal
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
+                    Waktu
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
+                    Mahasiswa
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
+                    Judul
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
+                    Penguji
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
+                    Ruangan
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedJadwal.map((jadwal) => (
+                  <tr
+                    key={jadwal.id}
+                    className="hover:bg-blue-50 transition-all"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
+                      {new Date(jadwal.tanggal).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
+                      {jadwal.waktu}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
+                      {jadwal.mahasiswa}
+                    </td>
+                    <td className="px-6 py-4 border-b border-gray-200 text-gray-700">
+                      {jadwal.judul}
+                    </td>
+                    <td className="px-6 py-4 border-b border-gray-200 text-gray-700">
+                      {jadwal.dosenPenguji}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
+                      {jadwal.ruangan}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => {
+                            setEditingItem(jadwal);
+                            setIsModalOpen(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-800 transition-all"
+                        >
+                          <Pencil className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                "Apakah Anda yakin ingin menghapus jadwal ini?"
+                              )
+                            ) {
+                              setJadwalList(
+                                jadwalList.filter(
+                                  (item) => item.id !== jadwal.id
+                                )
+                              );
+                            }
+                          }}
+                          className="text-red-600 hover:text-red-800 transition-all"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredJadwal.length > itemsPerPage && (
+            <div className="mt-4 flex justify-between items-center">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() =>
+                    setJadwalCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={jadwalCurrentPage === 1}
+                  className="px-3 py-1 border rounded-md disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                {[...Array(jadwalTotalPages)].map((_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => setJadwalCurrentPage(i + 1)}
+                    className={`px-3 py-1 border rounded-md ${
+                      jadwalCurrentPage === i + 1
+                        ? "bg-blue-500 text-white"
+                        : ""
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() =>
+                    setJadwalCurrentPage((prev) =>
+                      Math.min(prev + 1, jadwalTotalPages)
+                    )
+                  }
+                  disabled={jadwalCurrentPage === jadwalTotalPages}
+                  className="px-3 py-1 border rounded-md disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  const renderNilaiTab = () => (
+    <div>
+      <div className="mb-4">
         <div className="relative">
           <input
             type="text"
-            placeholder="Cari mahasiswa atau judul..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Cari penilaian (nama mahasiswa)"
+            value={nilaiSearchTerm}
+            onChange={(e) => setNilaiSearchTerm(e.target.value)}
             className="w-full p-2 pl-10 border rounded-lg"
           />
           <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
         </div>
       </div>
 
-      {/* Tabel Jadwal */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Daftar Jadwal</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  className="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("tanggal")}
-                >
-                  <div className="flex items-center">
-                    Tanggal
-                    <SortIndicator columnKey="tanggal" />
-                  </div>
-                </th>
-                <th
-                  className="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("waktu")}
-                >
-                  <div className="flex items-center">
-                    Waktu
-                    <SortIndicator columnKey="waktu" />
-                  </div>
-                </th>
-                <th
-                  className="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("mahasiswa")}
-                >
-                  <div className="flex items-center">
-                    Mahasiswa
-                    <SortIndicator columnKey="mahasiswa" />
-                  </div>
-                </th>
-                <th className="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Judul
-                </th>
-                <th className="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {paginatedData.map((jadwal) => (
-                <tr key={jadwal.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(jadwal.tanggal).toLocaleDateString("id-ID", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {jadwal.waktu}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {jadwal.mahasiswa}
-                  </td>
-                  <td className="px-6 py-4">{jadwal.judul}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleEdit(jadwal)}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Pencil className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(jadwal.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        <div className="mt-4 flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            Menampilkan {(currentPage - 1) * itemsPerPage + 1} -{" "}
-            {Math.min(currentPage * itemsPerPage, filteredAndSortedData.length)}{" "}
-            dari {filteredAndSortedData.length} data
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setCurrentPage((curr) => Math.max(curr - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-1 border rounded-md disabled:opacity-50"
-            >
-              Previous
-            </button>
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 border rounded-md ${
-                  currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                }`}
+      {nilaiList.length === 0 ? (
+        renderEmptyState("Belum ada nilai ditambahkan")
+      ) : (
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Detail Penilaian</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {paginatedNilai.map((jadwal) => (
+              <div
+                key={jadwal.id}
+                className="bg-white rounded-lg shadow-sm p-4 hover:shadow transition-shadow border border-gray-200"
               >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() =>
-                setCurrentPage((curr) => Math.min(curr + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 border rounded-md disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Card Penilaian section remains the same */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Detail Penilaian</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {paginatedData.map((jadwal) => (
-            <div
-              key={jadwal.id}
-              className="bg-white rounded-lg shadow-sm p-4 hover:shadow transition-shadow border border-gray-200"
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex-grow">
-                  <div className="text-base font-semibold mb-1">
-                    {jadwal.mahasiswa}
-                  </div>
-                  <p className="text-xs text-gray-600 mb-2">{jadwal.judul}</p>
-                  <div className="grid grid-cols-3 gap-2 text-sm">
-                    <div>
-                      <p className="text-gray-600">Pembimbing</p>
-                      <p className="font-semibold">{jadwal.nilai.pembimbing}</p>
+                <div className="flex justify-between items-center">
+                  <div className="flex-grow">
+                    <div className="text-base font-semibold mb-1">
+                      {jadwal.mahasiswa}
                     </div>
-                    <div>
-                      <p className="text-gray-600">Penguji</p>
-                      <p className="font-semibold">{jadwal.nilai.penguji}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Pembimbing Instansi</p>
-                      <p className="font-semibold">
-                        {jadwal.nilai.pembimbingInstansi}
-                      </p>
+                    <p className="text-xs text-gray-600 mb-2">{jadwal.judul}</p>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <div>
+                        <p className="text-gray-600">Pembimbing</p>
+                        <p className="font-semibold">{jadwal.pembimbing}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Penguji</p>
+                        <p className="font-semibold">{jadwal.penguji}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Pembimbing Instansi</p>
+                        <p className="font-semibold">
+                          {jadwal.pembimbingInstansi}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="ml-4 text-center bg-blue-50 px-4 py-2 rounded">
-                  <p className="text-xs text-gray-600">Nilai Akhir</p>
-                  <p className="text-xl font-bold text-blue-600">
-                    {hitungNilaiAkhir(jadwal.nilai)}
-                  </p>
+                  <div className="ml-4 text-center bg-blue-50 px-4 py-2 rounded">
+                    <p className="text-xs text-gray-600">Nilai Akhir</p>
+                    <p className="text-xl font-bold text-blue-600">
+                      {hitungNilaiAkhir(jadwal)}
+                    </p>
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {filteredNilai.length > itemsPerPage && (
+            <div className="mt-4 flex justify-between items-center">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() =>
+                    setNilaiCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={nilaiCurrentPage === 1}
+                  className="px-3 py-1 border rounded-md disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                {[...Array(nilaiTotalPages)].map((_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => setNilaiCurrentPage(i + 1)}
+                    className={`px-3 py-1 border rounded-md ${
+                      nilaiCurrentPage === i + 1 ? "bg-blue-500 text-white" : ""
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() =>
+                    setNilaiCurrentPage((prev) =>
+                      Math.min(prev + 1, nilaiTotalPages)
+                    )
+                  }
+                  disabled={nilaiCurrentPage === nilaiTotalPages}
+                  className="px-3 py-1 border rounded-md disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
             </div>
-          ))}
+          )}
         </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="p-6 bg-gray-50">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Jadwal & Nilai Seminar</h1>
       </div>
 
-      {/* Modal remains the same */}
+      <div className="mb-4 border-b">
+        <nav className="flex space-x-4">
+          <button
+            onClick={() => {
+              setActiveTab("jadwal");
+              setCurrentPage(1);
+            }}
+            className={`py-2 px-4 ${
+              activeTab === "jadwal"
+                ? "border-b-2 border-blue-500 text-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Jadwal
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("nilai");
+              setCurrentPage(1);
+            }}
+            className={`py-2 px-4 ${
+              activeTab === "nilai"
+                ? "border-b-2 border-blue-500 text-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Nilai
+          </button>
+        </nav>
+      </div>
+
+      {activeTab === "jadwal" ? renderJadwalTab() : renderNilaiTab()}
+
       {isModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
@@ -449,20 +654,18 @@ const JadwalNilai = () => {
               className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
               onClick={() => {
                 setIsModalOpen(false);
-                setEditingJadwal(null);
+                setEditingItem(null);
               }}
             ></div>
 
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-              <TambahJadwal
-                onSubmit={handleSave}
-                initialData={editingJadwal}
-                onClose={() => {
-                  setIsModalOpen(false);
-                  setEditingJadwal(null);
-                }}
-              />
-            </div>
+            <TambahJadwal
+              onSubmit={handleJadwalSave}
+              initialData={editingItem}
+              onClose={() => {
+                setIsModalOpen(false);
+                setEditingItem(null);
+              }}
+            />
           </div>
         </div>
       )}
@@ -470,4 +673,4 @@ const JadwalNilai = () => {
   );
 };
 
-export default JadwalNilai;
+export default JadwalNilaiTabs;

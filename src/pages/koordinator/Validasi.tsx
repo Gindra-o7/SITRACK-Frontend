@@ -12,6 +12,7 @@ const Validasi = () => {
       documentStatus: "Pendaftaran",
       submissionDate: "2024-03-15",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 2,
@@ -20,6 +21,7 @@ const Validasi = () => {
       documentStatus: "Persyaratan",
       submissionDate: "2024-02-28",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 3,
@@ -28,6 +30,7 @@ const Validasi = () => {
       documentStatus: "Pasca Seminar",
       submissionDate: "2024-01-10",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 4,
@@ -36,6 +39,7 @@ const Validasi = () => {
       documentStatus: "Pendaftaran",
       submissionDate: "2024-03-01",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 5,
@@ -44,6 +48,7 @@ const Validasi = () => {
       documentStatus: "Persyaratan",
       submissionDate: "2024-02-15",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 6,
@@ -52,6 +57,7 @@ const Validasi = () => {
       documentStatus: "Pasca Seminar",
       submissionDate: "2024-01-20",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 7,
@@ -60,6 +66,7 @@ const Validasi = () => {
       documentStatus: "Pendaftaran",
       submissionDate: "2024-03-05",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 8,
@@ -68,6 +75,7 @@ const Validasi = () => {
       documentStatus: "Persyaratan",
       submissionDate: "2024-02-20",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 9,
@@ -76,6 +84,7 @@ const Validasi = () => {
       documentStatus: "Pasca Seminar",
       submissionDate: "2024-03-10",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 10,
@@ -84,6 +93,7 @@ const Validasi = () => {
       documentStatus: "Persyaratan",
       submissionDate: "2024-03-12",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 11,
@@ -92,6 +102,7 @@ const Validasi = () => {
       documentStatus: "Pendaftaran",
       submissionDate: "2024-03-13",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
     {
       id: 12,
@@ -100,6 +111,7 @@ const Validasi = () => {
       documentStatus: "Pasca Seminar",
       submissionDate: "2024-01-11",
       status: "menunggu",
+      documentsHistory: {} as Record<string, Document[]>,
     },
   ]);
 
@@ -110,13 +122,18 @@ const Validasi = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Fungsi untuk mengupdate status mahasiswa setelah validasi
-  const updateStudentStatus = (studentId, documents) => {
+  const updateStudentStatus = (studentId: number, documents: Document[]) => {
     setStudents((prevStudents) =>
       prevStudents.map((student) => {
         if (student.id === studentId) {
-          // Cek apakah semua dokumen disetujui atau ada yang perlu direvisi
           const allApproved = documents.every((doc) => doc.status === "setuju");
           const hasRevisions = documents.some((doc) => doc.status === "revisi");
+
+          // Store the documents state in the student's history
+          const updatedHistory = {
+            ...student.documentsHistory,
+            [student.documentStatus]: documents,
+          };
 
           return {
             ...student,
@@ -125,6 +142,7 @@ const Validasi = () => {
               : hasRevisions
               ? "revisi"
               : "menunggu",
+            documentsHistory: updatedHistory,
           };
         }
         return student;
@@ -268,12 +286,16 @@ const Validasi = () => {
             documentStatus:
               activeDocument.documentStatus as keyof typeof documentLists,
           }}
+          initialDocuments={
+            students.find((s) => s.id === activeDocument.id)?.documentsHistory[
+              activeDocument.documentStatus
+            ] || []
+          }
           onClose={() => {
             setShowDialog(false);
             setActiveDocument(null);
           }}
           onSave={(documents) => {
-            // Update the student's status based on document validation
             updateStudentStatus(activeDocument.id, documents);
             setShowDialog(false);
             setActiveDocument(null);
