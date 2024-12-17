@@ -8,6 +8,7 @@ import {
   FileCheck,
   RotateCcw,
   CheckSquare,
+  Lock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -17,12 +18,6 @@ interface Document {
   status: "setuju" | "revisi" | null;
   comment: string;
   showComment: boolean;
-}
-
-interface Examiner {
-  id: number;
-  name: string;
-  department: string;
 }
 
 interface ActiveDocument {
@@ -70,13 +65,20 @@ const documentLists = {
 const ValidationModal: React.FC<ValidationModalProps> = ({
   activeDocument,
   onClose,
-  onOpenDocument,
   onSave,
 }) => {
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [currentTab, setCurrentTab] = useState<keyof typeof documentLists>(
+    activeDocument.documentStatus
+  );
+  const [documentProgress, setDocumentProgress] = useState({
+    Persyaratan: false,
+    Pendaftaran: false,
+    "Pasca Seminar": false,
+  });
 
   useEffect(() => {
-    const documentList = documentLists[activeDocument.documentStatus] || [];
+    const documentList = documentLists[currentTab] || [];
     const initialDocuments: Document[] = documentList.map((name, index) => ({
       id: index + 1,
       name,
@@ -85,23 +87,40 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
       showComment: false,
     }));
     setDocuments(initialDocuments);
-  }, [activeDocument.documentStatus]);
+  }, [currentTab]);
 
-  const [examiners] = useState<Examiner[]>([
-    { id: 1, name: "Dr. Ahmad Sutisna, M.Pd.", department: "Pendidikan" },
-    {
-      id: 2,
-      name: "Prof. Dr. Siti Rahayu, S.Kom., M.T.",
-      department: "Teknologi Informasi",
-    },
-    {
-      id: 3,
-      name: "Dr. Bambang Widodo, S.Pd., M.Si.",
-      department: "Manajemen Pendidikan",
-    },
-  ]);
+  const isTabAccessible = (tab: keyof typeof documentLists) => {
+    const order = ["Persyaratan", "Pendaftaran", "Pasca Seminar"];
+    const currentIndex = order.indexOf(activeDocument.documentStatus);
+    const tabIndex = order.indexOf(tab);
+    return tabIndex <= currentIndex;
+  };
 
-  const [selectedExaminer, setSelectedExaminer] = useState<string>("");
+  const TabButton: React.FC<{
+    tab: keyof typeof documentLists;
+    isActive: boolean;
+    isLocked: boolean;
+  }> = ({ tab, isActive, isLocked }) => (
+    <button
+      onClick={() => !isLocked && setCurrentTab(tab)}
+      className={`
+        flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
+        ${
+          isActive
+            ? "bg-blue-100 text-blue-700"
+            : isLocked
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50"
+            : "hover:bg-gray-100 text-gray-600"
+        }
+        transition-colors duration-200
+      `}
+      disabled={isLocked}
+    >
+      {isLocked && <Lock className="w-4 h-4" />}
+      {tab}
+    </button>
+  );
+
   const [isAllDocumentsApproved, setIsAllDocumentsApproved] = useState(false);
 
   const handleStatus = (docId: number, status: "setuju" | "revisi") => {
@@ -119,12 +138,6 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
         return doc;
       })
     );
-
-    const allApproved = documents.every((doc) => doc.status === "setuju");
-    setIsAllDocumentsApproved(allApproved);
-    if (!allApproved) {
-      setSelectedExaminer("");
-    }
   };
 
   const handleComment = (docId: number, comment: string) => {
@@ -154,7 +167,6 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
       }))
     );
     setIsAllDocumentsApproved(false);
-    setSelectedExaminer("");
   };
 
   const approveAllDocuments = () => {
@@ -181,7 +193,6 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
       docs.map((doc) => ({ ...doc, status: "revisi", showComment: true }))
     );
     setIsAllDocumentsApproved(false);
-    setSelectedExaminer("");
   };
 
   const handleSave = () => {
@@ -201,18 +212,8 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
       return;
     }
 
-    if (
-      isAllDocumentsApproved &&
-      activeDocument.documentStatus === "Pendaftaran"
-    ) {
-      if (!selectedExaminer) {
-        alert("Harap pilih dosen penguji");
-        return;
-      }
-    }
-
     console.log("Saving documents:", documents);
-    console.log("Selected Examiner:", selectedExaminer);
+
     onClose();
     onSave(documents);
   };
@@ -220,37 +221,52 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col shadow-xl">
-        <div className="sticky top-0 bg-gray-100 p-4 rounded-t-lg border-b border-gray-200 z-10">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex-grow">
-              {activeDocument.title}
-            </h2>
-          </div>
-        </div>
+        {/* Header */}
+        <div className="sticky top-0 bg-gray-100 p-4 rounded-t-lg border-b border-gray-200">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">
+            {activeDocument.title}
+          </h2>
 
-        <div className="bg-white p-4 border-b border-gray-200">
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={resetDocuments}
-              className="group flex items-center gap-2 px-4 py-2 text-sm bg-gray-50 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-all duration-200"
-            >
-              <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
-              <span className="font-medium">Reset</span>
-            </button>
-            <button
-              onClick={approveAllDocuments}
-              className="group flex items-center gap-2 px-4 py-2 text-sm bg-green-50 border border-green-200 text-green-700 rounded-lg hover:bg-green-100 hover:border-green-300 transition-all duration-200"
-            >
-              <CheckSquare className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
-              <span className="font-medium">Setujui Semua</span>
-            </button>
-            <button
-              onClick={reviseAllDocuments}
-              className="group flex items-center gap-2 px-4 py-2 text-sm bg-red-50 border border-red-200 text-red-700 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all duration-200"
-            >
-              <XCircle className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
-              <span className="font-medium">Revisi Semua</span>
-            </button>
+          {/* Combined container for tabs and action buttons */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {/* Document Status Tabs */}
+            <div className="flex gap-2 overflow-x-auto">
+              {(
+                Object.keys(documentLists) as Array<keyof typeof documentLists>
+              ).map((tab) => (
+                <TabButton
+                  key={tab}
+                  tab={tab}
+                  isActive={currentTab === tab}
+                  isLocked={!isTabAccessible(tab)}
+                />
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <button
+                onClick={resetDocuments}
+                className="group flex items-center gap-1 px-3 py-2 text-sm bg-gray-50 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-all duration-200"
+              >
+                <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                <span className="font-medium">Reset</span>
+              </button>
+              <button
+                onClick={approveAllDocuments}
+                className="group flex items-center gap-1 px-3 py-2 text-sm bg-green-50 border border-green-200 text-green-700 rounded-lg hover:bg-green-100 hover:border-green-300 transition-all duration-200"
+              >
+                <CheckSquare className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+                <span className="font-medium">Setujui Semua</span>
+              </button>
+              <button
+                onClick={reviseAllDocuments}
+                className="group flex items-center gap-1 px-3 py-2 text-sm bg-red-50 border border-red-200 text-red-700 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all duration-200"
+              >
+                <XCircle className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+                <span className="font-medium">Revisi Semua</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -319,50 +335,6 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
               </div>
             ))}
           </div>
-
-          {isAllDocumentsApproved &&
-            activeDocument.documentStatus === "Pendaftaran" && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
-                className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200"
-              >
-                <div>
-                  <label
-                    htmlFor="examiner-select"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Dosen Penguji
-                  </label>
-                  <select
-                    id="examiner-select"
-                    value={selectedExaminer}
-                    onChange={(e) => setSelectedExaminer(e.target.value)}
-                    className="w-full p-2 border rounded-lg text-sm"
-                  >
-                    <option value="" disabled>
-                      Pilih Dosen Penguji
-                    </option>
-                    {examiners.map((examiner) => (
-                      <option key={examiner.id} value={examiner.id}>
-                        {examiner.name} - {examiner.department}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </motion.div>
-            )}
-
-          {!isAllDocumentsApproved &&
-            activeDocument.documentStatus === "Pendaftaran" && (
-              <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200 text-center">
-                <p className="text-sm text-yellow-800">
-                  Dokumen harus disetujui semua untuk memilih dosen penguji
-                </p>
-              </div>
-            )}
         </div>
 
         <div className="sticky bottom-0 bg-white p-4 border-t border-gray-200 rounded-b-lg">
