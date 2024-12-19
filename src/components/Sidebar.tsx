@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CircleUser, LogOut } from "lucide-react";
-import Logout from "./Modal/Logout";
-import Profile from "./Modal/Profile";
+import Logout from "@/components/modal/Logout";
+import Profile from "@/components/modal/Profile";
 
 interface MenuItem {
   path: string;

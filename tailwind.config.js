@@ -1,3 +1,6 @@
+import flowbitePlugin from "flowbite/plugin";
+import tailwindcssAnimate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
 export default {
 	darkMode: ["class"], 
@@ -88,11 +91,11 @@ export default {
 	  }
 	},
 	plugins: [
-	  require("flowbite/plugin")({
-		charts: true, 
-		datatables: true, 
-	  }),
-	  require("tailwindcss-animate") 
+		flowbitePlugin({
+			charts: true,
+			datatables: true,
+		}),
+		tailwindcssAnimate,
 	],
 	safelist: [
 		'after:duration-[200ms]',

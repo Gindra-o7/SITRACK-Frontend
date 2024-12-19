@@ -2,13 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import NotFound_logo from "../assets/404.png";
 
-// If you're using a custom image import, you might need to add a type declaration
-// Add this in a separate .d.ts file or at the top of your TSX file
-declare module "*.png" {
-    const value: string;
-    export default value;
-}
-
 const NotFound: React.FC = () => {
     const navigate = useNavigate();
 
