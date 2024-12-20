@@ -1,8 +1,8 @@
 import {useState, useEffect, ReactNode} from "react";
 import { Link, useLocation } from "react-router-dom";
 import { LogOut, Menu, X, User } from "lucide-react";
-import Logout from "@/components/modal/Logout";
-import Profile from "@/components/modal/Profile";
+import Logout from "../modal/Logout";
+import Profile from "../modal/Profile";
 
 export interface LayoutProps {
   children: ReactNode;

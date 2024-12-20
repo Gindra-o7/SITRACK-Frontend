@@ -1,16 +1,16 @@
 import {Spinner} from "flowbite-react"
 import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {LoadingInterfaceLanding} from "@/pages/LoadingInterface";
+import {LoadingInterfaceLanding} from "./LoadingInterface.tsx";
 import Header from "../components/landing/Header";
 import Hero from "../components/landing/Hero";
 import Features from "../components/landing/Features";
 import Flow from "../components/landing/Flow";
 import FAQ from "../components/landing/FAQ";
 import Footer from "../components/landing/Footer";
-import axiosInstance from "@/configs/axios.configs";
+import axiosInstance from "../configs/axios.configs.ts";
 import Wave from "../components/landing/Wave";
-import {useAuth} from "@/contexts/auth.contexts";
+import {useAuth} from "../contexts/auth.contexts.tsx";
 
 const LandingPages = () => {
     const {user, login, logout} = useAuth();

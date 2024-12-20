@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Pencil, Trash2, Search } from "lucide-react";
-import TambahJadwal from "@/components/modal/TambahJadwal";
+import TambahJadwal from "../../modal/TambahJadwal";
 
 const JadwalNilaiTabs = () => {
   const [activeTab, setActiveTab] = useState("jadwal");

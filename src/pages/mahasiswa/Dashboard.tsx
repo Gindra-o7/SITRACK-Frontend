@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarMahasiswaItems } from "@/components/SidebarItems";
-import DashboardMahasiswa from "@/components/role/mahasiswa/DashboardMahasiswa"
+import Layout from "../../components/role/Layout";
+import { sidebarMahasiswaItems } from "../../components/SidebarItems";
+import DashboardMahasiswa from "../../components/role/mahasiswa/DashboardMahasiswa"
 
 const DashboardMahasiswaPages = () => {
 

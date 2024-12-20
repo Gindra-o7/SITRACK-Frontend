@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarMahasiswaItems } from "@/components/SidebarItems";
-import PengajuanMahasiswa from "@/components/role/mahasiswa/PengajuanMahasiswa"
+import Layout from "../../components/role/Layout";
+import { sidebarMahasiswaItems } from "../../components/SidebarItems";
+import PengajuanMahasiswa from "../../components/role/mahasiswa/PengajuanMahasiswa"
 
 const PengajuanMahasiswaPages = () => {
 

@@ -3,7 +3,7 @@ import LandingPages from "../pages/Landing.Pages";
 import Forbidden from "../components/Forbidden";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./protected.routers";
-import {AuthPage} from "@/pages/Auth.Pages";
+import {AuthPage} from "../pages/Auth.Pages.tsx";
 import DashboardMahasiswaPages from "../pages/mahasiswa/Dashboard";
 import PengajuanMahasiswaPages from "../pages/mahasiswa/Pengajuan";
 import DashboardDosenPengujiPages from "../pages/dosen-penguji/DashboardDosenPenguji";

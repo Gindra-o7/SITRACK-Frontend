@@ -1,8 +1,8 @@
 import React, {useState} from "react"
 import { Card } from "flowbite-react";
-import { LoginForm } from "@/components/auth/LoginForm"
-import { RegisterForm } from "@/components/auth/RegisterForm"
-import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
+import { LoginForm } from "../components/auth/LoginForm"
+import { RegisterForm } from "../components/auth/RegisterForm"
+import { ForgotPasswordForm } from "../components/auth/ForgotPasswordForm";
 
 export const AuthPage: React.FC = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register' | 'forgot-password'>('login');

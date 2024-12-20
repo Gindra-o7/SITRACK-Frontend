@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import Marquee from "@/components/ui/marquee";
+import { cn } from "../lib/utils";
+import Marquee from "./ui/marquee";
 import logo from "../assets/logoimage.png"; // Mengimpor gambar yang sama untuk semua review
 import { Link } from "react-router-dom";  // Menambahkan impor Link
 

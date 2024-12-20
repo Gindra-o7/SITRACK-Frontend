@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarKaprodiItems } from "@/components/SidebarItems";
-import VisualDataKaprodi from "@/components/role/kaprodi/VisualDataKaprodi"
+import Layout from "../../components/role/Layout";
+import { sidebarKaprodiItems } from "../../components/SidebarItems";
+import VisualDataKaprodi from "../../components/role/kaprodi/VisualDataKaprodi"
 
 const MahasiswaDosenPengujiPages = () => {
 

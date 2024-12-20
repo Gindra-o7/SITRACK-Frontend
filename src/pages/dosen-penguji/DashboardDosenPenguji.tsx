@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarDosenPengujiItems } from "@/components/SidebarItems";
-import DashboardDosenPenguji from "@/components/role/dosen-penguji/DashboardDosenPenguji"
+import Layout from "../../components/role/Layout";
+import { sidebarDosenPengujiItems } from "../../components/SidebarItems";
+import DashboardDosenPenguji from "../../components/role/dosen-penguji/DashboardDosenPenguji"
 
 const DashboardDosenPengujiPages = () => {
 

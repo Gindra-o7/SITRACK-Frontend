@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarDosenPengujiItems } from "@/components/SidebarItems";
-import MahasiswaDosenPenguji from "@/components/role/pembimbing-instansi/DashboardPembimbingInstansi"
+import Layout from "../../components/role/Layout";
+import { sidebarDosenPengujiItems } from "../../components/SidebarItems";
+import MahasiswaDosenPenguji from "../../components/role/pembimbing-instansi/DashboardPembimbingInstansi"
 
 const MahasiswaDosenPengujiPages = () => {
 

@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarKoordinatorItems } from "@/components/SidebarItems";
-import ValidasiKoordinator from "@/components/role/koordinator/ValidasiKoordinator";
+import Layout from "../../components/role/Layout";
+import { sidebarKoordinatorItems } from "../../components/SidebarItems";
+import ValidasiKoordinator from "../../components/role/koordinator/ValidasiKoordinator";
 
 const ValidasiKoordinatorPages = () => {
 

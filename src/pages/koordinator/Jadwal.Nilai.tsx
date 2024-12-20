@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarKoordinatorItems } from "@/components/SidebarItems";
-import PenjadwalanKoordinator from "@/components/role/koordinator/PenjadwalanKoordinator";
+import Layout from "../../components/role/Layout";
+import { sidebarKoordinatorItems } from "../../components/SidebarItems";
+import PenjadwalanKoordinator from "../../components/role/koordinator/PenjadwalanKoordinator";
 
 const PenjadwalanKoordinatorPages = () => {
 

@@ -1,10 +1,10 @@
 import React from "react";
-import ChartWidget from "@/components/ChartWidget";
-import ChartPSB from "@/components/ChartPSB";
-import Chartsat from "@/components/Chartsat";
-import SelectionTable from "@/components/SelectionTable";
-import Chartoke from "@/components/Chartoke";
-import Jadwal from "@/components/Jadwal";
+import ChartWidget from "../../ChartWidget";
+import ChartPSB from "../../ChartPSB";
+import Chartsat from "../../Chartsat";
+import SelectionTable from "../../SelectionTable";
+import Chartoke from "../../Chartoke";
+import Jadwal from "../../Jadwal";
 
 const DashboardKaprodi: React.FC = () => {
   return (

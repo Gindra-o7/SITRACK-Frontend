@@ -1,6 +1,6 @@
-import Layout from "@/components/role/Layout";
-import { sidebarKoordinatorItems } from "@/components/SidebarItems";
-import ManageAkunKoordinator from "@/components/role/koordinator/ManageAkunKoordinator";
+import Layout from "../../components/role/Layout";
+import { sidebarKoordinatorItems } from "../../components/SidebarItems";
+import ManageAkunKoordinator from "../../components/role/koordinator/ManageAkunKoordinator";
 
 const ManajemenAkunKoordinatorPages = () => {
 
