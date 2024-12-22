@@ -4,18 +4,18 @@ import Forbidden from "../components/Forbidden";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./protected.routers";
 import {AuthPage} from "../pages/Auth.Pages.tsx";
-import DashboardMahasiswaPages from "../pages/mahasiswa/Dashboard";
-import PengajuanMahasiswaPages from "../pages/mahasiswa/Pengajuan";
+import DashboardMahasiswaPages from "../pages/mahasiswa/DashboardMahasiswa.tsx";
+import PengajuanMahasiswaPages from "../pages/mahasiswa/PengajuanKoordinator.tsx";
 import DashboardDosenPengujiPages from "../pages/dosen-penguji/DashboardDosenPenguji";
 import MahasiswaDosenPengujiPages from "../pages/dosen-penguji/MahasiswaDosenPenguji";
 import DashboardDosenPembimbingPages from "../pages/dosen-pembimbing/DashboardDosenPembimbing";
 import RiwayatDosenPembimbingPages from "../pages/dosen-pembimbing/RiwayatDosenPembimbing";
-import DashboardKoordinatorPages from "../pages/koordinator/Dashboard";
-import ValidasiKoordinatorPages from "../pages/koordinator/Validasi";
-import ManageAkunKoordinatorPages from "../pages/koordinator/Manage.Accounts";
-import PenjadwalanKoordinatorPages from "../pages/koordinator/Jadwal.Nilai";
-import VisualDataKaprodiPages from "../pages/kaprodi/Dashboard"
-import DashboardPembimbingInstansiPages from "../pages/instansi/Dashboard";
+import DashboardKoordinatorPages from "../pages/koordinator/DashboardKoordinator.tsx";
+import ValidasiKoordinatorPages from "../pages/koordinator/ValidasiKoordinator.tsx";
+import ManageAkunKoordinatorPages from "../pages/koordinator/ManageAccountsKoordinator.tsx";
+import PenjadwalanKoordinatorPages from "../pages/koordinator/JadwalNilaiKoordinator.tsx";
+import VisualDataKaprodiPages from "../pages/kaprodi/DashboardKaprodi.tsx"
+import DashboardPembimbingInstansiPages from "../pages/instansi/DashboardPembimbingInstansi.tsx";
 
 const router = createBrowserRouter([
     {
