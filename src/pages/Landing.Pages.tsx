@@ -74,7 +74,7 @@ const LandingPages = () => {
     };
 
     // Render loading screen if still initializing
-    if (isLoading) {
+    if (!isLoading) {
         return (
             <div className="relative w-full h-screen bg-gray-100">
                 {/* Skeleton Background */}

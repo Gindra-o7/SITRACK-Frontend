@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Search, Filter } from "lucide-react";
 import ValidationModal from "../../modal/Validasi.Modal";
-import {  } from "../../Card.tsx";
+import { ValidationCard } from "../../Card.tsx";
 
 const Validasi = () => {
   const [students, setStudents] = useState([

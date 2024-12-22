@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Label, TextInput, Button, Modal } from 'flowbite-react';
 import { HiMail, HiLockClosed } from 'react-icons/hi';
-import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -19,18 +18,9 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onLoginC
     });
 
     const [showModal, setShowModal] = useState(false);
-    const recaptchaRef = React.useRef<ReCAPTCHA>(null);
 
     const handleEmailCaptchaSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Validate captcha first
-        const captchaToken = recaptchaRef.current?.getValue();
-        if (!captchaToken) {
-            toast.error('Silakan selesaikan verifikasi captcha');
-            return;
-        }
-
         try {
             // Validate email existence
             const emailResponse = await axios.post('/api/check-email', {
@@ -38,12 +28,6 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onLoginC
             });
 
             if (emailResponse.data.exists) {
-                // Validate captcha
-                await axios.post('/api/validate-captcha', {
-                    email: forgotPasswordData.email,
-                    captchaToken
-                });
-
                 // If both email and captcha are valid, proceed to reset password
                 setStep('reset-password');
             } else {
@@ -51,7 +35,6 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onLoginC
             }
         } catch (error) {
             toast.error('Terjadi kesalahan. Silakan coba lagi.');
-            recaptchaRef.current?.reset();
         }
     };
 
@@ -102,15 +85,6 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onLoginC
                                     email: e.target.value
                                 }))}
                             />
-                        </div>
-                        <div className="mt-4">
-                            <Label value="Verifikasi Keamanan" />
-                            <div className="flex justify-center mt-2">
-                                <ReCAPTCHA
-                                    ref={recaptchaRef}
-                                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                                />
-                            </div>
                         </div>
                         <Button type="submit" className="w-full mt-4" color="dark">
                             Lanjutkan
