@@ -20,7 +20,6 @@ const MahasiswaSeminar: React.FC = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-
   const students: Student[] = [
     // Menunggu Seminar
     {
