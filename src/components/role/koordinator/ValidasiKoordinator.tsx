@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Search, Filter } from "lucide-react";
 import ValidationModal from "../../modal/Validasi.Modal";
 import { ValidationCard } from "../../Card.tsx";
@@ -124,185 +124,185 @@ const Validasi = () => {
   // Fungsi untuk mengupdate status mahasiswa setelah validasi
   const updateStudentStatus = (studentId: number, documents: Document[]) => {
     setStudents((prevStudents) =>
-        prevStudents.map((student) => {
-          if (student.id === studentId) {
-            const allApproved = documents.every((doc) => doc.status === "setuju");
-            const hasRevisions = documents.some((doc) => doc.status === "revisi");
+      prevStudents.map((student) => {
+        if (student.id === studentId) {
+          const allApproved = documents.every((doc) => doc.status === "setuju");
+          const hasRevisions = documents.some((doc) => doc.status === "revisi");
 
-            // Store the documents state in the student's history
-            const updatedHistory = {
-              ...student.documentsHistory,
-              [student.documentStatus]: documents,
-            };
+          // Store the documents state in the student's history
+          const updatedHistory = {
+            ...student.documentsHistory,
+            [student.documentStatus]: documents,
+          };
 
-            return {
-              ...student,
-              status: allApproved
-                  ? "setuju"
-                  : hasRevisions
-                      ? "revisi"
-                      : "menunggu",
-              documentsHistory: updatedHistory,
-            };
-          }
-          return student;
-        })
+          return {
+            ...student,
+            status: allApproved
+              ? "setuju"
+              : hasRevisions
+              ? "revisi"
+              : "menunggu",
+            documentsHistory: updatedHistory,
+          };
+        }
+        return student;
+      })
     );
   };
 
   // Filter Mahasiswa berdasarkan status dokumennya
   const filteredStudents = students.filter((student) => {
     const matchesSearch =
-        student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.nim.includes(searchTerm);
+      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.nim.includes(searchTerm);
     const matchesFilter =
-        filterStatus === "" || student.documentStatus === filterStatus;
+      filterStatus === "" || student.documentStatus === filterStatus;
     return matchesSearch && matchesFilter;
   });
 
   return (
-      <div className="container px-4 py-6 md:px-6 bg-gray-50 min-h-screen">
-        <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-          Validasi Dokumen Mahasiswa
-        </h1>
+    <div className="container px-4 py-6 md:px-6 bg-gray-50 min-h-screen">
+      <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+        Validasi Dokumen Mahasiswa
+      </h1>
 
-        {/* Search and Filter Container */}
-        <div className="mb-4 md:mb-6">
-          <div className="flex items-center space-x-2">
-            {/* Search Input */}
-            <div className="relative flex-grow">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                  type="text"
-                  placeholder="Cari nama/NIM"
-                  className="w-full pl-10 p-2 border border-gray-300 rounded-lg text-sm"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
+      {/* Search and Filter Container */}
+      <div className="mb-4 md:mb-6">
+        <div className="flex items-center space-x-2">
+          {/* Search Input */}
+          <div className="relative flex-grow">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
             </div>
+            <input
+              type="text"
+              placeholder="Cari nama/NIM"
+              className="w-full pl-10 p-2 border border-gray-300 rounded-lg text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-            {/* Filter Buttons */}
-            <div className="hidden md:block">
-              <div className="flex space-x-2">
-                {["Persyaratan", "Pendaftaran", "Pasca Seminar"].map((status) => (
-                    <button
-                        key={status}
-                        className={`
+          {/* Filter Buttons */}
+          <div className="hidden md:block">
+            <div className="flex space-x-2">
+              {["Persyaratan", "Pendaftaran", "Pasca Seminar"].map((status) => (
+                <button
+                  key={status}
+                  className={`
                     px-3 py-2 rounded-full text-xs font-medium transition-colors
                     ${
-                            filterStatus === status
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }
+                      filterStatus === status
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }
                   `}
-                        onClick={() =>
-                            setFilterStatus(filterStatus === status ? "" : status)
-                        }
-                    >
-                      {status}
-                    </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Mobile Filter Toggle */}
-            <div className="md:hidden">
-              <button
-                  onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-                  className="p-2 bg-gray-100 text-gray-600 rounded-lg"
-              >
-                <Filter className="h-4 w-4" />
-              </button>
+                  onClick={() =>
+                    setFilterStatus(filterStatus === status ? "" : status)
+                  }
+                >
+                  {status}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Mobile Filter Dropdown */}
-          {mobileFiltersOpen && (
-              <div className="md:hidden mt-2 flex flex-wrap gap-2">
-                {["Pendaftaran", "Persyaratan", "Pasca Seminar"].map((status) => (
-                    <button
-                        key={status}
-                        className={`
+          {/* Mobile Filter Toggle */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+              className="p-2 bg-gray-100 text-gray-600 rounded-lg"
+            >
+              <Filter className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Filter Dropdown */}
+        {mobileFiltersOpen && (
+          <div className="md:hidden mt-2 flex flex-wrap gap-2">
+            {["Pendaftaran", "Persyaratan", "Pasca Seminar"].map((status) => (
+              <button
+                key={status}
+                className={`
                   px-3 py-1.5 rounded-full text-xs font-medium transition-colors
                   ${
-                            filterStatus === status
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }
+                    filterStatus === status
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }
                 `}
-                        onClick={() =>
-                            setFilterStatus(filterStatus === status ? "" : status)
-                        }
-                    >
-                      {status}
-                    </button>
-                ))}
-              </div>
-          )}
-        </div>
-
-        {/* Student Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {filteredStudents.map((student) => (
-              <div key={student.id} className="relative">
-                <ValidationCard
-                    student={{
-                      name: student.name,
-                      nim: student.nim,
-                      documentStatus: student.documentStatus,
-                      submissionDate: student.submissionDate,
-                      status: student.status,
-                    }}
-                    variant="default"
-                    className="h-full cursor-pointer"
-                    onClick={() => {
-                      setActiveDocument({
-                        id: student.id,
-                        title: `Dokumen ${student.documentStatus} - ${student.name}`,
-                        status: student.status,
-                        documentStatus: student.documentStatus,
-                      });
-                      setShowDialog(true);
-                    }}
-                />
-              </div>
-          ))}
-
-          {/* Empty State */}
-          {filteredStudents.length === 0 && (
-              <div className="col-span-full text-center py-8 text-gray-500">
-                Tidak ada pengajuan yang ditemukan
-              </div>
-          )}
-        </div>
-
-        {/* Validation Dialog */}
-        {showDialog && activeDocument && (
-            <ValidationModal
-                activeDocument={{
-                  ...activeDocument,
-                  documentStatus:
-                      activeDocument.documentStatus as keyof typeof documentLists,
-                }}
-                initialDocuments={
-                    students.find((s) => s.id === activeDocument.id)?.documentsHistory[
-                        activeDocument.documentStatus
-                        ] || []
+                onClick={() =>
+                  setFilterStatus(filterStatus === status ? "" : status)
                 }
-                onClose={() => {
-                  setShowDialog(false);
-                  setActiveDocument(null);
-                }}
-                onSave={(documents) => {
-                  updateStudentStatus(activeDocument.id, documents);
-                  setShowDialog(false);
-                  setActiveDocument(null);
-                }}
-            />
+              >
+                {status}
+              </button>
+            ))}
+          </div>
         )}
       </div>
+
+      {/* Student Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        {filteredStudents.map((student) => (
+          <div key={student.id} className="relative">
+            <ValidationCard
+              student={{
+                name: student.name,
+                nim: student.nim,
+                documentStatus: student.documentStatus,
+                submissionDate: student.submissionDate,
+                status: student.status,
+              }}
+              variant="default"
+              className="h-full cursor-pointer"
+              onClick={() => {
+                setActiveDocument({
+                  id: student.id,
+                  title: `Dokumen ${student.documentStatus} - ${student.name}`,
+                  status: student.status,
+                  documentStatus: student.documentStatus,
+                });
+                setShowDialog(true);
+              }}
+            />
+          </div>
+        ))}
+
+        {/* Empty State */}
+        {filteredStudents.length === 0 && (
+          <div className="col-span-full text-center py-8 text-gray-500">
+            Tidak ada pengajuan yang ditemukan
+          </div>
+        )}
+      </div>
+
+      {/* Validation Dialog */}
+      {showDialog && activeDocument && (
+        <ValidationModal
+          activeDocument={{
+            ...activeDocument,
+            documentStatus:
+              activeDocument.documentStatus as keyof typeof documentLists,
+          }}
+          initialDocuments={
+            students.find((s) => s.id === activeDocument.id)?.documentsHistory[
+              activeDocument.documentStatus
+            ] || []
+          }
+          onClose={() => {
+            setShowDialog(false);
+            setActiveDocument(null);
+          }}
+          onSave={(documents) => {
+            updateStudentStatus(activeDocument.id, documents);
+            setShowDialog(false);
+            setActiveDocument(null);
+          }}
+        />
+      )}
+    </div>
   );
 };
 

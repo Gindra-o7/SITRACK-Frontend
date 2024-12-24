@@ -11,7 +11,7 @@ const Dashboard: React.FC = () => {
         "Berikan penilaian untuk mahasiswa yang telah melaksanakan seminar kerja praktik.",
       path: "/dosen/mahasiswa-seminar",
       icon: PenLine,
-    }
+    },
   ];
 
   const alert: AlertData = {

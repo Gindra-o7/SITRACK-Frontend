@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Search,
-  ListFilter,
-  Calendar,
-  Building,
-  User,
-} from "lucide-react";
+import { Search, ListFilter, Calendar, Building, User } from "lucide-react";
 import { InputNilaiPembimbingInstansi } from "../../modal/InputNilai";
 import LihatNilai from "../../modal/LihatNilai";
 import Alert, { AlertData } from "../../Alert";
@@ -165,9 +159,7 @@ const DashboardPembimbingInstansi: React.FC = () => {
                     <h3 className="text-lg font-semibold text-gray-900">
                       {student.name}
                     </h3>
-                    <p className="text-gray-600 text-sm">
-                      NIM: {student.nim}
-                    </p>
+                    <p className="text-gray-600 text-sm">NIM: {student.nim}</p>
                   </div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs ${
