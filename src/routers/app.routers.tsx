@@ -2,7 +2,7 @@ import {createBrowserRouter} from "react-router-dom";
 import LandingPages from "../pages/Landing.Pages";
 import Forbidden from "../components/Forbidden";
 import NotFound from "../pages/NotFound";
-import ProtectedRoute from "./protected.routers";
+import ProtectedRoute from "./protected.routers.tsx";
 import {AuthPage} from "../pages/Auth.Pages.tsx";
 import DashboardMahasiswaPages from "../pages/mahasiswa/DashboardMahasiswa.tsx";
 import PengajuanMahasiswaPages from "../pages/mahasiswa/PengajuanKoordinator.tsx";
@@ -56,14 +56,16 @@ const router = createBrowserRouter([
     {
         path: "/mahasiswa",
         element: (
+            <ProtectedRoute allowedRoles={["mahasiswa"]}>
                 <DashboardMahasiswaPages/>
+            </ProtectedRoute>
         ),
     }, {
         path: "/mahasiswa/pengajuan",
         element: (
-
+            <ProtectedRoute allowedRoles={["mahasiswa"]}>
                 <PengajuanMahasiswaPages/>
-
+            </ProtectedRoute>
         ),
     },
 
@@ -71,17 +73,17 @@ const router = createBrowserRouter([
     {
         path: "/dosen-pembimbing",
         element: (
-
+            <ProtectedRoute allowedRoles={["dosen_pembimbing"]}>
                 <DashboardDosenPembimbingPages/>
-
+            </ProtectedRoute>
         ),
     },
     {
         path: "/dosen-pembimbing/riwayat",
         element: (
-
+            <ProtectedRoute allowedRoles={["dosen_pembimbing"]}>
                 <RiwayatDosenPembimbingPages/>
-
+            </ProtectedRoute>
         ),
     },
 
@@ -89,78 +91,57 @@ const router = createBrowserRouter([
     {
         path: "/dosen-penguji",
         element: (
-
+            <ProtectedRoute allowedRoles={["dosen_penguji"]}>
                 <DashboardDosenPengujiPages/>
-
+            </ProtectedRoute>
         ),
     }, {
         path: "/dosen-penguji/mahasiswa-seminar",
         element: (
-
+            <ProtectedRoute allowedRoles={["dosen_penguji"]}>
                 <MahasiswaDosenPengujiPages/>
-
+            </ProtectedRoute>
         ),
     },
 
     // Route role koordinator
-    // {
-    //   path: "/koordinator",
-    //   element: (
-    //       <ProtectedRoute allowedRoles={["koordinator"]}>
-    //         <DashboardKoordinatorPages />
-    //       </ProtectedRoute>
-    //   ),
-    // },{
-    //   path: "/koordinator/validasi",
-    //   element: (
-    //       <ProtectedRoute allowedRoles={["koordinator"]}>
-    //         <ValidasiKoordinatorPages />
-    //       </ProtectedRoute>
-    //   ),
-    // },{
-    //   path: "/koordinator/penjadwalan",
-    //   element: (
-    //       <ProtectedRoute allowedRoles={["koordinator"]}>
-    //         <PenjadwalanKoordinatorPages />
-    //       </ProtectedRoute>
-    //   ),
-    // },{
-    //   path: "/koordinator/manage-account",
-    //   element: (
-    //       <ProtectedRoute allowedRoles={["koordinator"]}>
-    //         <ManageAkunKoordinatorPages />
-    //       </ProtectedRoute>
-    //   ),
-    // },
     {
-        path: "/koordinator",
-        element: (
-            <DashboardKoordinatorPages/>
-        ),
-    }, {
-        path: "/koordinator/validasi",
-        element: (
-            <ValidasiKoordinatorPages/>
-        ),
-    }, {
-        path: "/koordinator/penjadwalan",
-        element: (
-            <PenjadwalanKoordinatorPages/>
-        ),
-    }, {
-        path: "/koordinator/manage-account",
-        element: (
-            <ManageAkunKoordinatorPages/>
-        ),
+      path: "/koordinator",
+      element: (
+          <ProtectedRoute allowedRoles={["koordinator"]}>
+            <DashboardKoordinatorPages />
+          </ProtectedRoute>
+      ),
+    },{
+      path: "/koordinator/validasi",
+      element: (
+          <ProtectedRoute allowedRoles={["koordinator"]}>
+            <ValidasiKoordinatorPages />
+          </ProtectedRoute>
+      ),
+    },{
+      path: "/koordinator/penjadwalan",
+      element: (
+          <ProtectedRoute allowedRoles={["koordinator"]}>
+            <PenjadwalanKoordinatorPages />
+          </ProtectedRoute>
+      ),
+    },{
+      path: "/koordinator/manage-account",
+      element: (
+          <ProtectedRoute allowedRoles={["koordinator"]}>
+            <ManageAkunKoordinatorPages />
+          </ProtectedRoute>
+      ),
     },
 
     // Route role kaprodi
     {
         path: "/kaprodi",
         element: (
-
+            <ProtectedRoute allowedRoles={["kaprodi"]}>
                 <VisualDataKaprodiPages/>
-
+            </ProtectedRoute>
         ),
     },
 
@@ -168,8 +149,9 @@ const router = createBrowserRouter([
     {
         path: "/pembimbing-instansi",
         element: (
-
+            <ProtectedRoute allowedRoles={["pembimbing_instansi"]}>
                 <DashboardPembimbingInstansiPages/>
+            </ProtectedRoute>
 
         ),
     },

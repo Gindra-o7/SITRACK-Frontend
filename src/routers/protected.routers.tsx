@@ -7,15 +7,18 @@ interface ProtectedRouteProps {
     children: ReactNode;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles, children }) => {
-    const { user, isAuthenticated } = useAuth();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+                                                           children,
+                                                           allowedRoles = []
+                                                       }) => {
+    const {isAuthenticated, userRole} = useAuth();
 
     if (!isAuthenticated) {
-        return <Navigate to="/auth" replace />;
+        return <Navigate to="/auth/login" />;
     }
 
-    if (!allowedRoles.includes(user!.role)) {
-        return <Navigate to="/unauthorized" replace />;
+    if (allowedRoles.length > 0 && userRole && !allowedRoles.includes(userRole)) {
+        return <Navigate to="/unauthorized"/>;
     }
 
     return <>{children}</>;

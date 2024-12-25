@@ -5,6 +5,10 @@ import {
     Plus,
     Pencil,
     Trash2,
+    AlertCircle,
+    CheckCircle2,
+    Eye,
+    EyeOff
 } from "lucide-react";
 import {
     Badge,
@@ -14,6 +18,7 @@ import {
     Pagination,
     TextInput,
     Label,
+    Alert
 } from "flowbite-react";
 
 interface User {
@@ -34,6 +39,7 @@ const ManageAccounts = () => {
     const [selectedRole, setSelectedRole] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [showPassword, setShowPassword] = useState(false);
     const [itemsPerPage] = useState(10);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -129,76 +135,101 @@ const ManageAccounts = () => {
         });
     };
 
+    const [formErrors, setFormErrors] = useState<{
+        [key: string]: string
+    }>({});
+    const [alertMessage, setAlertMessage] = useState<{
+        type: 'success' | 'error';
+        message: string;
+    } | null>(null);
+
+    // Reset form function
+    const resetForm = () => {
+        setNewUserData({
+            nama: "",
+            email: "",
+            roles: [],
+            password: "",
+            nim: "",
+            nip: ""
+        });
+        setFormErrors({});
+    };
+
+    // Validation function
+    const validateForm = () => {
+        const errors: { [key: string]: string } = {};
+
+        if (!newUserData.nama) errors.nama = "Nama wajib diisi";
+        if (!newUserData.email) errors.email = "Email wajib diisi";
+        if (!newUserData.password) errors.password = "Password wajib diisi";
+        if (newUserData.roles.length === 0) errors.roles = "Minimal pilih satu role";
+
+        // Validate NIM/NIP based on selected roles
+        if (newUserData.roles.includes('mahasiswa') && !newUserData.nim) {
+            errors.nim = "NIM wajib diisi untuk mahasiswa";
+        }
+        if ((newUserData.roles.includes('dosen_pembimbing') ||
+                newUserData.roles.includes('dosen_penguji')) &&
+            !newUserData.nip) {
+            errors.nip = "NIP wajib diisi untuk dosen";
+        }
+
+        return errors;
+    };
+
     const handleAddUser = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate form
+        const errors = validateForm();
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            return;
+        }
+
         setIsLoading(true);
         try {
-            // Validate input
-            if (!newUserData.nama || !newUserData.email || newUserData.roles.length === 0 || !newUserData.password) {
-                throw new Error("Harap lengkapi semua field yang wajib");
-            }
-
-            // Prepare payload
             const payload = {
                 nama: newUserData.nama,
                 email: newUserData.email,
-                roles: newUserData.roles,
                 password: newUserData.password,
-                // Conditionally add NIM or NIP based on roles
-                ...(newUserData.roles.includes('mahasiswa') ? { nim: newUserData.nim } :
-                    newUserData.roles.includes('dosen_pembimbing') || newUserData.roles.includes('dosen_penguji')
-                        ? { nip: newUserData.nip }
-                        : {})
+                roles: newUserData.roles,
+                ...(newUserData.roles.includes('mahasiswa') && { nim: newUserData.nim }),
+                ...(newUserData.roles.some(role => ['dosen_pembimbing', 'dosen_penguji', 'kaprodi'].includes(role)) &&
+                    { nip: newUserData.nip })
             };
 
-            // Log payload for debugging
-            console.log("Sending payload:", JSON.stringify(payload, null, 2));
-
-            // Send POST request
             const response = await axiosInstance.post("/koordinator/user", payload);
 
-            // Log the entire response
-            console.log("Full response:", response);
-
-            // Use response data if available
-            const responseData = response.data;
-            console.log("Response data:", responseData);
-
-            // Handle successful response
-            setToastMessage({
+            // Handle success
+            setAlertMessage({
                 type: 'success',
-                message: responseData?.message || 'Berhasil menambahkan pengguna baru'
+                message: 'Berhasil menambahkan pengguna baru'
             });
 
-            // Optionally use response data to update state or perform further actions
-            if (responseData && responseData.user) {
-                // Example: You might want to add the new user to your existing users list
-                setUsers(prevUsers => [...prevUsers, responseData.user]);
-            }
-
-            // Refresh user list (optional, since you might already have added the user)
+            // Refresh data
             fetchUsers();
 
-            // Close the modal
+            // Reset form and close modal
+            resetForm();
             setShowAddModal(false);
 
         } catch (error: any) {
-            // Detailed error logging
-            console.error("Full error object:", error);
-            console.error("Error response:", error.response);
-            console.error("Error message:", error.message);
-            console.error("Error status:", error.status);
+            console.error('Error adding user:', error);
 
-            // More detailed error message
-            const errorMessage = error.response?.data?.message ||
-                error.response?.data ||
-                error.message ||
-                'Gagal menambahkan pengguna';
-
-            setToastMessage({
-                type: 'error',
-                message: errorMessage
-            });
+            // Handle validation errors from backend
+            if (error.response?.data?.errors) {
+                setFormErrors(error.response.data.errors.reduce((acc: any, curr: any) => {
+                    acc[curr.field] = curr.message;
+                    return acc;
+                }, {}));
+            } else {
+                setAlertMessage({
+                    type: 'error',
+                    message: error.response?.data?.message || 'Gagal menambahkan pengguna'
+                });
+            }
         } finally {
             setIsLoading(false);
         }
@@ -255,6 +286,17 @@ const ManageAccounts = () => {
                     </Button>
                 </div>
             </div>
+
+            {alertMessage && (
+                <Alert
+                    color={alertMessage.type === 'success' ? 'success' : 'failure'}
+                    icon={alertMessage.type === 'success' ? CheckCircle2 : AlertCircle}
+                    onDismiss={() => setAlertMessage(null)}
+                    className="mb-4"
+                >
+                    {alertMessage.message}
+                </Alert>
+            )}
 
             {/* Loading and Error States */
             }
@@ -336,37 +378,47 @@ const ManageAccounts = () => {
             {/* Add User Modal */}
             <Modal
                 show={showAddModal}
-                onClose={() => setShowAddModal(false)}
+                onClose={() => {
+                    setShowAddModal(false);
+                    resetForm();
+                }}
                 size="md"
             >
                 <Modal.Header>Tambah Akun Baru</Modal.Header>
                 <Modal.Body>
                     <form onSubmit={handleAddUser} className="space-y-4">
                         <div>
-                            <Label htmlFor="nama">Nama</Label>
+                            <Label htmlFor="nama" className="mb-2">Nama</Label>
                             <TextInput
                                 id="nama"
                                 name="nama"
                                 value={newUserData.nama}
                                 onChange={handleInputChange}
-                                required
+                                color={formErrors.nama ? 'failure' : undefined}
+                                helperText={formErrors.nama}
                                 placeholder="Masukkan nama lengkap"
                             />
                         </div>
+
                         <div>
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="mb-2">Email</Label>
                             <TextInput
                                 id="email"
                                 type="email"
                                 name="email"
                                 value={newUserData.email}
                                 onChange={handleInputChange}
-                                required
+                                color={formErrors.email ? 'failure' : undefined}
+                                helperText={formErrors.email}
                                 placeholder="contoh@email.com"
                             />
                         </div>
+
                         <div>
-                            <Label>Pilih Role</Label>
+                            <Label className="mb-2">Pilih Role</Label>
+                            {formErrors.roles && (
+                                <div className="text-red-500 text-sm mb-2">{formErrors.roles}</div>
+                            )}
                             <div className="flex flex-wrap gap-2 mt-2">
                                 {roles.slice(1).map((role) => (
                                     <Badge
@@ -380,23 +432,36 @@ const ManageAccounts = () => {
                                 ))}
                             </div>
                         </div>
+
                         <div>
                             <Label htmlFor="password">Password</Label>
-                            <TextInput
-                                id="password"
-                                type="password"
-                                name="password"
-                                value={newUserData.password}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Masukkan password"
-                            />
+                            <div className="relative">
+                                <TextInput
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Password"
+                                    value={newUserData.password}
+                                    onChange={handleInputChange}
+                                    color={formErrors.password ? "failure" : undefined}
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute right-2 top-2"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                >
+                                    {showPassword ? <Eye className="h-5 w-5"/> : <EyeOff className="h-5 w-5"/>}
+                                </button>
+                            </div>
+                            {formErrors.password && (
+                                <p className="text-sm text-red-500">{formErrors.password}</p>
+                            )}
                         </div>
+
                         {(newUserData.roles.includes('mahasiswa') ||
-                            newUserData.roles.includes('dosen_pembimbing') ||
-                            newUserData.roles.includes('dosen_penguji')) && (
+                            newUserData.roles.some(role => ['dosen_pembimbing', 'dosen_penguji', 'kaprodi', 'koordinator'].includes(role))) && (
                             <div>
-                                <Label htmlFor="nim-nip">
+                                <Label htmlFor="nim-nip" className="mb-2">
                                     {newUserData.roles.includes('mahasiswa') ? 'NIM' : 'NIP'}
                                 </Label>
                                 <TextInput
@@ -405,20 +470,29 @@ const ManageAccounts = () => {
                                     name={newUserData.roles.includes('mahasiswa') ? 'nim' : 'nip'}
                                     value={newUserData.roles.includes('mahasiswa') ? newUserData.nim : newUserData.nip}
                                     onChange={handleInputChange}
-                                    required
-                                    placeholder={newUserData.roles.includes('mahasiswa') ? 'Masukkan NIM' : 'Masukkan NIP'}
+                                    color={formErrors.nim || formErrors.nip ? 'failure' : undefined}
+                                    helperText={formErrors.nim || formErrors.nip}
+                                    placeholder={`Masukkan ${newUserData.roles.includes('mahasiswa') ? 'NIM' : 'NIP'}`}
                                 />
                             </div>
                         )}
+
                         <div className="flex justify-end space-x-2">
                             <Button
                                 color="light"
-                                onClick={() => setShowAddModal(false)}
+                                onClick={() => {
+                                    setShowAddModal(false);
+                                    resetForm();
+                                }}
                             >
                                 Batal
                             </Button>
-                            <Button type="submit" color="blue" onClick={handleAddUser}>
-                                Kirim
+                            <Button
+                                type="submit"
+                                color="blue"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Memproses...' : 'Kirim'}
                             </Button>
                         </div>
                     </form>

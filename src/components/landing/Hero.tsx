@@ -1,7 +1,6 @@
 import React from "react";
-import Button from "../Button";
-import { Marqueee } from "@/components/Marqueee";  
-import TypingAnimation from "@/components/ui/typing-animation"; // Impor TypingAnimation
+import { Marqueee } from "../Marqueee";
+import TypingAnimation from "../ui/typing-animation.tsx";
 
 interface HeroProps {}
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Label, TextInput, Button, Toast } from 'flowbite-react';
-import { HiMail, HiLockClosed, HiUser, HiEye, HiEyeOff, HiCheck, HiX } from 'react-icons/hi';
+import { HiMail, HiLockClosed, HiUser, HiEye, HiEyeOff, HiCheck, HiX, HiIdentification } from 'react-icons/hi';
 import axiosInstance from "../../configs/axios.configs";
 import axios from "axios";
 
@@ -10,8 +10,9 @@ interface RegisterFormProps {
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
     const [registerData, setRegisterData] = useState({
-        name: '',
+        nama: '',
         email: '',
+        nim: '',
         password: '',
         confirmPassword: '',
     });
@@ -40,7 +41,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
         e.preventDefault();
 
         // Validasi input
-        if (!registerData.name.trim()) {
+        if (!registerData.nama.trim()) {
             showToast('error', 'Nama tidak boleh kosong');
             return;
         }
@@ -64,8 +65,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
 
         try {
             const response = await axiosInstance.post('/register', {
-                name: registerData.name,
+                nama: registerData.nama,
                 email: registerData.email,
+                nim: registerData.nim,
                 password: registerData.password,
             });
 
@@ -120,17 +122,17 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
             <h2 className="text-2xl font-bold text-center mb-4 text-black">Daftar</h2>
             <form onSubmit={handleRegister} className="space-y-4">
                 <div>
-                    <Label htmlFor="name" value="Nama Lengkap" />
+                    <Label htmlFor="nama" value="Nama Lengkap" />
                     <TextInput
                         icon={HiUser}
-                        id="name"
+                        id="nama"
                         placeholder="Nama Lengkap"
                         required
                         type="text"
-                        value={registerData.name}
+                        value={registerData.nama}
                         onChange={(e) => setRegisterData(prev => ({
                             ...prev,
-                            name: e.target.value
+                            nama: e.target.value
                         }))}
                     />
                 </div>
@@ -146,6 +148,21 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
                         onChange={(e) => setRegisterData(prev => ({
                             ...prev,
                             email: e.target.value
+                        }))}
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="nim" value="NIM" />
+                    <TextInput
+                        icon={HiIdentification}
+                        id="nim"
+                        placeholder="Masukkan NIM yang terdaftar"
+                        required
+                        type="nim"
+                        value={registerData.nim}
+                        onChange={(e) => setRegisterData(prev => ({
+                            ...prev,
+                            nim: e.target.value
                         }))}
                     />
                 </div>

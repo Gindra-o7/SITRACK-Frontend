@@ -7,7 +7,7 @@ import {
     HiEye,
     HiEyeOff,
 } from 'react-icons/hi';
-import { useAuth } from "@/contexts/auth.contexts";
+import { useAuth } from "../../contexts/auth.contexts";
 import { useNavigate } from 'react-router-dom';
 import axiosInstance, { isAxiosError } from "../../configs/axios.configs";
 import { useToast } from "../modal/Toast";
@@ -46,11 +46,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validasi input
         if (!validateInput()) return;
-
-        // Log data sebelum dikirim
-        console.log("Login Data yang dikirim:", loginData);
 
         try {
             const response = await axiosInstance.post('/login', {
@@ -58,26 +54,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 password: loginData.password,
             });
 
-            const tokenData = response.data?.token;
-            const userData = response.data?.user;
+            const { token, user } = response.data;
 
-            if (!tokenData || !userData) {
+            if (!token || !user) {
                 throw new Error('Token atau user data tidak valid.');
             }
 
-            // Simpan token dan role berdasarkan rememberMe
+            // Simpan token berdasarkan rememberMe
             if (loginData.rememberMe) {
-                localStorage.setItem("token", tokenData);
-                localStorage.setItem("userRole", userData.role);
+                localStorage.setItem("token", token);
             } else {
-                sessionStorage.setItem("token", tokenData);
-                sessionStorage.setItem("userRole", userData.role);
+                sessionStorage.setItem("token", token);
             }
 
-            // Update Auth Context
-            await login(userData.email, userData.role);
+            // Update Auth Context dengan roles dari API
+            await login(user.email, user.roles);
 
-            // Redirect berdasarkan role
+            // Tentukan route berdasarkan role pertama
+            const primaryRole = user.roles[0];
             const roleRoutes: { [key: string]: string } = {
                 mahasiswa: '/mahasiswa',
                 dosen_penguji: '/dosen-penguji',
@@ -87,8 +81,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 pembimbing_instansi: '/pembimbing-instansi',
             };
 
-            navigate(roleRoutes[userData.role] || '/');
-
+            navigate(roleRoutes[primaryRole] || '/');
             showToast({ message: "Login berhasil!", type: "success" });
         } catch (error: unknown) {
             if (isAxiosError(error)) {

@@ -2,8 +2,8 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL_PLACEHOLDER, // Adjust to your backend server URL
-  withCredentials: true, // If you're using cookies or need to send credentials
+  baseURL: import.meta.env.VITE_API_URL_PLACEHOLDER,
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
