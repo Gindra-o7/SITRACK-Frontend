@@ -3,7 +3,7 @@ import { Spinner } from "flowbite-react";
 import Layout from "../../components/role/Layout";
 import { sidebarMahasiswaItems } from "../../components/SidebarItems";
 import DashboardMahasiswa from "../../components/role/mahasiswa/DashboardMahasiswa";
-import { LoadingDashboard } from "../LoadingInterface";
+import { LoadingDashboardMahasiswa } from "../LoadingInterface";
 
 const DashboardMahasiswaPages = () => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -20,7 +20,7 @@ const DashboardMahasiswaPages = () => {
         {isLoading ? (
           <div className="relative w-full h-full bg-gray-100">
             {/* Skeleton Background */}
-            <LoadingDashboard cardCount={1} showAlert={true} statsCount={3} />
+            <LoadingDashboardMahasiswa cardCount={1} showAlert={true} />
 
             {/* Spinner dan Teks di Tengah */}
             <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">

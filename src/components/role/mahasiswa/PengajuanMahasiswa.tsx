@@ -13,6 +13,7 @@ import {
   PendaftaranMenunggu,
 } from "../../modal/StatusPendaftaran";
 import { CardUpload } from "../../Card";
+import { Button } from "flowbite-react";
 
 // Types & Data
 export interface DocumentData {
@@ -135,24 +136,24 @@ const Pengajuan: React.FC = () => {
   };
 
   return (
-    <div className="container bg-white p-4 rounded-lg">
+    <div className="container bg-white md:p-4 rounded-lg">
       <div className="mt-6">
         <ProgressSteps activeStep={activeStep} onStepClick={handleStepClick} />
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-reguler text-gray-900">
+      <div className="flex justify-between items-center mb-6 flex-col md:flex-row">
+        <h3 className="md:text-lg text-base font-reguler text-gray-900">
           Riwayat Pengajuan{" "}
           <span className="font-bold">{STEPS[activeStep].title}</span> Seminar
           KP
         </h3>
-        <button
+        <Button
           onClick={() => setModalStates((prev) => ({ ...prev, upload: true }))}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300"
+          className="inline-flex items-center w-full md:w-fit mt-4 text-sm font-medium text-white bg-blue-700 border border-gray-300 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
         >
           Buat
           <PlusCircle className="w-5 h-5 ml-2" />
-        </button>
+        </Button>
       </div>
 
       {SAMPLE_SUBMISSIONS.map((submission, index) => (

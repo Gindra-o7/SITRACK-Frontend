@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardData } from "../../Card";
 import Alert, { AlertData } from "../../Alert";
-import { PenLine, History } from "lucide-react";
+import { PenLine } from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const cards: CardData[] = [
@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="flex">
       <div className="flex-1 overflow-auto">
-        <main className="p-6">
+        <main>
           <div className="mb-8">
             <h2 className="text-2xl font-bold">
               Selamat Datang, Dr. Budi Santoso, M.Kom
