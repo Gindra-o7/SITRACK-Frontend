@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Search, ListFilter, Calendar, Building, User } from "lucide-react";
+import { ListFilter, Calendar, Building, User } from "lucide-react";
 import { InputNilaiPembimbingInstansi } from "../../modal/InputNilai";
 import LihatNilai from "../../modal/LihatNilai";
 import Alert, { AlertData } from "../../Alert";
+import SearchBar from "../../SearchBar";
+import Pagination from "../../Pagination";
 
 interface Student {
   nim: string;
@@ -17,10 +19,12 @@ interface Student {
 }
 
 const DashboardPembimbingInstansi: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [isInputModalOpen, setIsInputModalOpen] = useState<boolean>(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const students: Student[] = [
     {
@@ -78,78 +82,114 @@ const DashboardPembimbingInstansi: React.FC = () => {
     setSelectedStudent(null);
   };
 
-  const filteredStudents = students.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.nim.includes(searchQuery) ||
-      student.division.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleStatsCardClick = (filter: string | null) => {
+    setActiveFilter(activeFilter === filter ? null : filter);
+  };
+
+  // Get counts for each status
+  const statusCounts = {
+    total: students.length,
+    aktif: students.filter((s) => s.status === "Aktif").length,
+    selesai: students.filter((s) => s.status === "Selesai").length,
+  };
+
+  const filteredStudents = students
+    .filter((student) => {
+      if (!activeFilter) return true;
+      switch (activeFilter) {
+        case "total":
+          return true;
+        case "aktif":
+          return student.status === "Aktif";
+        case "selesai":
+          return student.status === "Selesai";
+        default:
+          return true;
+      }
+    })
+    .filter(
+      (student) =>
+        student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.nim.includes(searchQuery) ||
+        student.division.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+  const handleSearch = (newQuery: string) => {
+    setSearchQuery(newQuery);
+    setCurrentPage(1);
+  };
+
+  // Pagination
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginated = filteredStudents.slice(startIndex, endIndex);
 
   const alert: AlertData = {
     description: "Anda memiliki 3 mahasiswa yang harus dinilai",
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div>
       <div className="flex flex-col justify-between items-start mb-8">
         <div>
-          <h1 className="text-3xl font-semibold mb-2">
+          <h1 className="md:text-3xl text-2xl font-semibold mb-2">
             Selamat Datang, PT. Technology Indonesia
           </h1>
           <p className="text-gray-600">Pembimbing Instansi Kerja Praktik</p>
         </div>
       </div>
-
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white shadow-sm rounded-lg p-4 border-l-4 border-blue-500">
+        <div
+          className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-blue-500 cursor-pointer transition-all ${
+            activeFilter === "total" ? "ring-2 ring-blue-500 shadow-md" : ""
+          }`}
+          onClick={() => handleStatsCardClick("total")}
+        >
           <p className="text-gray-600 text-sm">Total Mahasiswa</p>
-          <h2 className="text-2xl font-bold mt-1">3</h2>
+          <h2 className="text-2xl font-bold mt-1">{statusCounts.total}</h2>
           <p className="text-blue-500 text-sm mt-2">Semester Ini</p>
         </div>
-        <div className="bg-white shadow-sm rounded-lg p-4 border-l-4 border-yellow-500">
+        <div
+          className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-yellow-500 cursor-pointer transition-all ${
+            activeFilter === "aktif" ? "ring-2 ring-yellow-500 shadow-md" : ""
+          }`}
+          onClick={() => handleStatsCardClick("aktif")}
+        >
           <p className="text-gray-600 text-sm">Mahasiswa Aktif</p>
-          <h2 className="text-2xl font-bold mt-1">2</h2>
+          <h2 className="text-2xl font-bold mt-1">{statusCounts.aktif}</h2>
           <p className="text-yellow-500 text-sm mt-2">Menunggu Penilaian</p>
         </div>
-        <div className="bg-white shadow-sm rounded-lg p-4 border-l-4 border-green-500">
+        <div
+          className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-green-500 cursor-pointer transition-all ${
+            activeFilter === "selesai" ? "ring-2 ring-green-500 shadow-md" : ""
+          }`}
+          onClick={() => handleStatsCardClick("selesai")}
+        >
           <p className="text-gray-600 text-sm">Mahasiswa Selesai</p>
-          <h2 className="text-2xl font-bold mt-1">1</h2>
+          <h2 className="text-2xl font-bold mt-1">{statusCounts.selesai}</h2>
           <p className="text-green-500 text-sm mt-2">Sudah Dinilai</p>
         </div>
       </div>
-
       <Alert description={alert.description} />
-
       {/* Student List Section */}
-      <div className="bg-white rounded-lg shadow-sm">
-        <div className="p-6 border-b border-gray-200">
+      <div className="bg-white rounded-lg md:shadow-sm">
+        <div className="md:p-6 pb-2 border-b border-gray-200">
           <h2 className="text-lg font-medium mb-4">
             Daftar Mahasiswa Kerja Praktik
           </h2>
-          <div className="flex flex-col sm:flex-row items-center gap-2">
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Cari mahasiswa berdasarkan nama, NIM, atau divisi..."
-                className="w-full pl-10 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <button className="w-full sm:w-auto bg-white px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-              <ListFilter className="h-4 w-4" />
-              Filter Status
-            </button>
-          </div>
+
+          <SearchBar
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Cari mahasiswa berdasarkan nama, NIM, atau divisi..."
+          />
         </div>
 
-        <div className="p-6">
+        <div className="md:p-6 py-2 ">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredStudents.map((student, index) => (
+            {paginated.map((student, index) => (
               <div
                 key={index}
                 className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
@@ -207,7 +247,7 @@ const DashboardPembimbingInstansi: React.FC = () => {
                     className={`w-full py-2 rounded-lg font-medium transition-colors ${
                       student.action === "Sudah Dinilai"
                         ? "bg-blue-50 hover:bg-blue-100 text-blue-600"
-                        : "bg-blue-500 hover:bg-blue-600 text-white"
+                        : "bg-blue-700 hover:bg-blue-800 text-white"
                     }`}
                   >
                     {student.action}
@@ -216,9 +256,19 @@ const DashboardPembimbingInstansi: React.FC = () => {
               </div>
             ))}
           </div>
+          {filteredStudents.length > itemsPerPage && (
+            <div className="my-4">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                itemsPerPage={itemsPerPage}
+                totalItems={filteredStudents.length}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
         </div>
       </div>
-
       {/* Modals */}
       <InputNilaiPembimbingInstansi
         isOpen={isInputModalOpen}

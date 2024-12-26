@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { Search, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import ValidationModal from "../../modal/Validasi.Modal";
 import { ValidationCard } from "../../Card.tsx";
+import SearchBar from "../../SearchBar.tsx";
+import { Button, Dropdown } from "flowbite-react";
+import Pagination from "../../Pagination.tsx";
 
 const Validasi = () => {
   const [students, setStudents] = useState([
@@ -114,12 +117,22 @@ const Validasi = () => {
       documentsHistory: {} as Record<string, Document[]>,
     },
   ]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [showDialog, setShowDialog] = useState(false);
   const [activeDocument, setActiveDocument] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const status = [
+    { id: "all", label: "Semua" },
+    { id: "persyaratan", label: "Persyaratan" },
+    { id: "pendaftaran", label: "Pendaftaran" },
+    { id: "pasca_seminar", label: "Pasca Seminar" },
+  ];
+
+  const itemsPerPage = 15;
 
   // Fungsi untuk mengupdate status mahasiswa setelah validasi
   const updateStudentStatus = (studentId: number, documents: Document[]) => {
@@ -153,15 +166,33 @@ const Validasi = () => {
   // Filter Mahasiswa berdasarkan status dokumennya
   const filteredStudents = students.filter((student) => {
     const matchesSearch =
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.nim.includes(searchTerm);
+      student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.nim.includes(searchQuery);
     const matchesFilter =
-      filterStatus === "" || student.documentStatus === filterStatus;
+      filterStatus === "all" ||
+      student.documentStatus.toLowerCase() ===
+        status.find((s) => s.id === filterStatus)?.label.toLowerCase();
     return matchesSearch && matchesFilter;
   });
 
+  // Pagination
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginated = filteredStudents.slice(startIndex, endIndex);
+
+  const handleFilterChange = (newFilter: string) => {
+    setFilterStatus(newFilter);
+    setCurrentPage(1);
+  };
+
+  const handleSearch = (newQuery: string) => {
+    setSearchQuery(newQuery);
+    setCurrentPage(1);
+  };
+
   return (
-    <div className="container px-4 py-6 md:px-6 bg-gray-50 min-h-screen">
+    <div className="container ">
       <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
         Validasi Dokumen Mahasiswa
       </h1>
@@ -170,82 +201,70 @@ const Validasi = () => {
       <div className="mb-4 md:mb-6">
         <div className="flex items-center space-x-2">
           {/* Search Input */}
-          <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Cari nama/NIM"
-              className="w-full pl-10 p-2 border border-gray-300 rounded-lg text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+          <SearchBar
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Cari mahasiswa berdasarkan nama atau NIM..."
+          />
 
           {/* Filter Buttons */}
           <div className="hidden md:block">
             <div className="flex space-x-2">
-              {["Persyaratan", "Pendaftaran", "Pasca Seminar"].map((status) => (
-                <button
-                  key={status}
-                  className={`
-                    px-3 py-2 rounded-full text-xs font-medium transition-colors
-                    ${
-                      filterStatus === status
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }
-                  `}
-                  onClick={() =>
-                    setFilterStatus(filterStatus === status ? "" : status)
-                  }
+              {status.map((status) => (
+                <Button
+                  key={status.id}
+                  color={filterStatus === status.id ? "blue" : "light"}
+                  onClick={() => {
+                    handleFilterChange(status.id);
+                  }}
+                  size="sm"
+                  className="whitespace-nowrap py-1 border-gray-200"
                 >
-                  {status}
-                </button>
+                  {status.label}
+                </Button>
               ))}
             </div>
-          </div>
-
-          {/* Mobile Filter Toggle */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-              className="p-2 bg-gray-100 text-gray-600 rounded-lg"
-            >
-              <Filter className="h-4 w-4" />
-            </button>
           </div>
         </div>
 
         {/* Mobile Filter Dropdown */}
-        {mobileFiltersOpen && (
-          <div className="md:hidden mt-2 flex flex-wrap gap-2">
-            {["Pendaftaran", "Persyaratan", "Pasca Seminar"].map((status) => (
-              <button
-                key={status}
-                className={`
-                  px-3 py-1.5 rounded-full text-xs font-medium transition-colors
-                  ${
-                    filterStatus === status
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }
-                `}
-                onClick={() =>
-                  setFilterStatus(filterStatus === status ? "" : status)
-                }
+        <div className="md:hidden pt-2">
+          <Dropdown
+            label={
+              <span className="flex items-center text-gray-600 text-xs">
+                <Filter className="h-4 w-4 mr-2" />
+                <span>{status.find((s) => s.id === filterStatus)?.label}</span>
+              </span>
+            }
+            dismissOnClick={true}
+            color="light"
+          >
+            {status.map((statusItem) => (
+              <Dropdown.Item
+                key={statusItem.id}
+                onClick={() => {
+                  handleFilterChange(statusItem.id);
+                }}
+                className={filterStatus === statusItem.id ? "bg-blue-50" : ""}
               >
-                {status}
-              </button>
+                <span
+                  className={
+                    filterStatus === statusItem.id
+                      ? "text-blue-600 font-medium"
+                      : ""
+                  }
+                >
+                  {statusItem.label}
+                </span>
+              </Dropdown.Item>
             ))}
-          </div>
-        )}
+          </Dropdown>
+        </div>
       </div>
 
       {/* Student Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-        {filteredStudents.map((student) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-2">
+        {paginated.map((student) => (
           <div key={student.id} className="relative">
             <ValidationCard
               student={{
@@ -277,6 +296,16 @@ const Validasi = () => {
           </div>
         )}
       </div>
+
+      {filteredStudents.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          totalItems={filteredStudents.length}
+          onPageChange={setCurrentPage}
+        />
+      )}
 
       {/* Validation Dialog */}
       {showDialog && activeDocument && (

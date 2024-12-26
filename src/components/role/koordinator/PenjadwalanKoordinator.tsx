@@ -1,6 +1,9 @@
 import { useState, useMemo } from "react";
-import { Pencil, Trash2, Search } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 import TambahJadwal from "../../modal/TambahJadwal";
+import SearchBar from "../../SearchBar";
+import { Button, Table } from "flowbite-react";
+import Pagination from "../../Pagination";
 
 const JadwalNilaiTabs = () => {
   const [activeTab, setActiveTab] = useState("jadwal");
@@ -335,97 +338,136 @@ const JadwalNilaiTabs = () => {
     setEditingItem(null);
   };
 
+  const handleSearchJadwal = (newQuery: string) => {
+    setJadwalSearchTerm(newQuery);
+    setJadwalCurrentPage(1);
+  };
+
+  const handleSearchNilai = (newQuery: string) => {
+    setNilaiSearchTerm(newQuery);
+    setNilaiCurrentPage(1);
+  };
+
   const renderEmptyState = (message) => (
     <div className="text-center py-12">
       <p className="text-gray-500 text-lg">{message}</p>
     </div>
   );
 
-  const renderJadwalTab = () => (
-    <div>
-      <div className="mb-4 flex justify-between items-center">
-        <div className="relative flex-grow">
-          <input
-            type="text"
-            placeholder="Cari jadwal (nama mahasiswa)"
-            value={jadwalSearchTerm}
-            onChange={(e) => setJadwalSearchTerm(e.target.value)}
-            className="w-full p-2 pl-10 border rounded-lg"
-          />
-          <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+  const renderJadwalMobileCard = (jadwal) => (
+    <div
+      key={jadwal.id}
+      className="bg-white rounded-lg shadow-sm p-4 mb-4 border border-gray-200"
+    >
+      <div className="space-y-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-semibold text-base">{jadwal.mahasiswa}</h3>
+            <p className="text-xs text-gray-600">{jadwal.judul}</p>
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => {
+                setEditingItem(jadwal);
+                setIsModalOpen(true);
+              }}
+              className="text-blue-600 hover:text-blue-800 transition-all"
+            >
+              <Pencil className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "Apakah Anda yakin ingin menghapus jadwal ini?"
+                  )
+                ) {
+                  setJadwalList(
+                    jadwalList.filter((item) => item.id !== jadwal.id)
+                  );
+                }
+              }}
+              className="text-red-600 hover:text-red-800 transition-all"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
         </div>
-        <button
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <p className="text-gray-600">Tanggal</p>
+            <p className="font-medium">
+              {new Date(jadwal.tanggal).toLocaleDateString()}
+            </p>
+          </div>
+          <div>
+            <p className="text-gray-600">Waktu</p>
+            <p className="font-medium">{jadwal.waktu}</p>
+          </div>
+          <div>
+            <p className="text-gray-600">Penguji</p>
+            <p className="font-medium">{jadwal.dosenPenguji}</p>
+          </div>
+          <div>
+            <p className="text-gray-600">Ruangan</p>
+            <p className="font-medium">{jadwal.ruangan}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderJadwalTab = () => (
+    <div className="min-h-full">
+      <div className="mb-4 flex flex-col sm:flex-row md:justify-between gap-3">
+        <SearchBar
+          value={jadwalSearchTerm}
+          onChange={handleSearchJadwal}
+          placeholder="Cari jadwal berdasarkan nama mahasiswa..."
+        />
+
+        <Button
+          size="sm"
+          color="blue"
           onClick={() => {
             setEditingItem(null);
             setIsModalOpen(true);
           }}
-          className="ml-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center"
+          className="whitespace-nowrap w-full sm:w-auto"
         >
-          <span className="mr-2">+</span>
+          <Plus className="mr-2 h-5 w-5" />
           Tambah Jadwal
-        </button>
+        </Button>
       </div>
 
       {jadwalList.length === 0 ? (
         renderEmptyState("Belum ada jadwal ditambahkan")
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-lg shadow-lg border-collapse">
-              <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-                <tr>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
-                    Tanggal
-                  </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
-                    Waktu
-                  </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
-                    Mahasiswa
-                  </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
-                    Judul
-                  </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
-                    Penguji
-                  </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
-                    Ruangan
-                  </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold uppercase">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+          {/* Desktop View */}
+          <div className="hidden md:block overflow-x-auto">
+            <Table>
+              <Table.Head>
+                <Table.HeadCell>Tanggal</Table.HeadCell>
+                <Table.HeadCell>Waktu</Table.HeadCell>
+                <Table.HeadCell>Mahasiswa</Table.HeadCell>
+                <Table.HeadCell>Judul</Table.HeadCell>
+                <Table.HeadCell>Penguji</Table.HeadCell>
+                <Table.HeadCell>Ruangan</Table.HeadCell>
+                <Table.HeadCell>Aksi</Table.HeadCell>
+              </Table.Head>
+              <Table.Body>
                 {paginatedJadwal.map((jadwal) => (
-                  <tr
-                    key={jadwal.id}
-                    className="hover:bg-blue-50 transition-all"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
-                      {new Date(jadwal.tanggal).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
-                      {jadwal.waktu}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
-                      {jadwal.mahasiswa}
-                    </td>
-                    <td className="px-6 py-4 border-b border-gray-200 text-gray-700">
-                      {jadwal.judul}
-                    </td>
-                    <td className="px-6 py-4 border-b border-gray-200 text-gray-700">
-                      {jadwal.dosenPenguji}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-gray-700">
-                      {jadwal.ruangan}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap border-b border-gray-200">
+                  <Table.Row key={jadwal.id}>
+                    <Table.Cell>
+                      {new Date(jadwal.tanggal).toLocaleDateString()}
+                    </Table.Cell>
+                    <Table.Cell>{jadwal.waktu}</Table.Cell>
+                    <Table.Cell>{jadwal.mahasiswa}</Table.Cell>
+                    <Table.Cell>{jadwal.judul}</Table.Cell>
+                    <Table.Cell>{jadwal.dosenPenguji}</Table.Cell>
+                    <Table.Cell>{jadwal.ruangan}</Table.Cell>
+                    <Table.Cell>
                       <div className="flex space-x-2">
                         <button
                           onClick={() => {
@@ -455,51 +497,26 @@ const JadwalNilaiTabs = () => {
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
-                    </td>
-                  </tr>
+                    </Table.Cell>
+                  </Table.Row>
                 ))}
-              </tbody>
-            </table>
+              </Table.Body>
+            </Table>
+          </div>
+
+          {/* Mobile View */}
+          <div className="md:hidden">
+            {paginatedJadwal.map(renderJadwalMobileCard)}
           </div>
 
           {filteredJadwal.length > itemsPerPage && (
-            <div className="mt-4 flex justify-between items-center">
-              <div className="flex space-x-2">
-                <button
-                  onClick={() =>
-                    setJadwalCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={jadwalCurrentPage === 1}
-                  className="px-3 py-1 border rounded-md disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                {[...Array(jadwalTotalPages)].map((_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => setJadwalCurrentPage(i + 1)}
-                    className={`px-3 py-1 border rounded-md ${
-                      jadwalCurrentPage === i + 1
-                        ? "bg-blue-500 text-white"
-                        : ""
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button
-                  onClick={() =>
-                    setJadwalCurrentPage((prev) =>
-                      Math.min(prev + 1, jadwalTotalPages)
-                    )
-                  }
-                  disabled={jadwalCurrentPage === jadwalTotalPages}
-                  className="px-3 py-1 border rounded-md disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={jadwalCurrentPage}
+              totalPages={jadwalTotalPages}
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredJadwal.length}
+              onPageChange={setJadwalCurrentPage}
+            />
           )}
         </>
       )}
@@ -507,38 +524,32 @@ const JadwalNilaiTabs = () => {
   );
 
   const renderNilaiTab = () => (
-    <div>
-      <div className="mb-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Cari penilaian (nama mahasiswa)"
-            value={nilaiSearchTerm}
-            onChange={(e) => setNilaiSearchTerm(e.target.value)}
-            className="w-full p-2 pl-10 border rounded-lg"
-          />
-          <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
-        </div>
-      </div>
-
+    <div className="min-h-full">
       {nilaiList.length === 0 ? (
         renderEmptyState("Belum ada nilai ditambahkan")
       ) : (
         <div>
           <h2 className="text-xl font-semibold mb-4">Detail Penilaian</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mb-4">
+            <SearchBar
+              value={nilaiSearchTerm}
+              onChange={handleSearchNilai}
+              placeholder="Cari penilaian berdasarkan nama mahasiswa..."
+            />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {paginatedNilai.map((jadwal) => (
               <div
                 key={jadwal.id}
                 className="bg-white rounded-lg shadow-sm p-4 hover:shadow transition-shadow border border-gray-200"
               >
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div className="flex-grow">
                     <div className="text-base font-semibold mb-1">
                       {jadwal.mahasiswa}
                     </div>
                     <p className="text-xs text-gray-600 mb-2">{jadwal.judul}</p>
-                    <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
                       <div>
                         <p className="text-gray-600">Pembimbing</p>
                         <p className="font-semibold">{jadwal.pembimbing}</p>
@@ -555,7 +566,7 @@ const JadwalNilaiTabs = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="ml-4 text-center bg-blue-50 px-4 py-2 rounded">
+                  <div className="w-full sm:w-auto text-center bg-blue-50 px-4 py-2 rounded">
                     <p className="text-xs text-gray-600">Nilai Akhir</p>
                     <p className="text-xl font-bold text-blue-600">
                       {hitungNilaiAkhir(jadwal)}
@@ -567,41 +578,13 @@ const JadwalNilaiTabs = () => {
           </div>
 
           {filteredNilai.length > itemsPerPage && (
-            <div className="mt-4 flex justify-between items-center">
-              <div className="flex space-x-2">
-                <button
-                  onClick={() =>
-                    setNilaiCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={nilaiCurrentPage === 1}
-                  className="px-3 py-1 border rounded-md disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                {[...Array(nilaiTotalPages)].map((_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => setNilaiCurrentPage(i + 1)}
-                    className={`px-3 py-1 border rounded-md ${
-                      nilaiCurrentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button
-                  onClick={() =>
-                    setNilaiCurrentPage((prev) =>
-                      Math.min(prev + 1, nilaiTotalPages)
-                    )
-                  }
-                  disabled={nilaiCurrentPage === nilaiTotalPages}
-                  className="px-3 py-1 border rounded-md disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={nilaiCurrentPage}
+              totalPages={nilaiTotalPages}
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredNilai.length}
+              onPageChange={setNilaiCurrentPage}
+            />
           )}
         </div>
       )}
@@ -609,17 +592,19 @@ const JadwalNilaiTabs = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-50">
+    <div className="md:p-4 sm:p-6 md:bg-gray-50">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Jadwal & Nilai Seminar</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">
+          Jadwal & Nilai Seminar
+        </h1>
       </div>
 
-      <div className="mb-4 border-b">
+      <div className="mb-4 border-b bg-gray-50">
         <nav className="flex space-x-4">
           <button
             onClick={() => {
               setActiveTab("jadwal");
-              setCurrentPage(1);
+              setJadwalCurrentPage(1);
             }}
             className={`py-2 px-4 ${
               activeTab === "jadwal"
@@ -632,7 +617,7 @@ const JadwalNilaiTabs = () => {
           <button
             onClick={() => {
               setActiveTab("nilai");
-              setCurrentPage(1);
+              setNilaiCurrentPage(1);
             }}
             className={`py-2 px-4 ${
               activeTab === "nilai"

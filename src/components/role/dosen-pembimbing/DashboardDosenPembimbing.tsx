@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Search, ListFilter } from "lucide-react";
 import { InputNilaiDosenPembimbing } from "../../modal/InputNilai";
 import LihatNilai from "../../modal/LihatNilai";
+import SearchBar from "../../SearchBar";
+import { Button } from "flowbite-react";
+import Pagination from "../../Pagination";
 
 interface Student {
   name: string;
@@ -15,6 +17,7 @@ interface Student {
 }
 
 const MahasiswaSeminar: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [isInputModalOpen, setIsInputModalOpen] = useState<boolean>(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
@@ -169,19 +172,30 @@ const MahasiswaSeminar: React.FC = () => {
     .filter(
       (student) =>
         student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        student.nim.includes(searchQuery) ||
-        student.judulKP.toLowerCase().includes(searchQuery.toLowerCase())
+        student.nim.includes(searchQuery)
     );
 
+  // Pagination
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginated = filteredStudents.slice(startIndex, endIndex);
+
+  const handleSearch = (newQuery: string) => {
+    setSearchQuery(newQuery);
+    setCurrentPage(1);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="pt-10 px-8 pb-8">
+    <div className="">
+      <main>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-semibold">Mahasiswa Bimbingan</h1>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div
             className={`bg-white shadow-sm rounded-lg p-4 border-l-4 border-blue-500 cursor-pointer transition-all ${
               activeFilter === "total" ? "ring-2 ring-blue-500 shadow-md" : ""
@@ -237,81 +251,73 @@ const MahasiswaSeminar: React.FC = () => {
           {/* Search and Filter */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex flex-col sm:flex-row items-center gap-2">
-              <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Cari mahasiswa seminar..."
-                  className="w-full pl-10 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <button
-                className={`w-full sm:w-auto px-6 py-2 rounded-lg border border-gray-300 transition-colors flex items-center justify-center gap-2 ${
-                  activeFilter
-                    ? "bg-blue-50 border-blue-200 text-blue-600"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-                onClick={() => setActiveFilter(null)}
-              >
-                <ListFilter className="h-4 w-4" />
-                {activeFilter ? "Clear Filter" : "Filter Status"}
-              </button>
+              <SearchBar
+                value={searchQuery}
+                onChange={handleSearch}
+                placeholder="Cari mahasiswa berdasarkan nama atau NIM..."
+              />
             </div>
           </div>
 
-          {/* Student Cards */}
-          <div className="p-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filteredStudents.map((student, index) => (
+          {/* Student Cards Grid */}
+          <div className="pt-4 md:p-6">
+            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {paginated.map((student, index) => (
                 <div
                   key={index}
-                  className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+                  className="flex flex-col bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-200"
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {student.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        NIM: {student.nim}
+                  {/* Card Header */}
+                  <div className="p-4 flex flex-col space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                          {student.name}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          NIM: {student.nim}
+                        </p>
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                          student.status === "Sedang Berlangsung"
+                            ? "bg-green-100 text-green-700"
+                            : student.status === "Menunggu Seminar"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-blue-100 text-blue-700"
+                        }`}
+                      >
+                        {student.status}
+                      </span>
+                    </div>
+
+                    {/* Thesis Title */}
+                    <div className="min-h-[3rem]">
+                      <p className="text-sm text-gray-800 font-medium line-clamp-2">
+                        {student.judulKP}
                       </p>
                     </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs ${
-                        student.status === "Sedang Berlangsung"
-                          ? "bg-green-100 text-green-600"
-                          : student.status === "Menunggu Seminar"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-blue-100 text-blue-600"
-                      }`}
-                    >
-                      {student.status}
-                    </span>
                   </div>
 
-                  <div className="space-y-2 mb-3">
-                    <p className="text-gray-800 text-sm font-medium line-clamp-2">
-                      {student.judulKP}
-                    </p>
+                  {/* Card Details */}
+                  <div className="px-4 py-3 border-t border-gray-100 bg-gray-50 space-y-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Pembimbing</span>
+                      <span className="text-gray-900 font-medium line-clamp-1 text-right max-w-[60%]">
+                        {student.pembimbing}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Tempat KP</span>
+                      <span className="text-gray-900 font-medium line-clamp-1 text-right max-w-[60%]">
+                        {student.company}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
-                    <p className="text-gray-600 text-sm flex justify-between">
-                      <span>Pembimbing:</span>
-                      <span className="font-medium">{student.pembimbing}</span>
-                    </p>
-                    <p className="text-gray-600 text-sm flex justify-between">
-                      <span>Tempat KP:</span>
-                      <span className="font-medium">{student.company}</span>
-                    </p>
-                  </div>
-
-                  <div className="mt-4">
-                    <button
+                  {/* Card Actions */}
+                  <div className="p-4 mt-auto">
+                    <Button
                       onClick={() => {
                         if (student.action === "Input Nilai") {
                           handleOpenInputModal(student);
@@ -319,20 +325,31 @@ const MahasiswaSeminar: React.FC = () => {
                           handleOpenViewModal(student);
                         }
                       }}
-                      className={`w-full py-2 rounded-lg font-medium transition-colors ${
+                      className={`w-full  rounded-lg font-medium text-sm transition-colors duration-200 ${
                         student.status === "Selesai Seminar"
-                          ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
                           : student.status === "Sedang Berlangsung"
                           ? "bg-green-500 text-white hover:bg-green-600"
-                          : "bg-blue-500 text-white hover:bg-blue-600"
+                          : "bg-blue-700 text-white hover:bg-blue-800"
                       }`}
                     >
                       {student.action}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
+            {filteredStudents.length > itemsPerPage && (
+              <div className="my-4">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={filteredStudents.length}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>

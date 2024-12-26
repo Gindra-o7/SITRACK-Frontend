@@ -29,9 +29,9 @@ const DashboardMahasiswa: React.FC = () => {
   };
 
   return (
-    <div className="flex bg-gray-50">
+    <div className="flex  min-h-screen">
       <div className="flex-1 overflow-auto">
-        <main className="p-6">
+        <main>
           <div className="mb-8">
             <h2 className="text-2xl font-bold">Halo, Gilang Ramadhan Indra</h2>
             <p className="text-gray-500 text-lg">

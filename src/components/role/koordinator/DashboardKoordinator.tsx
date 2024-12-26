@@ -41,9 +41,9 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex ">
       <div className="flex-1 overflow-auto">
-        <main className="p-6">
+        <main>
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900">
               Selamat Datang, Dr. Ahmad Koordinator

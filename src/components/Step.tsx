@@ -1,5 +1,6 @@
 import React from "react";
 import { Check } from "lucide-react";
+import { Button } from "flowbite-react";
 
 interface Step {
   id: number;
@@ -30,7 +31,7 @@ export const ProgressSteps: React.FC<ProgressStepsProps> = ({
             className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 z-10 relative 
               ${
                 activeStep === index
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-700 text-white"
                   : activeStep > index
                   ? "bg-green-500 text-white"
                   : "bg-gray-200"
@@ -38,7 +39,7 @@ export const ProgressSteps: React.FC<ProgressStepsProps> = ({
               transform transition-all duration-200 hover:scale-110
               ${
                 activeStep === index
-                  ? "hover:bg-blue-600"
+                  ? "hover:bg-blue-800"
                   : activeStep > index
                   ? "hover:bg-green-600"
                   : "hover:bg-gray-300"
@@ -78,29 +79,29 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   onNext,
 }) => (
   <div className="flex justify-between mt-6">
-    <button
-      className={`px-4 py-2 border rounded-md transition-all duration-200
+    <Button
+      className={`px-4 bg-white border rounded-md border-gray-200 transition-all duration-200
         ${
           activeStep === 0
             ? "text-gray-400 cursor-not-allowed"
-            : "hover:bg-gray-50 hover:scale-105"
+            : "hover:bg-gray-50 text-gray-600 hover:scale-105 bg-white "
         }`}
       onClick={onPrevious}
       disabled={activeStep === 0}
     >
       Sebelumnya
-    </button>
-    <button
-      className={`px-4 py-2 rounded-md transition-all duration-200
+    </Button>
+    <Button
+      className={`px-4 rounded-md transition-all duration-200
         ${
           activeStep === STEPS.length - 1
             ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-600 hover:scale-105"
+            : "bg-blue-700 text-white hover:bg-blue-900 hover:scale-105"
         }`}
       onClick={onNext}
       disabled={activeStep === STEPS.length - 1}
     >
       Lanjut
-    </button>
+    </Button>
   </div>
 );

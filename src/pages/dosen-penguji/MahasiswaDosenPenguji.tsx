@@ -20,7 +20,7 @@ const MahasiswaDosenPengujiPages = () => {
         {isLoading ? (
           <div className="relative w-full h-full bg-gray-100">
             {/* Skeleton Background */}
-            <LoadingMahasiswaSeminar cardCount={3} showStats={false} />
+            <LoadingMahasiswaSeminar cardCount={6} showStats={false} />
 
             {/* Spinner dan Teks di Tengah */}
             <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
