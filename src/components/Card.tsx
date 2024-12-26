@@ -1,12 +1,6 @@
 import React from "react";
-import {ChevronRight, LucideIcon, FileCheck, FileClock, FileX, CheckCircle, XCircle, Clock} from "lucide-react";
-
-export interface CardData {
-  title: string;
-  description: string;
-  path: string;
-  icon: LucideIcon;
-}
+import {ChevronRight, FileCheck, FileClock, FileX, CheckCircle, XCircle, Clock} from "lucide-react";
+import { CardUploadProps, CardData, BasicStat, DetailedStat } from "../interfaces/common.interfaces"
 
 export const Card: React.FC<CardData> = ({title, description, path, icon: Icon}) => {
   return (
@@ -30,21 +24,6 @@ export const Card: React.FC<CardData> = ({title, description, path, icon: Icon})
   );
 };
 
-interface BaseProps {
-  value: string;
-}
-
-interface BasicStat extends BaseProps {
-  variant: "basic";
-  label: string;
-}
-
-interface DetailedStat extends BaseProps {
-  variant: "detailed";
-  title: string;
-  description: string;
-}
-
 type StatProps = BasicStat | DetailedStat;
 
 export const CardStat: React.FC<StatProps> = (props) => {
@@ -66,14 +45,6 @@ export const CardStat: React.FC<StatProps> = (props) => {
   );
 };
 
-type StatusType = "revisi" | "diterima" | "menunggu";
-
-interface CardUploadProps {
-  number: string | number;
-  date: string;
-  status: StatusType;
-  onStatusClick: () => void;
-}
 
 export const CardUpload: React.FC<CardUploadProps> = ({
                                                         number,

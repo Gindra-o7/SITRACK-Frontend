@@ -1,9 +1,22 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Card, CardStat, CardData } from "../../Card";
-import { FileUp, BadgeInfo } from "lucide-react";
+import { FileUp} from "lucide-react";
 import Alert, { AlertData } from "../../Alert";
+import axiosInstance from "../../../configs/axios.configs.ts";
+
+interface UserData {
+  nama: string;
+  email: string;
+  userRoles: {
+    role: {
+      name: string;
+    };
+  }[];
+}
 
 const DashboardMahasiswa: React.FC = () => {
+  const [user, setUser] = useState<UserData | null>(null);
+
   const cards: CardData[] = [
     {
       title: "Upload Kebutuhan Dokumen Seminar",
@@ -24,6 +37,19 @@ const DashboardMahasiswa: React.FC = () => {
     { title: "SISA WAKTU", value: "20 Hari", description: "Periode ini" },
   ];
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance.get('/mahasiswa/me');
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const alert: AlertData = {
     description: "Anda memiliki 3 berkas persyaratan yang harus direvisi",
   };
@@ -33,7 +59,7 @@ const DashboardMahasiswa: React.FC = () => {
       <div className="flex-1 overflow-auto">
         <main className="p-6">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold">Halo, Gilang Ramadhan Indra</h2>
+            <h2 className="text-2xl font-bold">Halo, {user?.nama || 'Loading...'}</h2>
             <p className="text-gray-500 text-lg">
               Ingin melakukan apa hari ini?
             </p>

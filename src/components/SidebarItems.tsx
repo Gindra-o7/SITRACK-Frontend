@@ -1,7 +1,7 @@
 import {
   LayoutDashboard,
   FileSearch,
-  BadgeCheck,
+  FileCheck,
   FileCheck2,
   BookOpen,
   Users,
@@ -61,7 +61,7 @@ export const sidebarKoordinatorItems = [
     link: "/koordinator/manage-account",
   },
   {
-    icon: <Users className="w-5 h-5" />,
+    icon: <FileCheck className="w-5 h-5" />,
     label: "Validasi Dokumen",
     link: "/koordinator/validasi",
   },

@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
-import { Label, TextInput, Button, Checkbox } from 'flowbite-react';
-import { X } from "lucide-react";
+import React, {useState} from 'react';
+import {Label, TextInput, Button, Checkbox} from 'flowbite-react';
+import {X} from "lucide-react";
 import {
     HiMail,
     HiLockClosed,
     HiEye,
     HiEyeOff,
 } from 'react-icons/hi';
-import { useAuth } from "../../contexts/auth.contexts";
-import { useNavigate } from 'react-router-dom';
-import axiosInstance, { isAxiosError } from "../../configs/axios.configs";
-import { useToast } from "../modal/Toast";
+import {useAuth} from "../../contexts/auth.contexts";
+import {useNavigate} from 'react-router-dom';
+import axiosInstance, {isAxiosError} from "../../configs/axios.configs";
 
 interface LoginFormProps {
     onRegisterClick: () => void;
     onForgotPasswordClick: () => void;
+    showToast: (type: 'success' | 'error', message: string) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
                                                         onRegisterClick,
-                                                        onForgotPasswordClick
+                                                        onForgotPasswordClick,
+                                                        showToast
                                                     }) => {
     const [loginData, setLoginData] = useState({
         email: '',
@@ -27,17 +28,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         rememberMe: false
     });
     const [showPassword, setShowPassword] = useState(false);
-    const { login } = useAuth();
+    const {login} = useAuth();
     const navigate = useNavigate();
-    const { showToast, ToastComponent } = useToast();
 
     const validateInput = () => {
         if (!/\S+@\S+\.\S+/.test(loginData.email)) {
-            showToast({ message: "Email tidak valid", type: "error" });
+            showToast("error", "Email tidak valid");
             return false;
         }
         if (loginData.password.length < 6) {
-            showToast({ message: "Password minimal 6 karakter", type: "error" });
+            showToast("error", "Password minimal 6 karakter");
             return false;
         }
         return true;
@@ -54,7 +54,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 password: loginData.password,
             });
 
-            const { token, user } = response.data;
+            const {token, user} = response.data;
 
             if (!token || !user) {
                 throw new Error('Token atau user data tidak valid.');
@@ -82,13 +82,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             };
 
             navigate(roleRoutes[primaryRole] || '/');
-            showToast({ message: "Login berhasil!", type: "success" });
+            showToast("success", "Login berhasil!");
         } catch (error: unknown) {
             if (isAxiosError(error)) {
                 const errorMessage = error.response?.data?.message || "Login gagal.";
-                showToast({ message: errorMessage, type: "error" });
+                showToast("error", errorMessage);
             } else {
-                showToast({ message: "Terjadi kesalahan tidak terduga.", type: "error" });
+                showToast("error", "Terjadi kesalahan tidak terduga.");
             }
             console.error("Login Error:", error);
         }
@@ -105,7 +105,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
     return (
         <>
-            {ToastComponent}
             <div className="relative flex items-center justify-center mb-4">
                 <h2 className="text-2xl font-bold text-center text-black">Masuk</h2>
                 <div className="absolute right-0">

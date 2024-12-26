@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axiosInstance from "../../../configs/axios.configs";
 import {
     Search,
@@ -8,7 +8,9 @@ import {
     AlertCircle,
     CheckCircle2,
     Eye,
-    EyeOff
+    EyeOff,
+    ArrowUp,
+    ArrowDown
 } from "lucide-react";
 import {
     Badge,
@@ -22,32 +24,36 @@ import {
 } from "flowbite-react";
 
 interface User {
-    id: number;
+    id: string;
     nama: string;
     email: string;
     role: string;
-    photoPath?: string;
-    status?: string;
     nim?: string;
     nip?: string;
+    photoPath?: string;
     createdAt: string;
+}
+
+interface ApiResponse {
+    users: User[];
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
 }
 
 const ManageAccounts = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [totalUsers, setTotalUsers] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
     const [selectedRole, setSelectedRole] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [itemsPerPage] = useState(10);
+    const [sortBy, setSortBy] = useState<string>("createdAt");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [sortConfig, setSortConfig] = useState({
-        key: "createdAt",
-        direction: "desc",
-    });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [newUserData, setNewUserData] = useState({
@@ -58,19 +64,19 @@ const ManageAccounts = () => {
         nim: "",
         nip: ""
     });
-    const [toastMessage, setToastMessage] = useState<{
+    const [alertMessage, setAlertMessage] = useState<{
         type: 'success' | 'error';
         message: string;
     } | null>(null);
 
     const roles = [
-        {id: "all", label: "Semua"},
-        {id: "mahasiswa", label: "Mahasiswa"},
-        {id: "dosen_penguji", label: "Dosen Penguji"},
-        {id: "dosen_pembimbing", label: "Dosen Pembimbing"},
-        {id: "kaprodi", label: "Kaprodi"},
-        {id: "koordinator", label: "Koordinator"},
-        {id: "pembimbing", label: "Pembimbing Instansi"},
+        { id: "all", label: "Semua" },
+        { id: "mahasiswa", label: "Mahasiswa" },
+        { id: "koordinator", label: "Koordinator" },
+        { id: "kaprodi", label: "Kaprodi" },
+        { id: "dosen_pembimbing", label: "Dosen Pembimbing" },
+        { id: "dosen_penguji", label: "Dosen Penguji" },
+        { id: "pembimbing_instansi", label: "Instansi" }
     ];
 
     const fetchUsers = async () => {
@@ -81,40 +87,52 @@ const ManageAccounts = () => {
                 page: currentPage,
                 pageSize: itemsPerPage,
                 role: selectedRole === "all" ? undefined : selectedRole,
-                sortBy: sortConfig.key === "nimNipNik" ? "createdAt" : sortConfig.key,
-                sortOrder: sortConfig.direction,
+                search: searchQuery,
+                sortBy,
+                sortOrder
             };
 
-            const response = await axiosInstance.get("/koordinator/users", {params});
+            const response = await axiosInstance.get<ApiResponse>("/koordinator/users", { params });
             setUsers(response.data.users);
             setTotalUsers(response.data.total);
+            setTotalPages(response.data.totalPages);
         } catch (err) {
-            setError("Failed to fetch users. Please try again.");
+            setError("Data tidak ditemukan");
             console.error(err);
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Fetch users when dependencies change
     useEffect(() => {
-        fetchUsers();
-    }, [currentPage, selectedRole, sortConfig]);
+        const timeoutId = setTimeout(() => {
+            fetchUsers();
+        }, 500);
 
-    // Sorting function
-    const handleSort = (key: string) => {
-        let direction = "asc";
-        if (sortConfig.key === key && sortConfig.direction === "asc") {
-            direction = "desc";
+        return () => clearTimeout(timeoutId);
+    }, [currentPage, selectedRole, searchQuery, sortBy, sortOrder]);
+
+    const handleSort = (column: string) => {
+        if (sortBy === column) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSortBy(column);
+            setSortOrder("asc");
         }
-        setSortConfig({key, direction});
+        setCurrentPage(1);
     };
 
-    // Pagination
-    const totalPages = Math.ceil(totalUsers / itemsPerPage);
+    const getSortIcon = (column: string) => {
+        if (sortBy !== column) return null;
+        return sortOrder === "asc" ? (
+            <ArrowUp className="inline h-4 w-4 ml-1" />
+        ) : (
+            <ArrowDown className="inline h-4 w-4 ml-1" />
+        );
+    };
 
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setNewUserData(prev => ({
             ...prev,
             [name]: value
@@ -122,28 +140,16 @@ const ManageAccounts = () => {
     }, []);
 
     const toggleRole = (roleId: string) => {
-        setNewUserData(prev => {
-            const currentRoles = prev.roles;
-            const isRoleSelected = currentRoles.includes(roleId);
-
-            return {
-                ...prev,
-                roles: isRoleSelected
-                    ? currentRoles.filter(role => role !== roleId)
-                    : [...currentRoles, roleId]
-            };
-        });
+        setNewUserData(prev => ({
+            ...prev,
+            roles: [roleId] // Only allow single role selection
+        }));
     };
 
     const [formErrors, setFormErrors] = useState<{
         [key: string]: string
     }>({});
-    const [alertMessage, setAlertMessage] = useState<{
-        type: 'success' | 'error';
-        message: string;
-    } | null>(null);
 
-    // Reset form function
     const resetForm = () => {
         setNewUserData({
             nama: "",
@@ -156,21 +162,21 @@ const ManageAccounts = () => {
         setFormErrors({});
     };
 
-    // Validation function
     const validateForm = () => {
         const errors: { [key: string]: string } = {};
 
         if (!newUserData.nama) errors.nama = "Nama wajib diisi";
         if (!newUserData.email) errors.email = "Email wajib diisi";
         if (!newUserData.password) errors.password = "Password wajib diisi";
-        if (newUserData.roles.length === 0) errors.roles = "Minimal pilih satu role";
+        if (newUserData.roles.length === 0) errors.roles = "Role wajib dipilih";
 
-        // Validate NIM/NIP based on selected roles
         if (newUserData.roles.includes('mahasiswa') && !newUserData.nim) {
             errors.nim = "NIM wajib diisi untuk mahasiswa";
         }
-        if ((newUserData.roles.includes('dosen_pembimbing') ||
-                newUserData.roles.includes('dosen_penguji')) &&
+        if ((newUserData.roles.includes('koordinator') ||
+                newUserData.roles.includes('kaprodi') ||
+                newUserData.roles.includes('dosen_penguji') ||
+                newUserData.roles.includes('dosen_pembimbing')) &&
             !newUserData.nip) {
             errors.nip = "NIP wajib diisi untuk dosen";
         }
@@ -181,7 +187,6 @@ const ManageAccounts = () => {
     const handleAddUser = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate form
         const errors = validateForm();
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
@@ -190,51 +195,52 @@ const ManageAccounts = () => {
 
         setIsLoading(true);
         try {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                setAlertMessage({
+                    type: 'error',
+                    message: 'Sesi anda telah berakhir. Silakan login kembali.'
+                });
+                return;
+            }
+
             const payload = {
                 nama: newUserData.nama,
                 email: newUserData.email,
                 password: newUserData.password,
-                roles: newUserData.roles,
+                role: newUserData.roles[0],
                 ...(newUserData.roles.includes('mahasiswa') && { nim: newUserData.nim }),
-                ...(newUserData.roles.some(role => ['dosen_pembimbing', 'dosen_penguji', 'kaprodi'].includes(role)) &&
-                    { nip: newUserData.nip })
+                ...(newUserData.roles.includes('koordinator') ||
+                newUserData.roles.includes('kaprodi') ||
+                newUserData.roles.includes('dosen_penguji') ||
+                newUserData.roles.includes('dosen_pembimbing') ?
+                    { nip: newUserData.nip } : {})
             };
 
-            const response = await axiosInstance.post("/koordinator/user", payload);
+            await axiosInstance.post("/koordinator/user", payload, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-            // Handle success
             setAlertMessage({
                 type: 'success',
                 message: 'Berhasil menambahkan pengguna baru'
             });
 
-            // Refresh data
             fetchUsers();
-
-            // Reset form and close modal
             resetForm();
             setShowAddModal(false);
 
         } catch (error: any) {
             console.error('Error adding user:', error);
-
-            // Handle validation errors from backend
-            if (error.response?.data?.errors) {
-                setFormErrors(error.response.data.errors.reduce((acc: any, curr: any) => {
-                    acc[curr.field] = curr.message;
-                    return acc;
-                }, {}));
-            } else {
-                setAlertMessage({
-                    type: 'error',
-                    message: error.response?.data?.message || 'Gagal menambahkan pengguna'
-                });
-            }
+            setAlertMessage({
+                type: 'error',
+                message: error.response?.data?.message || 'Gagal menambahkan pengguna'
+            });
         } finally {
             setIsLoading(false);
         }
     };
-
 
     return (
         <div className="p-8">
@@ -298,82 +304,84 @@ const ManageAccounts = () => {
                 </Alert>
             )}
 
-            {/* Loading and Error States */
-            }
-            {
-                isLoading && (
-                    <div className="text-center py-4 text-gray-600">Loading...</div>
-                )
-            }
-            {
-                error && (
-                    <div className="text-center py-4 text-red-600">{error}</div>
-                )
-            }
+            {isLoading && (
+                <div className="text-center py-4 text-gray-600">Loading...</div>
+            )}
+            {error && (
+                <div className="text-center py-4 text-red-600">{error}</div>
+            )}
 
-            {/* Users Table */}
-            {
-                !isLoading && !error && (
-                    <>
-                        <Table hoverable>
-                            <Table.Head>
-                                {["Nama", "Email", "Role", "Dibuat", "Aksi"].map((header, index) => (
-                                    <Table.HeadCell key={index}>
-                                        {header}
-                                    </Table.HeadCell>
-                                ))}
-                            </Table.Head>
-                            <Table.Body className="divide-y">
-                                {users.map((user) => (
-                                    <Table.Row key={user.id}>
-                                        <Table.Cell>{user.nama}</Table.Cell>
-                                        <Table.Cell>{user.email}</Table.Cell>
-                                        <Table.Cell>
-                                            <Badge color="info">
-                                                {roles.find((r) => r.id === user.role)?.label}
-                                            </Badge>
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            {new Date(user.createdAt).toLocaleDateString()}
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    size="sm"
-                                                    color="light"
-                                                    onClick={() => setShowEditModal(true)}
-                                                >
-                                                    <Pencil className="h-4 w-4"/>
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    color="failure"
-                                                    onClick={() => setShowDeleteModal(true)}
-                                                >
-                                                    <Trash2 className="h-4 w-4"/>
-                                                </Button>
-                                            </div>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table>
+            {!isLoading && !error && (
+                <>
+                    <Table hoverable>
+                        <Table.Head>
+                            <Table.HeadCell
+                                className="cursor-pointer"
+                                onClick={() => handleSort("nama")}
+                            >
+                                Nama {getSortIcon("nama")}
+                            </Table.HeadCell>
+                            <Table.HeadCell
+                                className="cursor-pointer"
+                                onClick={() => handleSort("email")}
+                            >
+                                Email {getSortIcon("email")}
+                            </Table.HeadCell>
+                            <Table.HeadCell>Role</Table.HeadCell>
+                            <Table.HeadCell>NIM/NIP</Table.HeadCell>
+                            <Table.HeadCell
+                                className="cursor-pointer"
+                                onClick={() => handleSort("createdAt")}
+                            >
+                                Dibuat {getSortIcon("createdAt")}
+                            </Table.HeadCell>
+                            <Table.HeadCell>Aksi</Table.HeadCell>
+                        </Table.Head>
+                        <Table.Body className="divide-y">
+                            {users.map((user) => (
+                                <Table.Row key={user.id}>
+                                    <Table.Cell>{user.nama}</Table.Cell>
+                                    <Table.Cell>{user.email}</Table.Cell>
+                                    <Table.Cell>
+                                        <Badge color="info">
+                                            {roles.find((r) => r.id === user.role)?.label || user.role}
+                                        </Badge>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        {user.nim || user.nip || '-'}
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        {new Date(user.createdAt).toLocaleDateString('id-ID')}
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <div className="flex gap-2">
+                                            <Button size="sm" color="light">
+                                                <Pencil className="h-4 w-4"/>
+                                            </Button>
+                                            <Button size="sm" color="failure">
+                                                <Trash2 className="h-4 w-4"/>
+                                            </Button>
+                                        </div>
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
 
-                        {/* Pagination */}
-                        <div className="flex justify-between items-center mt-4">
-                            <div className="text-sm text-gray-700">
-                                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                                {Math.min(currentPage * itemsPerPage, totalUsers)} of{" "}
-                                {totalUsers} entries
-                            </div>
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={(page) => setCurrentPage(page)}
-                            />
+                    <div className="flex justify-between items-center mt-4">
+                        <div className="text-sm text-gray-700">
+                            Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                            {Math.min(currentPage * itemsPerPage, totalUsers)} of{" "}
+                            {totalUsers} entries
                         </div>
-                    </>
-                )}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    </div>
+                </>
+            )}
 
             {/* Add User Modal */}
             <Modal
@@ -420,8 +428,7 @@ const ManageAccounts = () => {
                                 <div className="text-red-500 text-sm mb-2">{formErrors.roles}</div>
                             )}
                             <div className="flex flex-wrap gap-2 mt-2">
-                                {roles.slice(1).map((role) => (
-                                    <Badge
+                                {roles.slice(1).map((role) => (<Badge
                                         key={role.id}
                                         color={newUserData.roles.includes(role.id) ? "info" : "light"}
                                         onClick={() => toggleRole(role.id)}
@@ -459,7 +466,7 @@ const ManageAccounts = () => {
                         </div>
 
                         {(newUserData.roles.includes('mahasiswa') ||
-                            newUserData.roles.some(role => ['dosen_pembimbing', 'dosen_penguji', 'kaprodi', 'koordinator'].includes(role))) && (
+                            newUserData.roles.some(role => ['koordinator', 'kaprodi', 'dosen_penguji', 'dosen_pembimbing'].includes(role))) && (
                             <div>
                                 <Label htmlFor="nim-nip" className="mb-2">
                                     {newUserData.roles.includes('mahasiswa') ? 'NIM' : 'NIP'}
@@ -492,7 +499,7 @@ const ManageAccounts = () => {
                                 color="blue"
                                 disabled={isLoading}
                             >
-                                {isLoading ? 'Memproses...' : 'Kirim'}
+                                {isLoading ? 'Memproses...' : 'Tambah User'}
                             </Button>
                         </div>
                     </form>

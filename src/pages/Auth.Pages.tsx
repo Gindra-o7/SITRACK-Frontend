@@ -1,50 +1,30 @@
 import React, {useState} from "react"
-import {Card} from "flowbite-react";
+import {Card, Toast} from "flowbite-react";
 import {LoginForm} from "../components/auth/LoginForm"
 import {RegisterForm} from "../components/auth/RegisterForm"
 import {ForgotPasswordForm} from "../components/auth/ForgotPasswordForm";
+import {HiCheck, HiX} from "react-icons/hi";
 
-const UINSuskaLogo = () => (
-    <svg
-        className="absolute top-4 left-4 w-16 h-16 z-20"
-        viewBox="0 0 8500 11000"
-        style={{filter: 'brightness(0.9)'}}
-    >
-        <g>
-            <path
-                fill="#ffffff"
-                d="M4250 833l1153 1153 -523 0 -630 -630 -1057 1057 -341 0 0 796 -490 394 -663 0 0 -1501 1282 0 1269 -1269zm-2170 1580l382 0 0 695 -382 245 0 -940z"
-            />
-            <path
-                fill="#ffffff"
-                d="M-81 5164l1153 -1153 0 523 -630 630 1057 1057 0 342 795 0 395 490 0 662 -1502 0 0 -1282 -1268 -1269zm1580 2170l0 -382 695 0 245 382 -940 0z"
-            />
-            <path
-                fill="#ffffff"
-                d="M8581 5164l-1153 1153 0 -522 630 -631 -1057 -1056 0 -342 -795 0 -395 -490 0 -662 1502 0 0 1282 1268 1268zm-1580 -2170l0 382 -695 0 -245 -382 940 0z"
-            />
-            <path
-                fill="#ffffff"
-                d="M4250 9495l-1153 -1153 523 0 630 631 1057 -1057 341 0 0 -796 490 -395 663 0 0 1502 -1282 0 -1269 1268zm2170 -1579l-382 0 0 -696 382 -245 0 941z"
-            />
-            {/* Center ornaments */}
-            <path
-                fill="#C5D85A"
-                d="M4272 3903l0 2480c36,10 62,43 62,82 0,46 -37,84 -84,84 -47,0 -84,-38 -84,-84 0,-39 26,-72 62,-82l0 -2480c-36,-9 -62,-42 -62,-81 0,-46 37,-84 84,-84 47,0 84,38 84,84 0,39 -26,72 -62,81z"
-            />
-            {/* Additional geometric patterns */}
-            <g fill="#C5D85A">
-                <path
-                    d="M3815 4709c291,-292 603,-509 871,-625 275,-118 506,-130 629,-7 123,123 111,355 -7,629 -115,268 -333,580 -624,872 -291,292 -603,509 -871,625 -275,118 -506,130 -629,7 -123,-123 -111,-355 7,-629 115,-268 333,-580 624,-872z"/>
-                <path
-                    d="M4685 4709c-291,-292 -603,-509 -871,-625 -275,-118 -506,-130 -629,-7 -123,123 -111,355 7,629 115,268 333,580 624,872 291,292 603,509 871,625 275,118 506,130 629,7 123,-123 111,-355 -7,-629 -115,-268 -333,-580 -624,-872z"/>
-            </g>
-        </g>
-    </svg>
-);
+interface ToastState {
+    show: boolean;
+    type: 'success' | 'error';
+    message: string;
+}
 
 export const AuthPage: React.FC = () => {
     const [activeForm, setActiveForm] = useState<'login' | 'register' | 'forgot-password'>('login');
+    const [toast, setToast] = useState<ToastState>({
+        show: false,
+        type: 'success',
+        message: ''
+    });
+
+    const showToast = (type: 'success' | 'error', message: string) => {
+        setToast({ show: true, type, message });
+        setTimeout(() => {
+            setToast(prev => ({ ...prev, show: false }));
+        }, 3000);
+    };
 
     const renderForm = () => {
         switch (activeForm) {
@@ -53,28 +33,89 @@ export const AuthPage: React.FC = () => {
                     <LoginForm
                         onRegisterClick={() => setActiveForm('register')}
                         onForgotPasswordClick={() => setActiveForm('forgot-password')}
+                        showToast={showToast}
                     />
                 );
             case 'register':
                 return (
                     <RegisterForm
                         onLoginClick={() => setActiveForm('login')}
+                        showToast={showToast}
                     />
                 );
             case 'forgot-password':
                 return (
                     <ForgotPasswordForm
                         onLoginClick={() => setActiveForm('login')}
+                        showToast={showToast}
                     />
                 );
         }
     };
 
+    const UINSuskaLogo = () => (
+        <svg
+            className="absolute top-4 left-4 w-16 h-16 z-20"
+            viewBox="0 0 8500 11000"
+            style={{filter: 'brightness(0.9)'}}
+        >
+            <g>
+                <path
+                    fill="#ffffff"
+                    d="M4250 833l1153 1153 -523 0 -630 -630 -1057 1057 -341 0 0 796 -490 394 -663 0 0 -1501 1282 0 1269 -1269zm-2170 1580l382 0 0 695 -382 245 0 -940z"
+                />
+                <path
+                    fill="#ffffff"
+                    d="M-81 5164l1153 -1153 0 523 -630 630 1057 1057 0 342 795 0 395 490 0 662 -1502 0 0 -1282 -1268 -1269zm1580 2170l0 -382 695 0 245 382 -940 0z"
+                />
+                <path
+                    fill="#ffffff"
+                    d="M8581 5164l-1153 1153 0 -522 630 -631 -1057 -1056 0 -342 -795 0 -395 -490 0 -662 1502 0 0 1282 1268 1268zm-1580 -2170l0 382 -695 0 -245 -382 940 0z"
+                />
+                <path
+                    fill="#ffffff"
+                    d="M4250 9495l-1153 -1153 523 0 630 631 1057 -1057 341 0 0 -796 490 -395 663 0 0 1502 -1282 0 -1269 1268zm2170 -1579l-382 0 0 -696 382 -245 0 941z"
+                />
+                {/* Center ornaments */}
+                <path
+                    fill="#C5D85A"
+                    d="M4272 3903l0 2480c36,10 62,43 62,82 0,46 -37,84 -84,84 -47,0 -84,-38 -84,-84 0,-39 26,-72 62,-82l0 -2480c-36,-9 -62,-42 -62,-81 0,-46 37,-84 84,-84 47,0 84,38 84,84 0,39 -26,72 -62,81z"
+                />
+                {/* Additional geometric patterns */}
+                <g fill="#C5D85A">
+                    <path
+                        d="M3815 4709c291,-292 603,-509 871,-625 275,-118 506,-130 629,-7 123,123 111,355 -7,629 -115,268 -333,580 -624,872 -291,292 -603,509 -871,625 -275,118 -506,130 -629,7 -123,-123 -111,-355 7,-629 115,-268 333,-580 624,-872z"/>
+                    <path
+                        d="M4685 4709c-291,-292 -603,-509 -871,-625 -275,-118 -506,-130 -629,-7 -123,123 -111,355 7,629 115,268 333,580 624,872 291,292 603,509 871,625 275,118 506,130 629,7 123,-123 111,-355 -7,-629 -115,-268 -333,-580 -624,-872z"/>
+                </g>
+            </g>
+        </svg>
+    );
+
     return (
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-            {/* Animated Black, Gray, and White Gradient Background */}
+            {/* Toast Component */}
+            {toast.show && (
+                <div className="fixed top-4 right-4 z-50">
+                    <Toast>
+                        {toast.type === 'success' ? (
+                            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
+                                <HiCheck className="h-5 w-5" />
+                            </div>
+                        ) : (
+                            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
+                                <HiX className="h-5 w-5" />
+                            </div>
+                        )}
+                        <div className="ml-3 text-sm font-normal">{toast.message}</div>
+                        <Toast.Toggle onDismiss={() => setToast(prev => ({ ...prev, show: false }))} />
+                    </Toast>
+                </div>
+            )}
+
             <div
-                className="absolute inset-0 bg-gradient-to-br from-black via-gray-800 to-white bg-size-200 animate-gradient-x"></div>
+                className="absolute inset-0 bg-gradient-to-br from-black via-gray-800 to-white bg-size-200 animate-gradient-x">
+            </div>
             <UINSuskaLogo/>
 
             <div className="relative z-10 w-full max-w-md p-4">

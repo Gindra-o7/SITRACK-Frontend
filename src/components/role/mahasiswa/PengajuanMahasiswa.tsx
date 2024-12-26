@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { PlusCircle } from "lucide-react";
 import { ProgressSteps, NavigationButtons, STEPS } from "../../Step";
 import {
@@ -13,6 +13,8 @@ import {
   PendaftaranMenunggu,
 } from "../../modal/StatusPendaftaran";
 import { CardUpload } from "../../Card";
+import axiosInstance from "../../../configs/axios.configs.ts";
+import {UserData, GroupedDocuments} from "../../../interfaces/common.interfaces.ts"
 
 // Types & Data
 export interface DocumentData {
@@ -27,58 +29,11 @@ export interface SubmissionData {
   documents: DocumentData[];
 }
 
-// Dummy Data
-const submission1: SubmissionData = {
-  number: 1,
-  date: "Senin, 4 November 2024",
-  status: "revisi",
-  documents: [
-    { name: "Surat keterangan selesai KP dari instansi", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 1", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 2", status: "revisi" },
-    { name: "Daily Report Kerja Praktik - Minggu 3", status: "revisi" },
-    { name: "Daily Report Kerja Praktik - Minggu 4", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 5", status: "diterima" },
-    { name: "Laporan Akhir Kerja Praktik", status: "revisi" },
-  ],
-};
-
-const submission2: SubmissionData = {
-  number: 2,
-  date: "Selasa, 5 November 2024",
-  status: "diterima",
-  documents: [
-    { name: "Surat keterangan selesai KP dari instansi", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 1", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 2", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 3", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 4", status: "diterima" },
-    { name: "Daily Report Kerja Praktik - Minggu 5", status: "diterima" },
-    { name: "Laporan Akhir Kerja Praktik", status: "diterima" },
-  ],
-};
-
-const submission3: SubmissionData = {
-  number: 3,
-  date: "Rabu, 6 November 2024",
-  status: "menunggu",
-  documents: [
-    { name: "Surat keterangan selesai KP dari instansi", status: "menunggu" },
-    { name: "Daily Report Kerja Praktik - Minggu 1", status: "menunggu" },
-    { name: "Daily Report Kerja Praktik - Minggu 2", status: "menunggu" },
-    { name: "Daily Report Kerja Praktik - Minggu 3", status: "menunggu" },
-    { name: "Daily Report Kerja Praktik - Minggu 4", status: "menunggu" },
-    { name: "Daily Report Kerja Praktik - Minggu 5", status: "menunggu" },
-    { name: "Laporan Akhir Kerja Praktik", status: "menunggu" },
-  ],
-};
-
-const SAMPLE_SUBMISSIONS = [submission1, submission2, submission3];
-
 const Pengajuan: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [activeSubmission, setActiveSubmission] =
-    useState<SubmissionData | null>(null);
+  const [activeSubmission, setActiveSubmission] = useState<GroupedDocuments | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [documents, setDocuments] = useState<GroupedDocuments[]>([]);
   const [modalStates, setModalStates] = useState({
     upload: false,
     status: false,
@@ -87,123 +42,194 @@ const Pengajuan: React.FC = () => {
     pendaftaranMenunggu: false,
   });
 
-  const handleStepClick = (stepIndex: number) => {
-    setActiveStep(stepIndex);
+  const mapStatus = (status: string): "menunggu" | "diterima" | "revisi" => {
+    switch (status) {
+      case 'verified': return 'diterima';
+      case 'rejected': return 'revisi';
+      default: return 'menunggu';
+    }
   };
 
+  const groupDocuments = (groups: any[]): GroupedDocuments[] => {
+    return groups.map((group, index) => ({
+      number: index + 1,
+      date: group.date,
+      status: group.status,
+      documents: group.documents.map((doc: any) => ({
+        name: doc.jenisDokumen,
+        status: mapStatus(doc.status),
+        filePath: doc.filePath
+      }))
+    }));
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axiosInstance.get('/mahasiswa/me');
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      if (!userData?.mahasiswa.nim) return;
+
+      try {
+        const kategori = STEPS[activeStep].title.toUpperCase();
+        const response = await axiosInstance.get(
+            `/mahasiswa/history/${kategori}/${userData.mahasiswa.nim}`
+        );
+        const groupedDocs = groupDocuments(response.data);
+        setDocuments(groupedDocs);
+      } catch (error) {
+        console.error('Error fetching documents:', error);
+      }
+    };
+
+    if (userData) {
+      fetchDocuments();
+    }
+  }, [userData, activeStep]);
+
+  const handleStepClick = (stepIndex: number) => setActiveStep(stepIndex);
   const closeModal = (modalKey: keyof typeof modalStates) => {
-    setModalStates((prev) => ({ ...prev, [modalKey]: false }));
+    setModalStates(prev => ({ ...prev, [modalKey]: false }));
   };
 
   const handleStatusClick = (submission: SubmissionData) => {
     setActiveSubmission(submission);
     if (activeStep === 1) {
-      switch (submission.status) {
-        case "revisi":
-          setModalStates((prev) => ({ ...prev, pendaftaranDitolak: true }));
-          break;
-        case "diterima":
-          setModalStates((prev) => ({ ...prev, pendaftaranDiterima: true }));
-          break;
-        case "menunggu":
-          setModalStates((prev) => ({ ...prev, pendaftaranMenunggu: true }));
-          break;
-      }
+      const modalMap = {
+        revisi: 'pendaftaranDitolak',
+        diterima: 'pendaftaranDiterima',
+        menunggu: 'pendaftaranMenunggu'
+      };
+      setModalStates(prev => ({ ...prev, [modalMap[submission.status]]: true }));
     } else {
-      setModalStates((prev) => ({ ...prev, status: true }));
+      setModalStates(prev => ({ ...prev, status: true }));
     }
   };
 
+  const handleDocumentClick = (filePath: string) => {
+    window.open(filePath, '_blank');
+  };
+
   const renderUploadModal = () => {
-    if (!modalStates.upload) return null;
+    if (!modalStates.upload || !userData) return null;
 
     const modalProps = {
       isOpen: modalStates.upload,
       onClose: () => closeModal("upload"),
+      nim: userData.mahasiswa.nim,
+      userId: userData.id,
+      onUploadSuccess: () => {
+        closeModal("upload");
+        const fetchDocuments = async () => {
+          if (!userData?.mahasiswa.nim) return;
+          try {
+            const kategori = STEPS[activeStep].title.toUpperCase();
+            const response = await axiosInstance.get(
+                `/mahasiswa/document-history/${kategori}/${userData.mahasiswa.nim}`
+            );
+            const groupedDocs = groupDocuments(response.data);
+            setDocuments(groupedDocs);
+          } catch (error) {
+            console.error('Error fetching documents:', error);
+          }
+        };
+        fetchDocuments();
+      }
     };
 
-    switch (activeStep) {
-      case 0:
-        return <UploadPersyaratan {...modalProps} />;
-      case 1:
-        return <UploadPendaftaran {...modalProps} />;
-      case 2:
-        return <UploadPascaSeminar {...modalProps} />;
-      default:
-        return null;
-    }
+    const components = {
+      0: UploadPersyaratan,
+      1: UploadPendaftaran,
+      2: UploadPascaSeminar
+    };
+
+    const ModalComponent = components[activeStep as keyof typeof components];
+    return ModalComponent ? <ModalComponent {...modalProps} /> : null;
   };
 
+  if (!userData) return <div>Loading...</div>;
+
   return (
-    <div className="container bg-white p-4 rounded-lg">
-      <div className="mt-6">
-        <ProgressSteps activeStep={activeStep} onStepClick={handleStepClick} />
-      </div>
+      <div className="container bg-white p-4 rounded-lg">
+        <div className="mt-6">
+          <ProgressSteps activeStep={activeStep} onStepClick={handleStepClick}/>
+        </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-reguler text-gray-900">
-          Riwayat Pengajuan{" "}
-          <span className="font-bold">{STEPS[activeStep].title}</span> Seminar
-          KP
-        </h3>
-        <button
-          onClick={() => setModalStates((prev) => ({ ...prev, upload: true }))}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300"
-        >
-          Buat
-          <PlusCircle className="w-5 h-5 ml-2" />
-        </button>
-      </div>
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-reguler text-gray-900">
+            Riwayat Pengajuan{" "}
+            <span className="font-bold">{STEPS[activeStep].title}</span> Seminar
+            KP
+          </h3>
+          <button
+              onClick={() => setModalStates((prev) => ({...prev, upload: true}))}
+              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300"
+          >
+            Buat
+            <PlusCircle className="w-5 h-5 ml-2"/>
+          </button>
+        </div>
 
-      {SAMPLE_SUBMISSIONS.map((submission, index) => (
-        <CardUpload
-          key={index}
-          {...submission}
-          onStatusClick={() => handleStatusClick(submission)}
+        {documents.map((submission, index) => (
+            <CardUpload
+                key={index}
+                {...submission}
+                onStatusClick={() => handleStatusClick(submission)}
+                onDocumentClick={handleDocumentClick}
+            />
+        ))}
+
+        {renderUploadModal()}
+
+        {activeSubmission && (
+            <FileModal
+                title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
+                status={activeSubmission.status}
+                isOpen={modalStates.status}
+                onClose={() => {
+                  closeModal("status");
+                  setActiveSubmission(null);
+                }}
+                documents={activeSubmission.documents}
+                onDocumentClick={handleDocumentClick}
+            />
+        )}
+
+        <PendaftaranDitolak
+            title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
+            isOpen={modalStates.pendaftaranDitolak}
+            onClose={() => closeModal("pendaftaranDitolak")}
         />
-      ))}
 
-      {renderUploadModal()}
-
-      {activeSubmission && (
-        <FileModal
-          title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
-          status={activeSubmission.status}
-          isOpen={modalStates.status}
-          onClose={() => {
-            closeModal("status");
-            setActiveSubmission(null);
-          }}
-          documents={activeSubmission.documents}
+        <PendaftaranDiterima
+            title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
+            isOpen={modalStates.pendaftaranDiterima}
+            onClose={() => closeModal("pendaftaranDiterima")}
         />
-      )}
 
-      <PendaftaranDitolak
-        title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
-        isOpen={modalStates.pendaftaranDitolak}
-        onClose={() => closeModal("pendaftaranDitolak")}
-      />
+        <PendaftaranMenunggu
+            title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
+            isOpen={modalStates.pendaftaranMenunggu}
+            onClose={() => closeModal("pendaftaranMenunggu")}
+        />
 
-      <PendaftaranDiterima
-        title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
-        isOpen={modalStates.pendaftaranDiterima}
-        onClose={() => closeModal("pendaftaranDiterima")}
-      />
-
-      <PendaftaranMenunggu
-        title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
-        isOpen={modalStates.pendaftaranMenunggu}
-        onClose={() => closeModal("pendaftaranMenunggu")}
-      />
-
-      <NavigationButtons
-        activeStep={activeStep}
-        onPrevious={() => setActiveStep((prev) => Math.max(0, prev - 1))}
-        onNext={() =>
-          setActiveStep((prev) => Math.min(STEPS.length - 1, prev + 1))
-        }
-      />
-    </div>
+        <NavigationButtons
+            activeStep={activeStep}
+            onPrevious={() => setActiveStep((prev) => Math.max(0, prev - 1))}
+            onNext={() =>
+                setActiveStep((prev) => Math.min(STEPS.length - 1, prev + 1))
+            }
+        />
+      </div>
   );
 };
 

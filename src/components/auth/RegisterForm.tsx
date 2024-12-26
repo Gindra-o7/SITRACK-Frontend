@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Label, TextInput, Button, Toast } from 'flowbite-react';
-import { HiMail, HiLockClosed, HiUser, HiEye, HiEyeOff, HiCheck, HiX, HiIdentification } from 'react-icons/hi';
+import { Label, TextInput, Button} from 'flowbite-react';
+import { HiMail, HiLockClosed, HiUser, HiEye, HiEyeOff, HiIdentification } from 'react-icons/hi';
 import axiosInstance from "../../configs/axios.configs";
 import axios from "axios";
 
 interface RegisterFormProps {
     onLoginClick: () => void;
+    showToast: (type: 'success' | 'error', message: string) => void;
 }
 
-export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
+export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick, showToast }) => {
     const [registerData, setRegisterData] = useState({
         nama: '',
         email: '',
@@ -20,22 +21,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
         password: false,
         confirmPassword: false
     });
-    const [toast, setToast] = useState<{
-        show: boolean;
-        type: 'success' | 'error';
-        message: string;
-    }>({
-        show: false,
-        type: 'success',
-        message: ''
-    });
-
-    const showToast = (type: 'success' | 'error', message: string) => {
-        setToast({ show: true, type, message });
-        setTimeout(() => {
-            setToast(prev => ({ ...prev, show: false }));
-        }, 3000);
-    };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -75,7 +60,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
             // Tunggu sebentar sebelum beralih ke halaman login
             setTimeout(() => {
                 onLoginClick();
-            }, 2000);
+            }, 1000);
         } catch (error: unknown) {
             let errorMessage = 'Terjadi kesalahan saat registrasi';
 
@@ -100,25 +85,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick }) => {
 
     return (
         <>
-            {/* Flowbite Toast */}
-            {toast.show && (
-                <div className="fixed top-4 right-4 z-50">
-                    <Toast>
-                        {toast.type === 'success' ? (
-                            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500">
-                                <HiCheck className="h-5 w-5" />
-                            </div>
-                        ) : (
-                            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500">
-                                <HiX className="h-5 w-5" />
-                            </div>
-                        )}
-                        <div className="ml-3 text-sm font-normal">{toast.message}</div>
-                        <Toast.Toggle onDismiss={() => setToast(prev => ({ ...prev, show: false }))} />
-                    </Toast>
-                </div>
-            )}
-
             <h2 className="text-2xl font-bold text-center mb-4 text-black">Daftar</h2>
             <form onSubmit={handleRegister} className="space-y-4">
                 <div>

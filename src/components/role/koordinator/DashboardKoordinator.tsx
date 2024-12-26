@@ -1,9 +1,35 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { CardStat, Card, CardData } from "../../Card";
 import Alert, { AlertData } from "../../Alert";
 import { Users, FileCheck, UserCog } from "lucide-react";
+import axiosInstance from "../../../configs/axios.configs.ts";
+
+interface UserData {
+  nama: string;
+  email: string;
+  userRoles: {
+    role: {
+      name: string;
+    };
+  }[];
+}
 
 const Dashboard: React.FC = () => {
+  const [user, setUser] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance.get('/koordinator/me');
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const cards: CardData[] = [
     {
       title: "Manajemen User",
@@ -46,7 +72,7 @@ const Dashboard: React.FC = () => {
         <main className="p-6">
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900">
-              Selamat Datang, Dr. Ahmad Koordinator
+              Selamat Datang, {user?.nama || 'Loading...'}
             </h2>
             <p className="text-gray-600 mt-1">
               Koordinator Kerja Praktik Teknik Informatika

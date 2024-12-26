@@ -73,14 +73,10 @@ const LandingPages = () => {
         }
     };
 
-    // Render loading screen if still initializing
     if (isLoading) {
         return (
             <div className="relative w-full h-screen bg-gray-100">
-                {/* Skeleton Background */}
                 <LoadingInterfaceLanding/>
-
-                {/* Spinner dan Teks di Tengah */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
                     <Spinner size="xl" color="gray"/>
                     <p className="text-gray-600 font-medium">Loading, mohon tunggu...</p>
