@@ -139,13 +139,6 @@ const ManageAccounts = () => {
         }));
     }, []);
 
-    const toggleRole = (roleId: string) => {
-        setNewUserData(prev => ({
-            ...prev,
-            roles: [roleId] // Only allow single role selection
-        }));
-    };
-
     const [formErrors, setFormErrors] = useState<{
         [key: string]: string
     }>({});
@@ -195,51 +188,52 @@ const ManageAccounts = () => {
 
         setIsLoading(true);
         try {
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                setAlertMessage({
-                    type: 'error',
-                    message: 'Sesi anda telah berakhir. Silakan login kembali.'
-                });
-                return;
-            }
-
+            // Simplified payload structure to match backend expectations
             const payload = {
                 nama: newUserData.nama,
                 email: newUserData.email,
                 password: newUserData.password,
-                role: newUserData.roles[0],
+                roles: newUserData.roles, // Send as array since backend expects roles array
                 ...(newUserData.roles.includes('mahasiswa') && { nim: newUserData.nim }),
-                ...(newUserData.roles.includes('koordinator') ||
-                newUserData.roles.includes('kaprodi') ||
-                newUserData.roles.includes('dosen_penguji') ||
-                newUserData.roles.includes('dosen_pembimbing') ?
-                    { nip: newUserData.nip } : {})
+                ...(newUserData.roles.some(role =>
+                    ['koordinator', 'kaprodi', 'dosen_penguji', 'dosen_pembimbing'].includes(role)
+                ) && { nip: newUserData.nip })
             };
 
-            await axiosInstance.post("/koordinator/user", payload, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await axiosInstance.post("/koordinator/user", payload);
 
-            setAlertMessage({
-                type: 'success',
-                message: 'Berhasil menambahkan pengguna baru'
-            });
-
-            fetchUsers();
-            resetForm();
-            setShowAddModal(false);
+            if (response.data.success) {
+                setAlertMessage({
+                    type: 'success',
+                    message: 'Berhasil menambahkan pengguna baru'
+                });
+                fetchUsers();
+                resetForm();
+                setShowAddModal(false);
+            }
 
         } catch (error: any) {
             console.error('Error adding user:', error);
+            const errorMessage = error.response?.data?.message ||
+                (error.response?.data?.errors && error.response.data.errors.map((err: any) => err.message).join(', ')) ||
+                'Gagal menambahkan pengguna';
+
             setAlertMessage({
                 type: 'error',
-                message: error.response?.data?.message || 'Gagal menambahkan pengguna'
+                message: errorMessage
             });
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const toggleRole = (roleId: string) => {
+        setNewUserData(prev => ({
+            ...prev,
+            roles: prev.roles.includes(roleId)
+                ? prev.roles.filter(r => r !== roleId)
+                : [...prev.roles, roleId]
+        }));
     };
 
     return (

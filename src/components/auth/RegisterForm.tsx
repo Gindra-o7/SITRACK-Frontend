@@ -107,7 +107,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onLoginClick, showTo
                     <TextInput
                         icon={HiMail}
                         id="email"
-                        placeholder="name@sitrack.com"
+                        placeholder="nim@students.uin-suska.ac.id"
                         required
                         type="email"
                         value={registerData.email}

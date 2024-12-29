@@ -123,7 +123,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                     <TextInput
                         icon={HiMail}
                         id="email"
-                        placeholder="name@sitrack.com"
+                        placeholder="email"
                         required
                         type="email"
                         value={loginData.email}
@@ -156,7 +156,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                             onClick={togglePasswordVisibility}
                             className="absolute right-3 top-1/2 -translate-y-1/2 z-10"
                         >
-                            {showPassword ? <HiEyeOff/> : <HiEye/>}
+                            {showPassword ? <HiEye/> : <HiEyeOff/>}
                         </button>
                     </div>
                 </div>
@@ -180,7 +180,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                         Lupa Password?
                     </button>
                 </div>
-                <Button className="w-full" color="dark" onClick={handleLogin}>
+                <Button className="w-full" color="dark" onClick={handleLogin} type="submit">
                     Masuk
                 </Button>
                 <div className="text-center">

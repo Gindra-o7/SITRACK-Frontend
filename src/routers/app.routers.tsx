@@ -5,7 +5,7 @@ import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./protected.routers.tsx";
 import {AuthPage} from "../pages/Auth.Pages.tsx";
 import DashboardMahasiswaPages from "../pages/mahasiswa/DashboardMahasiswa.tsx";
-import PengajuanMahasiswaPages from "../pages/mahasiswa/PengajuanKoordinator.tsx";
+import PengajuanMahasiswaPages from "../pages/mahasiswa/PengajuanMahasiswa.tsx";
 import DashboardDosenPengujiPages from "../pages/dosen-penguji/DashboardDosenPenguji";
 import MahasiswaDosenPengujiPages from "../pages/dosen-penguji/MahasiswaDosenPenguji";
 import DashboardDosenPembimbingPages from "../pages/dosen-pembimbing/DashboardDosenPembimbing";

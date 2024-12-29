@@ -1,308 +1,305 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Filter } from "lucide-react";
 import ValidationModal from "../../modal/Validasi.Modal";
-import { ValidationCard } from "../../Card.tsx";
+import { ValidationCard } from "../../Card";
+import axiosInstance from "../../../configs/axios.configs";
+
+interface User {
+  id: string;
+  email: string;
+  nama: string;
+  photoPath: string;
+}
+
+interface Document {
+  id: string;
+  jenisDokumen: string;
+  kategori: string;
+  status: string;
+  tanggalUpload: string;
+  filePath: string;
+}
+
+interface Student {
+  id: string;
+  nim: string;
+  noHp: string;
+  semester: number;
+  user: User;
+  dokumen: Document[];
+}
+
+interface APIResponse {
+  success: boolean;
+  message: string;
+  data: Student[];
+}
+
+interface GroupedDocuments {
+  PERSYARATAN: Document[];
+  PENDAFTARAN: Document[];
+  PASCA_SEMINAR: Document[];
+}
+
+interface ProcessedStudent {
+  id: string;
+  name: string;
+  nim: string;
+  documentStatus: string;
+  submissionDate: string;
+  status: string;
+  photoPath: string;
+  email: string;
+  noHp: string;
+  semester: number;
+}
 
 const Validasi = () => {
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      name: "M Iqbal",
-      nim: "12250111001",
-      documentStatus: "Pendaftaran",
-      submissionDate: "2024-03-15",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 2,
-      name: "Siti Fatima",
-      nim: "12250111002",
-      documentStatus: "Persyaratan",
-      submissionDate: "2024-02-28",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 3,
-      name: "Muhammad Rizki",
-      nim: "12250111003",
-      documentStatus: "Pasca Seminar",
-      submissionDate: "2024-01-10",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 4,
-      name: "Dewi Anggraini",
-      nim: "12250111004",
-      documentStatus: "Pendaftaran",
-      submissionDate: "2024-03-01",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 5,
-      name: "Budi Santoso",
-      nim: "12250111005",
-      documentStatus: "Persyaratan",
-      submissionDate: "2024-02-15",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 6,
-      name: "Rina Wijayanti",
-      nim: "12250111006",
-      documentStatus: "Pasca Seminar",
-      submissionDate: "2024-01-20",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 7,
-      name: "Hendro Prasetyo",
-      nim: "12250111007",
-      documentStatus: "Pendaftaran",
-      submissionDate: "2024-03-05",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 8,
-      name: "Annisa Nurhaliza",
-      nim: "12250111008",
-      documentStatus: "Persyaratan",
-      submissionDate: "2024-02-20",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 9,
-      name: "Yusuf Ardiansyah",
-      nim: "12250111009",
-      documentStatus: "Pasca Seminar",
-      submissionDate: "2024-03-10",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 10,
-      name: "Ratna Sari",
-      nim: "12250111010",
-      documentStatus: "Persyaratan",
-      submissionDate: "2024-03-12",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 11,
-      name: "Adi Saputra",
-      nim: "12250111011",
-      documentStatus: "Pendaftaran",
-      submissionDate: "2024-03-13",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-    {
-      id: 12,
-      name: "Lestari Dewi",
-      nim: "12250111012",
-      documentStatus: "Pasca Seminar",
-      submissionDate: "2024-01-11",
-      status: "menunggu",
-      documentsHistory: {} as Record<string, Document[]>,
-    },
-  ]);
-
+  const [students, setStudents] = useState<ProcessedStudent[]>([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [activeDocument, setActiveDocument] = useState(null);
+  const [activeDocument, setActiveDocument] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [selectedStudentDocs, setSelectedStudentDocs] = useState<GroupedDocuments>({
+    PERSYARATAN: [],
+    PENDAFTARAN: [],
+    PASCA_SEMINAR: []
+  });
 
-  // Fungsi untuk mengupdate status mahasiswa setelah validasi
-  const updateStudentStatus = (studentId: number, documents: Document[]) => {
-    setStudents((prevStudents) =>
-      prevStudents.map((student) => {
-        if (student.id === studentId) {
-          const allApproved = documents.every((doc) => doc.status === "setuju");
-          const hasRevisions = documents.some((doc) => doc.status === "revisi");
+  const processStudentData = (apiData: Student[]): ProcessedStudent[] => {
+    return apiData.map(student => {
+      const latestDoc = student.dokumen.reduce((latest, current) => {
+        return !latest || new Date(current.tanggalUpload) > new Date(latest.tanggalUpload)
+            ? current
+            : latest;
+      }, null as Document | null);
 
-          // Store the documents state in the student's history
-          const updatedHistory = {
-            ...student.documentsHistory,
-            [student.documentStatus]: documents,
-          };
-
-          return {
-            ...student,
-            status: allApproved
-              ? "setuju"
-              : hasRevisions
-              ? "revisi"
-              : "menunggu",
-            documentsHistory: updatedHistory,
-          };
-        }
-        return student;
-      })
-    );
+      return {
+        id: student.id,
+        name: student.user.nama,
+        nim: student.nim,
+        documentStatus: latestDoc?.kategori || "PERSYARATAN",
+        submissionDate: latestDoc?.tanggalUpload || new Date().toISOString(),
+        status: latestDoc?.status || "Belum Mengirim",
+        photoPath: student.user.photoPath,
+        email: student.user.email,
+        noHp: student.noHp,
+        semester: student.semester
+      };
+    });
   };
 
-  // Filter Mahasiswa berdasarkan status dokumennya
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = async () => {
+    try {
+      const response = await axiosInstance.get<APIResponse>('/koordinator/mahasiswa-document');
+      if (response.data.success) {
+        setStudents(processStudentData(response.data.data));
+      } else {
+        console.error('Error fetching students:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching students:', error);
+    }
+  };
+
+  const groupDocumentsByCategory = (documents: Document[]): GroupedDocuments => {
+    return documents.reduce((acc, doc) => {
+      const category = doc.kategori as keyof GroupedDocuments;
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(doc);
+      return acc;
+    }, {
+      PERSYARATAN: [],
+      PENDAFTARAN: [],
+      PASCA_SEMINAR: []
+    } as GroupedDocuments);
+  };
+
+  const fetchStudentDocuments = async (nim: string) => {
+    try {
+      const response = await axiosInstance.get<APIResponse>(`/koordinator/mahasiswa-document`);
+      if (response.data.success) {
+        const student = response.data.data.find(s => s.nim === nim);
+        if (student) {
+          setSelectedStudentDocs(groupDocumentsByCategory(student.dokumen));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+    }
+  };
+
+  const updateDocumentStatus = async (docId: string, status: string, komentar?: string) => {
+    try {
+      await axiosInstance.patch(`/koordinator/document/${docId}/status`, {
+        status,
+        komentar
+      });
+      await fetchStudents();
+      if (activeDocument) {
+        const activeStudent = students.find(s => s.id === activeDocument.id);
+        if (activeStudent) {
+          await fetchStudentDocuments(activeStudent.nim);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
+
+  const handleCardClick = async (student: ProcessedStudent) => {
+    setActiveDocument({
+      id: student.id,
+      title: `Dokumen ${student.documentStatus} - ${student.name}`,
+      status: student.status,
+      documentStatus: student.documentStatus,
+    });
+    await fetchStudentDocuments(student.nim);
+    setShowDialog(true);
+  };
+
   const filteredStudents = students.filter((student) => {
-    const matchesSearch =
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.nim.includes(searchTerm);
-    const matchesFilter =
-      filterStatus === "" || student.documentStatus === filterStatus;
+    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.nim.includes(searchTerm);
+    const matchesFilter = filterStatus === "" || student.documentStatus === filterStatus;
     return matchesSearch && matchesFilter;
   });
 
   return (
-    <div className="container px-4 py-6 md:px-6 bg-gray-50 min-h-screen">
-      <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-        Validasi Dokumen Mahasiswa
-      </h1>
+      <div className="container px-4 py-6 md:px-6 bg-gray-50 min-h-screen">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4 md:mb-6">
+          Validasi Dokumen Mahasiswa
+        </h1>
 
-      {/* Search and Filter Container */}
-      <div className="mb-4 md:mb-6">
-        <div className="flex items-center space-x-2">
-          {/* Search Input */}
-          <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
+        {/* Search and Filter Container */}
+        <div className="mb-4 md:mb-6">
+          <div className="flex items-center space-x-2">
+            <div className="relative flex-grow">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <input
+                  type="text"
+                  placeholder="Cari nama/NIM"
+                  className="w-full pl-10 p-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Cari nama/NIM"
-              className="w-full pl-10 p-2 border border-gray-300 rounded-lg text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
 
-          {/* Filter Buttons */}
-          <div className="hidden md:block">
-            <div className="flex space-x-2">
-              {["Persyaratan", "Pendaftaran", "Pasca Seminar"].map((status) => (
-                <button
-                  key={status}
-                  className={`
+            <div className="hidden md:block">
+              <div className="flex space-x-2">
+                {["PERSYARATAN", "PENDAFTARAN", "PASCA_SEMINAR"].map((status) => (
+                    <button
+                        key={status}
+                        className={`
                     px-3 py-2 rounded-full text-xs font-medium transition-colors
-                    ${
-                      filterStatus === status
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }
+                    ${filterStatus === status
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }
                   `}
-                  onClick={() =>
-                    setFilterStatus(filterStatus === status ? "" : status)
-                  }
-                >
-                  {status}
-                </button>
-              ))}
+                        onClick={() => setFilterStatus(filterStatus === status ? "" : status)}
+                    >
+                      {status.replace("_", " ")}
+                    </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Mobile Filter Toggle */}
-          <div className="md:hidden">
             <button
-              onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-              className="p-2 bg-gray-100 text-gray-600 rounded-lg"
+                className="md:hidden p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
+                onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
             >
               <Filter className="h-4 w-4" />
             </button>
           </div>
+
+          {mobileFiltersOpen && (
+              <div className="md:hidden mt-2 flex flex-wrap gap-2">
+                {["PERSYARATAN", "PENDAFTARAN", "PASCA_SEMINAR"].map((status) => (
+                    <button
+                        key={status}
+                        className={`
+                  px-3 py-1.5 rounded-full text-xs font-medium transition-colors
+                  ${filterStatus === status
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }
+                `}
+                        onClick={() => setFilterStatus(filterStatus === status ? "" : status)}
+                    >
+                      {status.replace("_", " ")}
+                    </button>
+                ))}
+              </div>
+          )}
         </div>
 
-        {/* Mobile Filter Dropdown */}
-        {mobileFiltersOpen && (
-          <div className="md:hidden mt-2 flex flex-wrap gap-2">
-            {["Pendaftaran", "Persyaratan", "Pasca Seminar"].map((status) => (
-              <button
-                key={status}
-                className={`
-                  px-3 py-1.5 rounded-full text-xs font-medium transition-colors
-                  ${
-                    filterStatus === status
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }
-                `}
-                onClick={() =>
-                  setFilterStatus(filterStatus === status ? "" : status)
-                }
-              >
-                {status}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+        {/* Student Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          {filteredStudents.map((student) => (
+              <div key={student.id} className="relative">
+                <ValidationCard
+                    student={{
+                      name: student.name,
+                      nim: student.nim,
+                      documentStatus: student.documentStatus,
+                      status: student.status,
+                      photoPath: student.photoPath,
+                      email: student.email,
+                      noHp: student.noHp,
+                      semester: student.semester
+                    }}
+                    variant="default"
+                    className="h-full cursor-pointer"
+                    onClick={() => handleCardClick(student)}
+                />
+              </div>
+          ))}
+        </div>
 
-      {/* Student Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-        {filteredStudents.map((student) => (
-          <div key={student.id} className="relative">
-            <ValidationCard
-              student={{
-                name: student.name,
-                nim: student.nim,
-                documentStatus: student.documentStatus,
-                submissionDate: student.submissionDate,
-                status: student.status,
-              }}
-              variant="default"
-              className="h-full cursor-pointer"
-              onClick={() => {
-                setActiveDocument({
-                  id: student.id,
-                  title: `Dokumen ${student.documentStatus} - ${student.name}`,
-                  status: student.status,
-                  documentStatus: student.documentStatus,
-                });
-                setShowDialog(true);
-              }}
+        {/* Validation Modal */}
+        {showDialog && activeDocument && (
+            <ValidationModal
+                activeDocument={{
+                  ...activeDocument,
+                  documentStatus: activeDocument.documentStatus,
+                }}
+                groupedDocuments={selectedStudentDocs}
+                onClose={() => {
+                  setShowDialog(false);
+                  setActiveDocument(null);
+                  setSelectedStudentDocs({
+                    PERSYARATAN: [],
+                    PENDAFTARAN: [],
+                    PASCA_SEMINAR: []
+                  });
+                }}
+                onSave={(documents) => {
+                  const promises = documents.map(doc =>
+                      updateDocumentStatus(doc.id, doc.status, doc.komentar)
+                  );
+                  Promise.all(promises).then(() => {
+                    setShowDialog(false);
+                    setActiveDocument(null);
+                    setSelectedStudentDocs({
+                      PERSYARATAN: [],
+                      PENDAFTARAN: [],
+                      PASCA_SEMINAR: []
+                    });
+                  });
+                }}
             />
-          </div>
-        ))}
-
-        {/* Empty State */}
-        {filteredStudents.length === 0 && (
-          <div className="col-span-full text-center py-8 text-gray-500">
-            Tidak ada pengajuan yang ditemukan
-          </div>
         )}
       </div>
-
-      {/* Validation Dialog */}
-      {showDialog && activeDocument && (
-        <ValidationModal
-          activeDocument={{
-            ...activeDocument,
-            documentStatus:
-              activeDocument.documentStatus as keyof typeof documentLists,
-          }}
-          initialDocuments={
-            students.find((s) => s.id === activeDocument.id)?.documentsHistory[
-              activeDocument.documentStatus
-            ] || []
-          }
-          onClose={() => {
-            setShowDialog(false);
-            setActiveDocument(null);
-          }}
-          onSave={(documents) => {
-            updateStudentStatus(activeDocument.id, documents);
-            setShowDialog(false);
-            setActiveDocument(null);
-          }}
-        />
-      )}
-    </div>
   );
 };
 

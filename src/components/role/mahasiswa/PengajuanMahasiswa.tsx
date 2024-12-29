@@ -7,25 +7,19 @@ import {
   UploadPascaSeminar,
 } from "../../modal/Upload";
 import FileModal from "../../modal/File.Modal";
-import {
-  PendaftaranDiterima,
-  PendaftaranDitolak,
-  PendaftaranMenunggu,
-} from "../../modal/StatusPendaftaran";
 import { CardUpload } from "../../Card";
 import axiosInstance from "../../../configs/axios.configs.ts";
 import {UserData, GroupedDocuments} from "../../../interfaces/common.interfaces.ts"
 
-// Types & Data
 export interface DocumentData {
   name: string;
-  status: "menunggu" | "diterima" | "revisi";
+  status: "submitted" | "verified" | "rejected";
 }
 
 export interface SubmissionData {
   number: number;
   date: string;
-  status: "revisi" | "diterima" | "menunggu";
+  status: "submitted" | "verified" | "rejected";
   documents: DocumentData[];
 }
 
@@ -36,17 +30,14 @@ const Pengajuan: React.FC = () => {
   const [documents, setDocuments] = useState<GroupedDocuments[]>([]);
   const [modalStates, setModalStates] = useState({
     upload: false,
-    status: false,
-    pendaftaranDitolak: false,
-    pendaftaranDiterima: false,
-    pendaftaranMenunggu: false,
+    status: false
   });
 
-  const mapStatus = (status: string): "menunggu" | "diterima" | "revisi" => {
+  const mapStatus = (status: string): "submitted" | "verified" | "rejected" => {
     switch (status) {
-      case 'verified': return 'diterima';
-      case 'rejected': return 'revisi';
-      default: return 'menunggu';
+      case 'verified': return 'verified';
+      case 'rejected': return 'rejected';
+      default: return 'submitted';
     }
   };
 
@@ -103,20 +94,11 @@ const Pengajuan: React.FC = () => {
 
   const handleStatusClick = (submission: SubmissionData) => {
     setActiveSubmission(submission);
-    if (activeStep === 1) {
-      const modalMap = {
-        revisi: 'pendaftaranDitolak',
-        diterima: 'pendaftaranDiterima',
-        menunggu: 'pendaftaranMenunggu'
-      };
-      setModalStates(prev => ({ ...prev, [modalMap[submission.status]]: true }));
-    } else {
-      setModalStates(prev => ({ ...prev, status: true }));
-    }
+    setModalStates(prev => ({ ...prev, status: true }));
   };
 
   const handleDocumentClick = (filePath: string) => {
-    window.open(filePath, '_blank');
+    window.open(`http://localhost:5000/${filePath}`, '_blank');
   };
 
   const renderUploadModal = () => {
@@ -134,7 +116,7 @@ const Pengajuan: React.FC = () => {
           try {
             const kategori = STEPS[activeStep].title.toUpperCase();
             const response = await axiosInstance.get(
-                `/mahasiswa/document-history/${kategori}/${userData.mahasiswa.nim}`
+                `/mahasiswa/history/${kategori}/${userData.mahasiswa.nim}`
             );
             const groupedDocs = groupDocuments(response.data);
             setDocuments(groupedDocs);
@@ -203,24 +185,6 @@ const Pengajuan: React.FC = () => {
                 onDocumentClick={handleDocumentClick}
             />
         )}
-
-        <PendaftaranDitolak
-            title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
-            isOpen={modalStates.pendaftaranDitolak}
-            onClose={() => closeModal("pendaftaranDitolak")}
-        />
-
-        <PendaftaranDiterima
-            title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
-            isOpen={modalStates.pendaftaranDiterima}
-            onClose={() => closeModal("pendaftaranDiterima")}
-        />
-
-        <PendaftaranMenunggu
-            title={`Pengajuan ${STEPS[activeStep].title} Seminar KP Anda`}
-            isOpen={modalStates.pendaftaranMenunggu}
-            onClose={() => closeModal("pendaftaranMenunggu")}
-        />
 
         <NavigationButtons
             activeStep={activeStep}

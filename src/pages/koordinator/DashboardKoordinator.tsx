@@ -11,7 +11,7 @@ const DashboardKoordinatorPages = () => {
   React.useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // 1 detik itu cuman simulasi
+    }, 1000);
   }, []);
 
   return (

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Search, ListFilter } from "lucide-react";
-import { InputNilaiDosenPembimbing } from "../../modal/InputNilai";
+import InputNilaiDosenPembimbing from "../../modal/InputNilaiDosenPembimbing.tsx";
 import LihatNilai from "../../modal/LihatNilai";
+import axiosInstance from "../../../configs/axios.configs.ts";
 
 interface Student {
   name: string;
@@ -14,108 +15,69 @@ interface Student {
   action: "Input Nilai" | "Lihat Nilai";
 }
 
+interface UserData {
+  nama: string;
+  email: string;
+  userRoles: {
+    role: {
+      name: string;
+    };
+  }[];
+  dosen: {
+    id: string | number;
+  };
+}
+
 const MahasiswaSeminar: React.FC = () => {
   const [isInputModalOpen, setIsInputModalOpen] = useState<boolean>(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const students: Student[] = [
-    // Menunggu Seminar
-    {
-      name: "Ahmad Fauzi",
-      nim: "1234567893",
-      department: "Teknik Informatika",
-      status: "Menunggu Seminar",
-      company: "PT. Global Tech",
-      pembimbing: "Dr. Budi Santoso, M.Kom",
-      judulKP:
-        "Pengembangan Sistem Informasi Berbasis Web Menggunakan React dan Node.js",
-      action: "Input Nilai",
-    },
-    {
-      name: "Michael Wijaya",
-      nim: "1234567895",
-      department: "Teknik Informatika",
-      status: "Menunggu Seminar",
-      company: "PT. Tech Inovasi",
-      pembimbing: "Dr. Siti Rahayu, M.Kom",
-      judulKP: "Pengembangan Aplikasi Mobile untuk Manajemen Inventory",
-      action: "Input Nilai",
-    },
-    {
-      name: "Sarah Putri",
-      nim: "1234567896",
-      department: "Teknik Informatika",
-      status: "Menunggu Seminar",
-      company: "PT. Digital Solution",
-      pembimbing: "Dr. Ahmad Rahman, M.T",
-      judulKP: "Implementasi Internet of Things untuk Smart Home",
-      action: "Input Nilai",
-    },
-    // Sedang Berlangsung
-    {
-      name: "Diana Permata",
-      nim: "1234567897",
-      department: "Teknik Informatika",
-      status: "Sedang Berlangsung",
-      company: "PT. Cyber Indonesia",
-      pembimbing: "Dr. Hendro Wicaksono, M.Kom",
-      judulKP: "Pengembangan Sistem Keamanan Berbasis AI",
-      action: "Input Nilai",
-    },
-    {
-      name: "Reza Pratama",
-      nim: "1234567898",
-      department: "Teknik Informatika",
-      status: "Sedang Berlangsung",
-      company: "PT. Data Analytics",
-      pembimbing: "Dr. Maya Indah, M.T",
-      judulKP: "Analisis Big Data untuk Prediksi Perilaku Konsumen",
-      action: "Input Nilai",
-    },
-    {
-      name: "Dewi Safitri",
-      nim: "1234567899",
-      department: "Teknik Informatika",
-      status: "Sedang Berlangsung",
-      company: "PT. Cloud Solutions",
-      pembimbing: "Dr. Eko Prasetyo, M.Kom",
-      judulKP: "Implementasi Cloud Computing untuk Sistem Enterprise",
-      action: "Input Nilai",
-    },
-    // Selesai Seminar
-    {
-      name: "Linda Kusuma",
-      nim: "1234567894",
-      department: "Teknik Informatika",
-      status: "Selesai Seminar",
-      company: "PT. Solusi Digital",
-      pembimbing: "Dr. Andi Wijaya, M.T",
-      judulKP: "Implementasi Machine Learning untuk Prediksi Penjualan",
-      action: "Lihat Nilai",
-    },
-    {
-      name: "Budi Hartono",
-      nim: "1234567901",
-      department: "Teknik Informatika",
-      status: "Selesai Seminar",
-      company: "PT. Software House",
-      pembimbing: "Dr. Rini Susanti, M.Kom",
-      judulKP: "Pengembangan E-Commerce dengan Progressive Web App",
-      action: "Lihat Nilai",
-    },
-    {
-      name: "Rina Melati",
-      nim: "1234567902",
-      department: "Teknik Informatika",
-      status: "Selesai Seminar",
-      company: "PT. Tech Solutions",
-      pembimbing: "Dr. Bambang Kusumo, M.T",
-      judulKP: "Implementasi Blockchain untuk Supply Chain Management",
-      action: "Lihat Nilai",
-    },
-  ];
+  const [user, setUser] = useState<UserData | null>(null);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch user data
+        const userResponse = await axiosInstance.get('/dosenpembimbing/me');
+        setUser(userResponse.data);
+
+        // Fetch students data
+        const dosenId = userResponse.data.dosen.id;
+        const studentsResponse = await axiosInstance.get(`/dosenpembimbing/${dosenId}/mahasiswa`);
+        setStudents(studentsResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSubmitNilai = async (nilai: number, mahasiswaNim: string) => {
+    try {
+      const dosenId = user?.dosen.id;
+      if (!dosenId) throw new Error('Dosen ID not found');
+
+      await axiosInstance.post(`/dosenpembimbing/${dosenId}/nilai`, {
+        mahasiswaNim,
+        nilai
+      });
+
+      // Refresh students data
+      const response = await axiosInstance.get(`/dosenpembimbing/${dosenId}/mahasiswa`);
+      setStudents(response.data);
+
+      handleCloseInputModal();
+    } catch (error) {
+      console.error('Error submitting nilai:', error);
+    }
+  };
 
   const handleOpenInputModal = (student: Student): void => {
     setSelectedStudent(student);
@@ -145,39 +107,47 @@ const MahasiswaSeminar: React.FC = () => {
   const statusCounts = {
     total: students.length,
     menunggu: students.filter((s) => s.status === "Menunggu Seminar").length,
-    berlangsung: students.filter((s) => s.status === "Sedang Berlangsung")
-      .length,
+    berlangsung: students.filter((s) => s.status === "Sedang Berlangsung").length,
     selesai: students.filter((s) => s.status === "Selesai Seminar").length,
   };
 
   const filteredStudents = students
-    .filter((student) => {
-      if (!activeFilter) return true;
-      switch (activeFilter) {
-        case "total":
-          return true;
-        case "menunggu":
-          return student.status === "Menunggu Seminar";
-        case "berlangsung":
-          return student.status === "Sedang Berlangsung";
-        case "selesai":
-          return student.status === "Selesai Seminar";
-        default:
-          return true;
-      }
-    })
-    .filter(
-      (student) =>
-        student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        student.nim.includes(searchQuery) ||
-        student.judulKP.toLowerCase().includes(searchQuery.toLowerCase())
+      .filter((student) => {
+        if (!activeFilter) return true;
+        switch (activeFilter) {
+          case "total":
+            return true;
+          case "menunggu":
+            return student.status === "Menunggu Seminar";
+          case "berlangsung":
+            return student.status === "Sedang Berlangsung";
+          case "selesai":
+            return student.status === "Selesai Seminar";
+          default:
+            return true;
+        }
+      })
+      .filter(
+          (student) =>
+              student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              student.nim.includes(searchQuery) ||
+              student.judulKP.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+  if (loading) {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <p className="text-lg">Loading...</p>
+        </div>
     );
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="pt-10 px-8 pb-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-semibold">Mahasiswa Bimbingan</h1>
+          <h2 className="text-3xl font-semibold">Selamat Datang, {user?.nama || 'Loading...'}</h2>
         </div>
 
         {/* Stats Cards */}
@@ -337,14 +307,15 @@ const MahasiswaSeminar: React.FC = () => {
         </div>
       </main>
       <InputNilaiDosenPembimbing
-        isOpen={isInputModalOpen}
-        onClose={handleCloseInputModal}
-        student={selectedStudent}
+          isOpen={isInputModalOpen}
+          onClose={handleCloseInputModal}
+          student={selectedStudent}
+          onSubmit={handleSubmitNilai}
       />
       <LihatNilai
-        isOpen={isViewModalOpen}
-        onClose={handleCloseViewModal}
-        student={selectedStudent}
+          isOpen={isViewModalOpen}
+          onClose={handleCloseViewModal}
+          student={selectedStudent}
       />
     </div>
   );

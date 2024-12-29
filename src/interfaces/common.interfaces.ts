@@ -131,3 +131,10 @@ export interface DocumentPendaftaran {
     text: string;
     type: string;
 }
+
+export interface UploadPascaSeminarProps {
+    isOpen: boolean;
+    onClose: () => void;
+    nim: string;
+    userId: string;
+}

@@ -1,38 +1,37 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { ChevronLeft } from "lucide-react";
+import React, {useState, ChangeEvent, FormEvent} from "react";
+import {ChevronLeft} from "lucide-react";
+import {FormData, AdditionalField} from "./types";
 
-interface UserData {
-    name?: string;
-    email?: string;
-    phone?: string;
-    profilePicture?: string;
-}
-
-interface FormData {
-    name: string;
-    email: string;
-    phone: string;
-    profilePicture?: string;
-}
-
-interface ProfileModalProps {
+interface ProfileProps {
     isOpen: boolean;
     onClose: () => void;
-    userData?: UserData;
+    userData?: {
+        name?: string;
+        email?: string;
+        phone?: string;
+        profilePicture?: string;
+        [key: string]: any;
+    };
     onSave: (data: FormData) => void;
+    additionalFields?: AdditionalField[];
 }
 
-const Profile: React.FC<ProfileModalProps> = ({
-                                                  isOpen,
-                                                  onClose,
-                                                  userData,
-                                                  onSave,
-                                              }) => {
+const Profile: React.FC<ProfileProps> = ({
+                                             isOpen,
+                                             onClose,
+                                             userData,
+                                             onSave,
+                                             additionalFields = [],
+                                         }) => {
     const [formData, setFormData] = useState<FormData>({
         name: userData?.name || "",
         email: userData?.email || "",
         phone: userData?.phone || "",
         profilePicture: userData?.profilePicture || "",
+        ...additionalFields.reduce((acc, field) => ({
+            ...acc,
+            [field.name]: field.value,
+        }), {}),
     });
 
     if (!isOpen) return null;
@@ -43,7 +42,7 @@ const Profile: React.FC<ProfileModalProps> = ({
     };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
@@ -66,21 +65,18 @@ const Profile: React.FC<ProfileModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Overlay */}
             <div
                 className="fixed inset-0 bg-gray-800 bg-opacity-50 transition-opacity"
                 onClick={onClose}
             />
 
-            {/* Modal Content */}
             <div className="relative bg-white dark:bg-gray-800 rounded-lg w-full max-w-md mx-4 shadow-lg">
-                {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                     <button
                         onClick={onClose}
                         className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     >
-                        <ChevronLeft className="w-6 h-6" />
+                        <ChevronLeft className="w-6 h-6"/>
                     </button>
                     <div className="flex-grow flex items-center justify-center relative">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -89,11 +85,10 @@ const Profile: React.FC<ProfileModalProps> = ({
                     </div>
                 </div>
 
-                {/* Content */}
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                    {/* Profile Picture */}
                     <div className="flex justify-center relative">
-                        <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+                        <div
+                            className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
                             {formData.profilePicture ? (
                                 <img
                                     src={formData.profilePicture}
@@ -102,8 +97,8 @@ const Profile: React.FC<ProfileModalProps> = ({
                                 />
                             ) : (
                                 <span className="text-gray-400 text-2xl font-bold">
-                  {formData.name.charAt(0)}
-                </span>
+            {formData.name.charAt(0)}
+            </span>
                             )}
                         </div>
                         <button
@@ -117,7 +112,7 @@ const Profile: React.FC<ProfileModalProps> = ({
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
                             >
-                                <path d="M2.003 5.884L10 1l7.997 4.884v8.232L10 19l-7.997-4.884V5.884z" />
+                                <path d="M2.003 5.884L10 1l7.997 4.884v8.232L10 19l-7.997-4.884V5.884z"/>
                             </svg>
                         </button>
                         <input
@@ -129,7 +124,6 @@ const Profile: React.FC<ProfileModalProps> = ({
                         />
                     </div>
 
-                    {/* Form Fields */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Full Name
@@ -168,6 +162,22 @@ const Profile: React.FC<ProfileModalProps> = ({
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                         />
                     </div>
+
+                    {additionalFields.map((field) => (
+                        <div key={field.name}>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                {field.label}
+                            </label>
+                            <input
+                                type={field.type || "text"}
+                                name={field.name}
+                                value={formData[field.name]}
+                                onChange={handleChange}
+                                disabled={field.disabled}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                            />
+                        </div>
+                    ))}
 
                     <button
                         type="submit"

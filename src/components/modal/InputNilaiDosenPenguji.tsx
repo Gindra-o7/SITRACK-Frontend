@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Award, User, BookOpen, Building2, CalendarCheck } from "lucide-react";
+import React, {useState} from "react";
+import {Award, User, BookOpen, Building2, CalendarCheck} from "lucide-react";
+import axiosInstance from "../../configs/axios.configs.ts";
 
 interface Student {
     nim?: string;
@@ -13,53 +14,103 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     student?: Student;
+    onSubmit: (nilai: number, mahasiswaNim: string) => void;
 }
 
 interface GradesDosenPenguji {
-    scientific: string;
-    presentation: string;
-    project: string;
+    scientific: number;
+    presentation: number;
+    project: number;
+    comment?: string;
 }
 
-type GradeInputsDosenPenguji = {
-    [K in keyof GradesDosenPenguji]: string;
+const GRADE_WEIGHTS = {
+    scientific: 0.40,
+    presentation: 0.20,
+    project: 0.40
 };
 
-export const InputNilaiDosenPenguji: React.FC<Props> = ({
-                                                            isOpen,
-                                                            onClose,
-                                                            student,
-                                                        }) => {
+const convertToGrade = (score: number): string => {
+    if (score >= 85) return 'A';
+    if (score >= 80) return 'A-';
+    if (score >= 75) return 'B+';
+    if (score >= 70) return 'B';
+    if (score >= 65) return 'B-';
+    if (score >= 60) return 'C+';
+    if (score >= 55) return 'C';
+    if (score >= 50) return 'D';
+    return 'E';
+};
+
+const convertToNumber = (grade: string): number => {
+    switch (grade) {
+        case 'A': return 85;
+        case 'A-': return 80;
+        case 'B+': return 75;
+        case 'B': return 70;
+        case 'B-': return 65;
+        case 'C+': return 60;
+        case 'C': return 55;
+        case 'D': return 50;
+        default: return 0;
+    }
+};
+
+const InputNilaiDosenPenguji: React.FC<Props> = ({
+                                                     isOpen,
+                                                     onClose,
+                                                     student,
+                                                     onSubmit
+                                                 }) => {
     const [selectedGrades, setSelectedGrades] = useState<GradesDosenPenguji>({
-        scientific: "",
-        presentation: "",
-        project: "",
+        scientific: 0,
+        presentation: 0,
+        project: 0,
     });
     const [comment, setComment] = useState<string>("");
+    const [displayGrades, setDisplayGrades] = useState({
+        scientific: "",
+        presentation: "",
+        project: ""
+    });
 
     const gradeOptions: string[] = ["A", "A-", "B+", "B", "B-", "C+", "C", "D"];
 
-    const handleSubmit = (
-        e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
-    ) => {
+    const handleGradeSelect = (key: keyof GradesDosenPenguji, grade: string) => {
+        const numericValue = convertToNumber(grade);
+        setSelectedGrades(prev => ({
+            ...prev,
+            [key]: numericValue
+        }));
+        setDisplayGrades(prev => ({
+            ...prev,
+            [key]: grade
+        }));
+    };
+
+    const calculateWeightedGrade = (): number => {
+        return (
+            selectedGrades.scientific * GRADE_WEIGHTS.scientific +
+            selectedGrades.presentation * GRADE_WEIGHTS.presentation +
+            selectedGrades.project * GRADE_WEIGHTS.project
+        );
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        console.log({ studentId: student?.nim, grades: selectedGrades, comment });
-        onClose();
+        const weightedGrade = calculateWeightedGrade();
+        if (student?.nim) {
+            onSubmit(weightedGrade, student.nim);
+        }
     };
 
     if (!isOpen) return null;
 
-    const gradeInputs: GradeInputsDosenPenguji = {
-        scientific: "Penguasaan Keilmuan",
-        presentation: "Kemampuan Presentasi",
-        project: "Kesesuaian dan Urgensi Project / Tugas KP",
+    const gradeInputs = {
+        scientific: "Penguasaan keilmuan (40%)",
+        presentation: "Kemampuan presentasi (20%)",
+        project: "Kesesuaian dan Urgensi tugas KP (40%)"
     };
-
-    // Type-safe version of Object.entries
-    const gradeInputEntries = Object.entries(gradeInputs) as [
-        keyof GradesDosenPenguji,
-        string
-    ][];
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -97,7 +148,7 @@ export const InputNilaiDosenPenguji: React.FC<Props> = ({
                     {/* Informasi Mahasiswa */}
                     <div className="mb-6">
                         <div className="flex items-center gap-2 mb-2">
-                            <User className="h-5 w-5 text-gray-400" />
+                            <User className="h-5 w-5 text-gray-400"/>
                             <h4 className="font-medium text-gray-900">Informasi Mahasiswa</h4>
                         </div>
                         <div className="grid grid-cols-2 gap-4 pl-7">
@@ -115,18 +166,18 @@ export const InputNilaiDosenPenguji: React.FC<Props> = ({
                     {/* Judul KP */}
                     <div className="mb-6">
                         <div className="flex items-center gap-2 mb-2">
-                            <BookOpen className="h-5 w-5 text-gray-400" />
+                            <BookOpen className="h-5 w-5 text-gray-400"/>
                             <h4 className="font-medium text-gray-900">Judul Kerja Praktek</h4>
                         </div>
                         <p className="pl-7">
-                            {student?.title || "Implementasi Sistem IoT untuk Smart Home"}
+                            {student?.title || ".-"}
                         </p>
                     </div>
 
                     {/* Tempat KP */}
                     <div className="mb-6">
                         <div className="flex items-center gap-2 mb-2">
-                            <Building2 className="h-5 w-5 text-gray-400" />
+                            <Building2 className="h-5 w-5 text-gray-400"/>
                             <h4 className="font-medium text-gray-900">
                                 Tempat Kerja Praktek
                             </h4>
@@ -139,27 +190,25 @@ export const InputNilaiDosenPenguji: React.FC<Props> = ({
                     {/* Periode KP */}
                     <div className="mb-6">
                         <div className="flex items-center gap-2 mb-2">
-                            <CalendarCheck className="h-5 w-5 text-gray-400" />
+                            <CalendarCheck className="h-5 w-5 text-gray-400"/>
                             <h4 className="font-medium text-gray-900">Periode</h4>
                         </div>
                         <p className="pl-7">
-                            {student?.period || "1 Januari 2024 - 1 Maret 2024"}
+                            {student?.period || ".-"}
                         </p>
                     </div>
 
                     {/* Form Penilaian */}
                     <div>
-                        <div className="flex items-center gap-2 mb-4">
-                            <Award className="h-5 w-5 text-gray-400" />
-                            <h4 className="font-medium text-gray-900">Form Penilaian</h4>
-                        </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="space-y-6 pl-7">
-                                {/* Grade inputs */}
-                                {gradeInputEntries.map(([key, label]) => (
+                        <h4 className="font-medium text-gray-900 mb-4">Form Penilaian</h4>
+                        <form>
+                            <div className="space-y-6">
+                                {Object.entries(gradeInputs).map(([key, label]) => (
                                     <div key={key} className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
                                             {label}
+                                            {displayGrades[key as keyof GradesDosenPenguji] &&
+                                                ` - Nilai: ${selectedGrades[key as keyof GradesDosenPenguji]}`}
                                         </label>
                                         <div className="flex flex-wrap gap-2">
                                             {gradeOptions.map((grade) => (
@@ -167,16 +216,11 @@ export const InputNilaiDosenPenguji: React.FC<Props> = ({
                                                     key={`${key}-${grade}`}
                                                     type="button"
                                                     className={`px-4 py-2 text-sm rounded-lg ${
-                                                        selectedGrades[key] === grade
+                                                        displayGrades[key as keyof GradesDosenPenguji] === grade
                                                             ? "bg-blue-600 text-white"
                                                             : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                                                     }`}
-                                                    onClick={() =>
-                                                        setSelectedGrades((prev) => ({
-                                                            ...prev,
-                                                            [key]: grade,
-                                                        }))
-                                                    }
+                                                    onClick={() => handleGradeSelect(key as keyof GradesDosenPenguji, grade)}
                                                 >
                                                     {grade}
                                                 </button>
@@ -185,17 +229,24 @@ export const InputNilaiDosenPenguji: React.FC<Props> = ({
                                     </div>
                                 ))}
 
-                                {/* Comment section */}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center">
+                                        <span
+                                            className="text-sm font-medium text-gray-700">Nilai Akhir (dengan bobot)</span>
+                                        <span className="text-lg font-bold text-blue-600">
+                                            {calculateWeightedGrade().toFixed(2)} ({convertToGrade(calculateWeightedGrade())})
+                                        </span>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-gray-700">
                                         Catatan / Komentar
                                     </label>
                                     <textarea
                                         value={comment}
-                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                                            setComment(e.target.value)
-                                        }
-                                        className="w-full h-32 p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        onChange={(e) => setComment(e.target.value)}
+                                        className="w-full h-32 p-3 bg-gray-50 border border-gray-200 rounded-lg"
                                         placeholder="Tambahkan komentar..."
                                     />
                                 </div>
@@ -208,13 +259,13 @@ export const InputNilaiDosenPenguji: React.FC<Props> = ({
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-4">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
                     >
                         Batal
                     </button>
                     <button
                         onClick={handleSubmit}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
                     >
                         Simpan
                     </button>
@@ -223,3 +274,5 @@ export const InputNilaiDosenPenguji: React.FC<Props> = ({
         </div>
     );
 };
+
+export default InputNilaiDosenPenguji

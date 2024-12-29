@@ -4,9 +4,6 @@ import {toast} from 'react-toastify';
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL_PLACEHOLDER,
     withCredentials: true,
-    headers: {
-        'Content-Type': 'multipart/form-data'
-    }
 });
 
 axiosInstance.interceptors.request.use(
@@ -14,6 +11,12 @@ axiosInstance.interceptors.request.use(
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        }
+        // Tentukan Content-Type secara dinamis
+        if (config.data instanceof FormData) {
+            config.headers['Content-Type'] = 'multipart/form-data';
+        } else {
+            config.headers['Content-Type'] = 'application/json';
         }
         return config;
     },

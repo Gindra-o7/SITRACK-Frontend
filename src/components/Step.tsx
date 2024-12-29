@@ -9,7 +9,7 @@ interface Step {
 export const STEPS: Step[] = [
   { id: 0, title: "Persyaratan" },
   { id: 1, title: "Pendaftaran" },
-  { id: 2, title: "Pasca-Seminar" },
+  { id: 2, title: "Pasca_Seminar" },
 ];
 
 interface ProgressStepsProps {
