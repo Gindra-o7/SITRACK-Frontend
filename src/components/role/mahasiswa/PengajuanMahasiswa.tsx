@@ -49,7 +49,8 @@ const Pengajuan: React.FC = () => {
       documents: group.documents.map((doc: any) => ({
         name: doc.jenisDokumen,
         status: mapStatus(doc.status),
-        filePath: doc.filePath
+        filePath: doc.filePath,
+        history: doc.history
       }))
     }));
   };

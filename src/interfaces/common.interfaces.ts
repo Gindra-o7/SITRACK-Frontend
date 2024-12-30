@@ -34,15 +34,26 @@ export interface UserData {
     };
 }
 
+export interface DocumentData {
+    name: string;
+    status: "submitted" | "verified" | "rejected";
+    filePath: string;
+    history: {
+        id: string;
+        tanggalUpload: string;
+        komentar: string;
+        user: {
+            nama: string;
+            email: string;
+        };
+    }[];
+}
+
 export interface GroupedDocuments {
     number: number;
     date: string;
-    status: "revisi" | "diterima" | "menunggu";
-    documents: {
-        name: string;
-        status: "menunggu" | "diterima" | "revisi";
-        filePath?: string;
-    }[];
+    status: "diterima" | "menunggu" | "revisi";
+    documents: DocumentData[];
 }
 
 export interface CardData {
@@ -80,16 +91,11 @@ export interface CardUploadProps {
 
 export interface StatusModalProps {
     title: string;
-    status: StatusType;
-    text?: string;
+    status: "diterima" | "menunggu" | "revisi";
     isOpen: boolean;
     onClose: () => void;
-    documents: Array<{
-        name: string;
-        status: StatusType;
-    }>;
-    notes?: string[];
-    onDocumentClick?: (filePath: string) => void;
+    documents: Document[];
+    onDocumentClick: (filePath: string) => void;
 }
 
 export interface UploadPersyaratanProps {

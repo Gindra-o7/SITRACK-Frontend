@@ -13,6 +13,8 @@ interface Student {
   projectTitle: string;
   status: string;
   seminarDate?: string;
+  hasNilai?: boolean;
+  nilai?: number;
 }
 
 interface UserData {
@@ -62,13 +64,30 @@ const DashboardPembimbingInstansi: React.FC = () => {
 
         // Fetch students
         const studentsResponse = await axiosInstance.get('/pembimbinginstansi/mahasiswa');
-        setStudents(studentsResponse.data);
+        const studentsWithNilai = await Promise.all(
+            studentsResponse.data.map(async (student: Student) => {
+              try {
+                const nilaiResponse = await axiosInstance.get(`/pembimbinginstansi/mahasiswa/${student.nim}/nilai`);
+                return {
+                  ...student,
+                  hasNilai: true,
+                  nilai: nilaiResponse.data.nilaiPembimbingInstansi
+                };
+              } catch (error) {
+                return {
+                  ...student,
+                  hasNilai: false
+                };
+              }
+            })
+        );
+        setStudents(studentsWithNilai);
 
         // Calculate stats
         const stats = {
-          total: studentsResponse.data.length,
-          active: studentsResponse.data.filter((s: Student) => s.status === 'Aktif').length,
-          completed: studentsResponse.data.filter((s: Student) => s.status === 'Selesai').length
+          total: studentsWithNilai.length,
+          active: studentsWithNilai.filter((s: Student) => s.status === 'Aktif').length,
+          completed: studentsWithNilai.filter((s: Student) => s.status === 'Selesai').length
         };
         setStudentStats(stats);
       } catch (error) {
@@ -82,18 +101,14 @@ const DashboardPembimbingInstansi: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleOpenInputModal = async (student: Student) => {
-    try {
-      setSelectedStudent(student);
-      setIsInputModalOpen(true);
-    } catch (error) {
-      console.error('Error opening input modal:', error);
-    }
+  const handleOpenInputModal = (student: Student) => {
+    setSelectedStudent(student);
+    setIsInputModalOpen(true);
   };
 
   const handleCloseInputModal = () => {
     setIsInputModalOpen(false);
-    setSelectedStudent(null);
+    setSelectedStudent(undefined);  // Changed null to undefined
   };
 
   const handleOpenViewModal = async (student: Student) => {
@@ -112,7 +127,7 @@ const DashboardPembimbingInstansi: React.FC = () => {
 
   const handleCloseViewModal = () => {
     setIsViewModalOpen(false);
-    setSelectedStudent(null);
+    setSelectedStudent(undefined);  // Changed null to undefined
   };
 
   const handleSubmitNilai = async (nim: string, nilai: number) => {

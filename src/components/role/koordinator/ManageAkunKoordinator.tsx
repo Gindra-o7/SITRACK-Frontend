@@ -20,8 +20,10 @@ import {
     Pagination,
     TextInput,
     Label,
-    Alert
+    Alert,
+    Spinner,
 } from "flowbite-react";
+import { ManageAccountSkeleton } from "../../../pages/LoadingInterface"
 
 interface User {
     id: string;
@@ -299,7 +301,18 @@ const ManageAccounts = () => {
             )}
 
             {isLoading && (
-                <div className="text-center py-4 text-gray-600">Loading...</div>
+                <div className="relative w-full h-full bg-gray-100">
+                    {/* Skeleton Background */}
+                    <ManageAccountSkeleton/>
+
+                    {/* Spinner and Text in Center */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
+                        <Spinner size="xl" color="gray"/>
+                        <p className="text-gray-600 font-medium">
+                            Loading, mohon tunggu...
+                        </p>
+                    </div>
+                </div>
             )}
             {error && (
                 <div className="text-center py-4 text-red-600">{error}</div>

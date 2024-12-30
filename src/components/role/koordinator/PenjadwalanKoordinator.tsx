@@ -1,7 +1,9 @@
 import {useState, useMemo, useEffect} from "react";
 import { Pencil, Trash2, Search } from "lucide-react";
+import { Spinner } from "flowbite-react";
 import TambahJadwal from "../../modal/TambahJadwal";
 import axiosInstance from "../../../configs/axios.configs.ts"
+import { LoadingPenjadwalanKoordinator } from "../../../pages/LoadingInterface"
 
 interface Jadwal {
   id: string;
@@ -48,7 +50,7 @@ const JadwalNilaiTabs = () => {
   const [nilaiSearchTerm, setNilaiSearchTerm] = useState("");
   const [jadwalCurrentPage, setJadwalCurrentPage] = useState(1);
   const [nilaiCurrentPage, setNilaiCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const itemsPerPage = 10;
 
@@ -430,6 +432,23 @@ const JadwalNilaiTabs = () => {
       )}
       </div>
   );
+
+  if (loading) {
+    return (
+        <div className="relative w-full h-full bg-gray-100">
+          {/* Skeleton Background */}
+          <LoadingPenjadwalanKoordinator />
+
+          {/* Spinner and Text in Center */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
+            <Spinner size="xl" color="gray" />
+            <p className="text-gray-600 font-medium">
+              Loading, mohon tunggu...
+            </p>
+          </div>
+        </div>
+    );
+  }
 
   return (
       <div className="p-6 bg-gray-50">

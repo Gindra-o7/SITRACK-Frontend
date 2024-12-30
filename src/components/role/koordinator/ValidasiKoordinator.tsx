@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Filter } from "lucide-react";
 import ValidationModal from "../../modal/Validasi.Modal";
 import { ValidationCard } from "../../Card";
 import axiosInstance from "../../../configs/axios.configs";
+import { Spinner } from "flowbite-react"
+import {LoadingValidationDocument} from "../../../pages/LoadingInterface"
 
 interface User {
   id: string;
@@ -59,6 +61,7 @@ const Validasi = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [activeDocument, setActiveDocument] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [selectedStudentDocs, setSelectedStudentDocs] = useState<GroupedDocuments>({
@@ -94,18 +97,21 @@ const Validasi = () => {
     fetchStudents();
   }, []);
 
-  const fetchStudents = async () => {
-    try {
-      const response = await axiosInstance.get<APIResponse>('/koordinator/mahasiswa-document');
-      if (response.data.success) {
-        setStudents(processStudentData(response.data.data));
-      } else {
-        console.error('Error fetching students:', response.data.message);
-      }
-    } catch (error) {
-      console.error('Error fetching students:', error);
-    }
-  };
+    const fetchStudents = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get<APIResponse>('/koordinator/mahasiswa-document');
+            if (response.data.success) {
+                setStudents(processStudentData(response.data.data));
+            } else {
+                console.error('Error fetching students:', response.data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching students:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   const groupDocumentsByCategory = (documents: Document[]): GroupedDocuments => {
     return documents.reduce((acc, doc) => {
@@ -174,131 +180,148 @@ const Validasi = () => {
 
   return (
       <div className="container px-4 py-6 md:px-6 bg-gray-50 min-h-screen">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4 md:mb-6">
-          Validasi Dokumen Mahasiswa
-        </h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4 md:mb-6">
+              Validasi Dokumen Mahasiswa
+          </h1>
 
-        {/* Search and Filter Container */}
-        <div className="mb-4 md:mb-6">
-          <div className="flex items-center space-x-2">
-            <div className="relative flex-grow">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                  type="text"
-                  placeholder="Cari nama/NIM"
-                  className="w-full pl-10 p-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+          {/* Search and Filter Container */}
+          <div className="mb-4 md:mb-6">
+              <div className="flex items-center space-x-2">
+                  <div className="relative flex-grow">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <Search className="h-4 w-4 text-gray-400"/>
+                      </div>
+                      <input
+                          type="text"
+                          placeholder="Cari nama/NIM"
+                          className="w-full pl-10 p-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                  </div>
 
-            <div className="hidden md:block">
-              <div className="flex space-x-2">
-                {["PERSYARATAN", "PENDAFTARAN", "PASCA_SEMINAR"].map((status) => (
-                    <button
-                        key={status}
-                        className={`
+                  <div className="hidden md:block">
+                      <div className="flex space-x-2">
+                          {["PERSYARATAN", "PENDAFTARAN", "PASCA_SEMINAR"].map((status) => (
+                              <button
+                                  key={status}
+                                  className={`
                     px-3 py-2 rounded-full text-xs font-medium transition-colors
                     ${filterStatus === status
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }
+                                      ? "bg-blue-600 text-white"
+                                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                  }
                   `}
-                        onClick={() => setFilterStatus(filterStatus === status ? "" : status)}
-                    >
-                      {status.replace("_", " ")}
-                    </button>
-                ))}
+                                  onClick={() => setFilterStatus(filterStatus === status ? "" : status)}
+                              >
+                                  {status.replace("_", " ")}
+                              </button>
+                          ))}
+                      </div>
+                  </div>
+
+                  <button
+                      className="md:hidden p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
+                      onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+                  >
+                      <Filter className="h-4 w-4"/>
+                  </button>
               </div>
-            </div>
 
-            <button
-                className="md:hidden p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
-                onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            >
-              <Filter className="h-4 w-4" />
-            </button>
-          </div>
-
-          {mobileFiltersOpen && (
-              <div className="md:hidden mt-2 flex flex-wrap gap-2">
-                {["PERSYARATAN", "PENDAFTARAN", "PASCA_SEMINAR"].map((status) => (
-                    <button
-                        key={status}
-                        className={`
+              {mobileFiltersOpen && (
+                  <div className="md:hidden mt-2 flex flex-wrap gap-2">
+                      {["PERSYARATAN", "PENDAFTARAN", "PASCA_SEMINAR"].map((status) => (
+                          <button
+                              key={status}
+                              className={`
                   px-3 py-1.5 rounded-full text-xs font-medium transition-colors
                   ${filterStatus === status
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              }
                 `}
-                        onClick={() => setFilterStatus(filterStatus === status ? "" : status)}
-                    >
-                      {status.replace("_", " ")}
-                    </button>
-                ))}
+                              onClick={() => setFilterStatus(filterStatus === status ? "" : status)}
+                          >
+                              {status.replace("_", " ")}
+                          </button>
+                      ))}
+                  </div>
+              )}
+          </div>
+
+          {loading && (
+              <div className="relative w-full h-full bg-gray-100">
+                  {/* Skeleton Background */}
+                  <LoadingValidationDocument/>
+
+                  {/* Spinner and Text in Center */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
+                      <Spinner size="xl" color="gray"/>
+                      <p className="text-gray-600 font-medium">
+                          Loading, mohon tunggu...
+                      </p>
+                  </div>
               </div>
           )}
-        </div>
 
-        {/* Student Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {filteredStudents.map((student) => (
-              <div key={student.id} className="relative">
-                <ValidationCard
-                    student={{
-                      name: student.name,
-                      nim: student.nim,
-                      documentStatus: student.documentStatus,
-                      status: student.status,
-                      photoPath: student.photoPath,
-                      email: student.email,
-                      noHp: student.noHp,
-                      semester: student.semester
-                    }}
-                    variant="default"
-                    className="h-full cursor-pointer"
-                    onClick={() => handleCardClick(student)}
-                />
-              </div>
-          ))}
-        </div>
+          {/* Student Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+              {!loading && (
+                  filteredStudents.map((student) => (
+                      <div key={student.id} className="relative">
+                          <ValidationCard
+                              student={{
+                                  name: student.name,
+                                  nim: student.nim,
+                                  documentStatus: student.documentStatus,
+                                  status: student.status,
+                                  photoPath: student.photoPath,
+                                  email: student.email,
+                                  noHp: student.noHp,
+                                  semester: student.semester,
+                              }}
+                              variant="default"
+                              className="h-full cursor-pointer"
+                              onClick={() => handleCardClick(student)}
+                          />
+                      </div>
+                  ))
+              )}
+          </div>
 
-        {/* Validation Modal */}
-        {showDialog && activeDocument && (
-            <ValidationModal
-                activeDocument={{
-                  ...activeDocument,
-                  documentStatus: activeDocument.documentStatus,
-                }}
-                groupedDocuments={selectedStudentDocs}
-                onClose={() => {
-                  setShowDialog(false);
-                  setActiveDocument(null);
-                  setSelectedStudentDocs({
-                    PERSYARATAN: [],
-                    PENDAFTARAN: [],
-                    PASCA_SEMINAR: []
-                  });
-                }}
-                onSave={(documents) => {
-                  const promises = documents.map(doc =>
-                      updateDocumentStatus(doc.id, doc.status, doc.komentar)
-                  );
-                  Promise.all(promises).then(() => {
-                    setShowDialog(false);
-                    setActiveDocument(null);
-                    setSelectedStudentDocs({
-                      PERSYARATAN: [],
-                      PENDAFTARAN: [],
-                      PASCA_SEMINAR: []
-                    });
-                  });
-                }}
-            />
-        )}
+          {/* Validation Modal */}
+          {showDialog && activeDocument && (
+              <ValidationModal
+                  activeDocument={{
+                      ...activeDocument,
+                      documentStatus: activeDocument.documentStatus,
+                  }}
+                  groupedDocuments={selectedStudentDocs}
+                  onClose={() => {
+                      setShowDialog(false);
+                      setActiveDocument(null);
+                      setSelectedStudentDocs({
+                          PERSYARATAN: [],
+                          PENDAFTARAN: [],
+                          PASCA_SEMINAR: []
+                      });
+                  }}
+                  onSave={(documents) => {
+                      const promises = documents.map(doc =>
+                          updateDocumentStatus(doc.id, doc.status, doc.komentar)
+                      );
+                      Promise.all(promises).then(() => {
+                          setShowDialog(false);
+                          setActiveDocument(null);
+                          setSelectedStudentDocs({
+                              PERSYARATAN: [],
+                              PENDAFTARAN: [],
+                              PASCA_SEMINAR: []
+                          });
+                      });
+                  }}
+              />
+          )}
       </div>
   );
 };

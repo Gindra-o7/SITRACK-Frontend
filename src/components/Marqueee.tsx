@@ -1,65 +1,25 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { cn } from "../lib/utils";
 import Marquee from "./ui/marquee";
 import logo from "../assets/logoimage.png";
 import { Button } from "flowbite-react"
+import axiosInstance from "../configs/axios.configs.ts"
+import { format } from 'date-fns';
 
-const reviews = [
-  {
-    name: "Gilang Ramadhan",
-    nim: "12250111234",
-    tanggal: "2024-12-05",
-    jam: "10:00 WIB",
-    ruangan: "A101",
-    img: logo,
-  },
-  {
-    name: "Raka Sabri",
-    nim: "12250111235",
-    tanggal: "2024-12-06",
-    jam: "11:00 WIB",
-    ruangan: "B202",
-    img: logo,
-  },
-  {
-    name: "M.Rafly",
-    nim: "12250111236",
-    tanggal: "2024-12-07",
-    jam: "13:00 WIB",
-    ruangan: "C303",
-    img: logo,
-  },
-  {
-    name: "M.Nabil dawami",
-    nim: "12250111237",
-    tanggal: "2024-12-08",
-    jam: "14:00 WIB",
-    ruangan: "D404",
-    img: logo,
-  },
-  {
-    name: "Fajri",
-    nim: "12250111238",
-    tanggal: "2024-12-09",
-    jam: "15:00 WIB",
-    ruangan: "E505",
-    img: logo,
-  },
-  {
-    name: "Fakhri",
-    nim: "12250111239",
-    tanggal: "2024-12-10",
-    jam: "16:00 WIB",
-    ruangan: "F606",
-    img: logo,
-  },
-];
-
-const firstRow = reviews.slice(0, reviews.length / 2);
-const secondRow = reviews.slice(reviews.length / 2);
+export const getJadwalSeminar = async () => {
+    try {
+        const response = await axiosInstance.get('/jadwal'); // Adjust the URL based on your API endpoint
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching jadwal seminar:', error);
+        throw error;
+    }
+};
 
 const JadwalModal = ({ isOpen, onClose, reviews }) => {
   if (!isOpen) return null;
+
+
 
   return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -187,46 +147,100 @@ const ReviewCard = ({
 };
 
 export function Marqueee() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [jadwalList, setJadwalList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchJadwal = async () => {
+            try {
+                const data = await getJadwalSeminar();
+                const formattedData = data.map(jadwal => ({
+                    name: jadwal.mahasiswa.user.nama,
+                    nim: jadwal.mahasiswa.nim,
+                    tanggal: format(new Date(jadwal.tanggal), 'yyyy-MM-dd'),
+                    jam: `${format(new Date(jadwal.waktuMulai), 'HH:mm')} WIB`,
+                    ruangan: jadwal.ruangan,
+                    img: logo, // Using default logo for all users
+                }));
+                setJadwalList(formattedData);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchJadwal();
+    }, []);
+
+    const firstRow = jadwalList.slice(0, Math.ceil(jadwalList.length / 2));
+    const secondRow = jadwalList.slice(Math.ceil(jadwalList.length / 2));
+
+    if (loading) {
+        return (
+            <div className="relative flex h-[470px] w-full items-center justify-center rounded-2xl bg-white dark:bg-gray-900 shadow-lg">
+                <div className="text-center">Loading...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="relative flex h-[470px] w-full items-center justify-center rounded-2xl bg-white dark:bg-gray-900 shadow-lg">
+                <div className="text-center text-red-500">Error: {error}</div>
+            </div>
+        );
+    }
 
   return (
-      <div className="relative flex h-[470px] w-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-white dark:bg-gray-900 md:h-[470px] shadow-lg">
-        <div className="absolute top-5 w-full text-left z-10">
-          <h2 className="text-xl font-bold text-black dark:text-white ml-4">
-            Real-Time Jadwal Seminar-KP
-          </h2>
-        </div>
+      <div
+          className="relative flex h-[470px] w-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-white dark:bg-gray-900 md:h-[470px] shadow-lg">
+          <div className="absolute top-5 w-full text-left z-10">
+              <h2 className="text-xl font-bold text-black dark:text-white ml-4">
+                  Real-Time Jadwal Seminar-KP
+              </h2>
+          </div>
 
-        <Marquee pauseOnHover className="[--duration:110s] md:[--duration:30s]">
-          {firstRow.map((review) => (
-              <ReviewCard key={review.nim} {...review} />
-          ))}
-        </Marquee>
+          {jadwalList.length > 0 ? (
+              <>
+                  <Marquee pauseOnHover className="[--duration:110s] md:[--duration:30s]">
+                      {firstRow.map((review) => (
+                          <ReviewCard key={review.nim} {...review} />
+                      ))}
+                  </Marquee>
 
-        <Marquee reverse pauseOnHover className="[--duration:100s] md:[--duration:30s]">
-          {secondRow.map((review) => (
-              <ReviewCard key={review.nim} {...review} />
-          ))}
-        </Marquee>
+                  <Marquee reverse pauseOnHover className="[--duration:100s] md:[--duration:30s]">
+                      {secondRow.map((review) => (
+                          <ReviewCard key={review.nim} {...review} />
+                      ))}
+                  </Marquee>
+              </>
+          ) : (
+              <div className="text-center">No schedules available</div>
+          )}
 
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-gray-900"></div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-gray-900"></div>
+          <div
+              className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-gray-900"></div>
+          <div
+              className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-gray-900"></div>
 
-        <div className="absolute bottom-3 w-full text-right ml-4">
-          <Button
-              onClick={() => setIsModalOpen(true)}
-              color='dark'
-              size='sm'
-          >
-            Selengkapnya &gt;
-          </Button>
-        </div>
+          <div className="absolute bottom-3 w-full text-right ml-4">
+              <Button
+                  onClick={() => setIsModalOpen(true)}
+                  color='dark'
+                  size='sm'
+              >
+                  Selengkapnya &gt;
+              </Button>
+          </div>
 
-        <JadwalModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            reviews={reviews}
-        />
+          <JadwalModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              reviews={jadwalList}
+          />
       </div>
   );
 }
